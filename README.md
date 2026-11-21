@@ -6,7 +6,7 @@ Requirements: [`docs/PRD.md`](docs/PRD.md). Diagrams: [`docs/uml/`](docs/uml). A
 ## Stack
 
 Next.js 16 (App Router, static by default) · TypeScript (strict) · Tailwind CSS 4 · Vitest · Playwright + axe.
-Added in later phases: Motion, Lucide, shadcn/ui, Keystatic (content), Zod, Resend, Cloudflare Turnstile, Supabase (testimonials only).
+Also: shadcn/ui (Radix), Lucide, Keystatic + Markdoc (content), Zod. Later phases: Motion, Resend, Cloudflare Turnstile, Supabase (testimonials only).
 
 ## Requirements
 
@@ -39,8 +39,10 @@ Environment variables are listed in `.env.example` (PRD section 13). Variables s
 
 ## Editing content
 
-Content will be edited through Keystatic at `/keystatic` (PRD section 18). This is set up in Phase 2,
-and `docs/EDITING.md` will describe the workflow.
+Content is managed with Keystatic (PRD section 18): run `npm run dev` and open
+<http://localhost:3000/keystatic>. Files live in `content/`; only **Published** entries render.
+`npm run build` first runs `npm run content:check`, which fails on invalid published content.
+Step-by-step guide: [`docs/EDITING.md`](docs/EDITING.md).
 
 ## Deployment and rollback
 
