@@ -1,0 +1,12 @@
+stateDiagram-v2
+  [*] --> Pending: author submits
+  Pending --> Approved: Desi approves
+  Pending --> Rejected: Desi rejects
+  Approved --> Pending: author edits
+  Rejected --> Pending: author edits
+  Approved --> Unpublished: Desi unpublishes
+  Unpublished --> Approved: Desi re-approves
+  Pending --> [*]: author deletes
+  Approved --> [*]: author deletes
+  Rejected --> [*]: author deletes
+  Unpublished --> [*]: author deletes

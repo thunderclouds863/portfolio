@@ -1,0 +1,11 @@
+stateDiagram-v2
+  [*] --> Closed
+  Closed --> Open: tap menu button
+  Open --> Closed: tap close / press Esc
+  Open --> Navigating: tap section link
+  Navigating --> Closed: scroll to anchor, restore focus
+  state Open {
+    [*] --> FocusTrapped
+    FocusTrapped --> FocusTrapped: Tab / Shift+Tab cycles
+  }
+  Closed --> Closed: viewport ≥ 768px (menu hidden)

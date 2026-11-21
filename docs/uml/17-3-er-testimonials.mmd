@@ -1,0 +1,25 @@
+erDiagram
+  AUTH_USERS ||--o| TESTIMONIALS : writes
+  AUTH_USERS ||--o| ADMINS : "is listed as"
+  AUTH_USERS {
+    uuid id PK
+    jsonb raw_user_meta_data "name, picture, email from LinkedIn"
+  }
+  TESTIMONIALS {
+    uuid id PK
+    uuid user_id FK "unique"
+    text author_name "set by trigger"
+    text author_headline "self-reported"
+    text relationship
+    text linkedin_url "self-reported, optional"
+    text body
+    boolean consent_publish
+    text status "pending | approved | rejected"
+    text rejection_reason
+    timestamptz created_at
+    timestamptz updated_at
+    timestamptz reviewed_at
+  }
+  ADMINS {
+    uuid user_id PK
+  }

@@ -1,0 +1,14 @@
+flowchart LR
+  Dev[Developer laptop] -->|git push| GH[(GitHub repo)]
+  GH -->|webhook| GHA[GitHub Actions CI]
+  GH -->|Git integration| VB[Vercel Build]
+  VB --> Edge[Vercel Edge Network / CDN<br/>static HTML, JS, fonts, images]
+  VB --> Fn[Vercel Function<br/>contact handler]
+  User[Visitor browser] -->|HTTPS| DNS[DNS: custom domain]
+  DNS --> Edge
+  User -->|POST| Fn
+  User -->|widget| CF[Cloudflare Turnstile]
+  Fn -->|siteverify| CF
+  Fn -->|API key| RS[Resend]
+  RS -->|SMTP, SPF/DKIM| Inbox[Owner inbox]
+  Edge -.-> Analytics[Vercel Analytics / Speed Insights]

@@ -1,0 +1,106 @@
+classDiagram
+  class Profile {
+    +string name
+    +string headline
+    +string subheadline
+    +string location
+    +string[] preferredLocations
+    +Availability availability
+    +SocialLink[] links
+    +string cvPdfPath
+  }
+  class Availability {
+    +boolean openToWork
+    +string[] workModes
+    +boolean freelance
+    +string[] freelanceServices
+  }
+  class SocialLink {
+    +string label
+    +string url
+    +string icon
+  }
+  class Experience {
+    +string organization
+    +string role
+    +string startDate
+    +string endDate
+    +ContributionScope scope
+    +string[] highlights
+    +string[] tags
+  }
+  class Education {
+    +string institution
+    +string degree
+    +string major
+    +string startDate
+    +string endDate
+    +string gpa
+    +string[] focusAreas
+  }
+  class Project {
+    +string slug
+    +string title
+    +string summary
+    +ProjectType type
+    +Capability[] capabilities
+    +string role
+    +string contribution
+    +number teamSize
+    +string period
+    +string[] stack
+    +Outcome[] outcomes
+    +boolean featured
+    +number order
+    +string thumbnail
+    +string body
+  }
+  class Outcome {
+    +string statement
+    +boolean verified
+    +string evidence
+  }
+  class Skill {
+    +string name
+    +SkillGroup group
+    +Proficiency level
+  }
+  class ContactMessage {
+    +string name
+    +string email
+    +InquiryType type
+    +string message
+    +boolean consent
+    +string turnstileToken
+    +string honeypot
+    +number renderedAt
+  }
+  class ContributionScope {
+    <<enumeration>>
+    OWNER
+    CORE_TEAM
+    SUPPORTING
+  }
+  class Capability {
+    <<enumeration>>
+    SYSTEM_ANALYSIS
+    PROCESS_IMPROVEMENT
+    SYSTEM_DEVELOPMENT
+    DATA
+  }
+  class Proficiency {
+    <<enumeration>>
+    DAILY_USE
+    PROJECT_USE
+    LEARNING
+  }
+  Profile "1" *-- "1" Availability
+  Profile "1" *-- "*" SocialLink
+  Profile "1" o-- "*" Experience
+  Profile "1" o-- "*" Education
+  Profile "1" o-- "*" Project
+  Profile "1" o-- "*" Skill
+  Project "1" *-- "*" Outcome
+  Experience ..> ContributionScope
+  Project ..> Capability
+  Skill ..> Proficiency

@@ -1,0 +1,16 @@
+sequenceDiagram
+  autonumber
+  actor O as Desi
+  participant N as Next.js server
+  participant DB as Supabase Postgres (RLS)
+  participant C as Cache
+
+  O->>N: GET /admin/testimonials (signed in with LinkedIn)
+  N->>DB: select * (RLS: is_admin() required for non-approved rows)
+  DB-->>N: pending + approved + rejected
+  O->>N: Approve testimonial #id
+  N->>N: Re-check session and is_admin on the server
+  N->>DB: update status = approved, reviewed_at = now()
+  DB-->>N: ok
+  N->>C: revalidatePath('/') + revalidatePath('/testimonials')
+  N-->>O: Updated list

@@ -1,0 +1,16 @@
+flowchart TD
+  Home["/ (Home)"] --> About["#about"]
+  Home --> Cap["#capabilities"]
+  Home --> Exp["#experience"]
+  Home --> Proj["#projects"]
+  Home --> App["#approach"]
+  Home --> Stack["#stack"]
+  Home --> Contact["#contact"]
+  Proj --> PList["/projects"]
+  PList --> PDetail["/projects/[slug]"]
+  Proj --> PDetail
+  PDetail -->|next / prev| PDetail
+  Home --> CV["/cv"]
+  CV --> PDF["/cv/desi-armanda-sari-cv.pdf"]
+  Contact --> Privacy["/privacy"]
+  Contact -->|submit| API["Contact handler"]

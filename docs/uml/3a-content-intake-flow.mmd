@@ -1,0 +1,15 @@
+flowchart TD
+  A[Phase needs content] --> B[Agent sends Intake Request]
+  B --> C{Desi provides source?}
+  C -- export / CV / notes / answers --> D[Agent extracts candidates]
+  C -- skips optional item --> H[Element hidden, not filled]
+  D --> E[Confirmation table: value + source + wording]
+  E --> F{Desi confirms row?}
+  F -- edit --> E
+  F -- remove --> H
+  F -- ok --> G[Write to content/* with source + verified:true]
+  G --> I[Build content gate]
+  H --> I
+  I --> J{Unverified item or TODO in production?}
+  J -- yes --> K[Build fails]
+  J -- no --> L[Proceed]

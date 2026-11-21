@@ -1,0 +1,15 @@
+sequenceDiagram
+  autonumber
+  actor D as Desi
+  participant K as /keystatic (admin UI)
+  participant GH as GitHub repo
+  participant CI as GitHub Actions
+  participant V as Vercel
+  D->>K: Sign in with GitHub
+  D->>K: Create / edit project (form + images + body)
+  K->>GH: Commit to branch content/<slug>
+  GH->>CI: Lint, typecheck, build, content gate, e2e
+  GH->>V: Preview deployment
+  V-->>D: Preview URL
+  D->>GH: Merge to main
+  GH->>V: Production deployment

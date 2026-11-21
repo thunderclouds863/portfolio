@@ -1,0 +1,30 @@
+flowchart LR
+  R((Recruiter / HR))
+  H((Hiring manager))
+  C((Client / collaborator))
+  O((Desi - owner))
+  E[[Email service]]
+  T[[Turnstile]]
+
+  subgraph System[Portfolio website]
+    UC1([View profile and role])
+    UC2([Browse experience])
+    UC3([Browse projects])
+    UC4([Read case study])
+    UC5([View / download CV])
+    UC6([Send contact message])
+    UC7([Verify human])
+    UC8([Deliver message by email])
+    UC9([Update content via Git])
+    UC10([Deploy new version])
+  end
+
+  R --> UC1 & UC2 & UC5 & UC6
+  H --> UC1 & UC3 & UC4 & UC5 & UC6
+  C --> UC1 & UC3 & UC4 & UC6
+  O --> UC9 & UC10
+  UC6 -. include .-> UC7
+  UC6 -. include .-> UC8
+  UC3 -. extend .-> UC4
+  UC7 --- T
+  UC8 --- E

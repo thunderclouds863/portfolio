@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Desi Armanda Sari — Portfolio
 
-## Getting Started
+Personal portfolio for Desi Armanda Sari (System Analyst · Business Process Improvement · System Development).
+Requirements: [`docs/PRD.md`](docs/PRD.md). Diagrams: [`docs/uml/`](docs/uml). Agent rules: [`AGENTS.md`](AGENTS.md).
 
-First, run the development server:
+## Stack
+
+Next.js 16 (App Router, static by default) · TypeScript (strict) · Tailwind CSS 4 · Vitest · Playwright + axe.
+Added in later phases: Motion, Lucide, shadcn/ui, Keystatic (content), Zod, Resend, Cloudflare Turnstile, Supabase (testimonials only).
+
+## Requirements
+
+- Node.js 24 LTS or newer (`node -v`)
+- npm 11 or newer
+
+## Setup
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm ci
+cp .env.example .env.local   # fill in values; never commit .env.local
+npx playwright install chromium
+npm run dev                  # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Environment variables are listed in `.env.example` (PRD section 13). Variables starting with
+`NEXT_PUBLIC_` reach the browser; all others are server-only.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Script                                    | What it does                                                                                 |
+| ----------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `npm run dev`                             | Development server                                                                           |
+| `npm run build` / `npm run start`         | Production build / serve it                                                                  |
+| `npm run lint`                            | ESLint                                                                                       |
+| `npm run typecheck`                       | Generate route types, then `tsc --noEmit`                                                    |
+| `npm run format` / `npm run format:check` | Prettier write / check                                                                       |
+| `npm run test`                            | Unit tests (Vitest, `tests/unit`)                                                            |
+| `npm run test:e2e`                        | End-to-end + accessibility tests (Playwright, `tests/e2e`); builds and starts the app itself |
 
-## Learn More
+## Editing content
 
-To learn more about Next.js, take a look at the following resources:
+Content will be edited through Keystatic at `/keystatic` (PRD section 18). This is set up in Phase 2,
+and `docs/EDITING.md` will describe the workflow.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Deployment and rollback
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Vercel with Git integration: every PR gets a preview, merging to `main` deploys production.
+Rollback: Vercel "Instant Rollback" to the previous production deployment, then fix forward on a branch.
+Full runbook: PRD section 13 (completed in Phase 9).
