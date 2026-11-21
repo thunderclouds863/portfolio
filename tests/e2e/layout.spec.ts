@@ -1,6 +1,8 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
 
+import { revealAll } from "./helpers";
+
 const SECTION_LABELS = [
   "./about",
   "./skills",
@@ -48,7 +50,7 @@ test.describe("desktop (1280px)", () => {
     await page.goto("/");
     await page.keyboard.press("Tab"); // skip link
     await page.keyboard.press("Tab");
-    await expect(page.getByRole("link", { name: "Desi Armanda Sari, home" })).toBeFocused();
+    await expect(page.getByRole("link", { name: /Desi Armanda Sari.*home/i })).toBeFocused();
     await hasVisibleFocusRing(page);
 
     const nav = page.getByRole("navigation", { name: "Main" });
@@ -202,6 +204,7 @@ test.describe("styleguide", () => {
   test("renders every primitive with no serious axe violations", async ({ page }) => {
     await page.goto("/styleguide");
     await expect(page.getByRole("heading", { level: 1, name: "Styleguide" })).toBeVisible();
+    await revealAll(page);
     for (const name of [
       "Colour tokens",
       "Typography",

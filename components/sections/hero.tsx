@@ -5,6 +5,8 @@ import { StatusChip } from "@/components/ui/status-chip";
 import { joinOr, workModeLabel } from "@/lib/format";
 import type { ProfileView, SettingsView } from "@/lib/views";
 
+import { TypingLine } from "@/components/motion/typing-line";
+
 import { HeroVisual } from "./hero-visual";
 
 type HeroProps = { profile: ProfileView | null; settings: SettingsView | null };
@@ -20,10 +22,7 @@ function Hero({ profile, settings }: HeroProps) {
     <section id="top" aria-labelledby="hero-title" className="relative">
       <div className="mx-auto grid max-w-[1200px] items-center gap-10 px-4 py-16 md:px-6 md:py-24 lg:grid-cols-12 lg:gap-12">
         <div className="flex flex-col gap-6 lg:col-span-7">
-          <p aria-hidden="true" className="text-meta text-green-dim">
-            {"> analyze --process=as-is"}
-            <span className="text-amber animate-blink">{"█"}</span>
-          </p>
+          <TypingLine text="> analyze --process=as-is" />
 
           <DraftBadge show={!!profile?.isDraft} className="self-start" />
 

@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { Missing } from "@/components/content/missing";
+import { Reveal } from "@/components/motion/reveal";
+import { PipelineProgress, TimelineTrack } from "@/components/motion/scroll-progress";
 import { PixelIcon } from "@/components/pixel/pixel-icon";
 import { pixelIcons, type PixelIconName } from "@/components/pixel/pixel-icons";
 import { Button } from "@/components/ui/button";
@@ -242,6 +244,47 @@ export default function StyleguidePage() {
             </li>
           ))}
         </ul>
+      </Block>
+
+      <Block title="Motion">
+        <div className="flex flex-col gap-16">
+          <p className="text-meta text-muted max-w-[68ch]">
+            Scroll-linked demos (desktop, no reduced motion): the timeline line draws and the
+            pipeline fills as this block scrolls past. Lists reveal with an 80ms stagger.
+          </p>
+          <TimelineTrack>
+            <Reveal as="ol" stagger className="flex flex-col gap-10" aria-label="Timeline demo">
+              {["Entry A", "Entry B", "Entry C", "Entry D"].map((label) => (
+                <li key={label} className="relative pl-10">
+                  <span
+                    aria-hidden="true"
+                    className="bg-green-dim absolute top-1.5 left-0 size-3"
+                  />
+                  <p className="text-h3 text-white">{label}</p>
+                  <p className="text-meta text-muted">Sample timeline entry</p>
+                </li>
+              ))}
+            </Reveal>
+          </TimelineTrack>
+          <PipelineProgress steps={6}>
+            <ol
+              aria-label="Pipeline demo"
+              className="relative grid gap-6 md:grid-cols-3 lg:grid-cols-6"
+            >
+              {[1, 2, 3, 4, 5, 6].map((n) => (
+                <li key={n} data-step={n - 1} className="group flex gap-4 lg:flex-col">
+                  <span
+                    aria-hidden="true"
+                    className="bg-bg border-green text-label text-green group-data-[active]:border-amber group-data-[active]:text-amber flex size-12 items-center justify-center border-2"
+                  >
+                    {String(n).padStart(2, "0")}
+                  </span>
+                  <p className="text-h3 text-white">Step {n}</p>
+                </li>
+              ))}
+            </ol>
+          </PipelineProgress>
+        </div>
       </Block>
 
       <Block title="Missing content marker">

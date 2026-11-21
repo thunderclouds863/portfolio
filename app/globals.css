@@ -171,6 +171,72 @@
   );
 }
 
+/*
+ * Reveals — PRD section 7 (components/motion/reveal.tsx). Elements are hidden only
+ * after hydration and only if they start below the viewport, so content is
+ * visible without JS. Transform and opacity only.
+ */
+[data-reveal],
+[data-reveal-stagger] > * {
+  transition:
+    opacity var(--dur-reveal) var(--ease-pixel),
+    transform var(--dur-reveal) var(--ease-pixel);
+}
+[data-reveal="hidden"]:not([data-reveal-stagger]),
+[data-reveal="hidden"][data-reveal-stagger] > * {
+  opacity: 0;
+  transform: translateY(16px);
+}
+/* 80ms stagger for the first 6 items; the rest appear together. */
+[data-reveal-stagger] > :nth-child(2) {
+  transition-delay: 80ms;
+}
+[data-reveal-stagger] > :nth-child(3) {
+  transition-delay: 160ms;
+}
+[data-reveal-stagger] > :nth-child(4) {
+  transition-delay: 240ms;
+}
+[data-reveal-stagger] > :nth-child(5) {
+  transition-delay: 320ms;
+}
+[data-reveal-stagger] > :nth-child(n + 6) {
+  transition-delay: 400ms;
+}
+
+/* Hero typing line (FR-HERO-03): a cover slides off the text in character steps. */
+@keyframes type-cover {
+  to {
+    transform: translateX(100%);
+  }
+}
+.typing-cover {
+  animation: type-cover var(--type-duration, 1200ms) steps(var(--type-steps, 24), end) 150ms
+    forwards;
+}
+
+/* Project card hover/focus: a scanline sweep over the thumbnail (FR-PRJ-02, 200ms). */
+.card-sweep {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(-100%);
+  background-image: repeating-linear-gradient(
+    to bottom,
+    var(--color-green) 0 1px,
+    transparent 1px 4px
+  );
+  transition:
+    transform 200ms linear,
+    opacity 200ms linear;
+}
+.group:hover .card-sweep,
+.group:has(a:focus-visible) .card-sweep {
+  opacity: 0.15;
+  transform: translateY(100%);
+}
+
 /* PRD section 7 hard rule 3. */
 @media (prefers-reduced-motion: reduce) {
   html {
@@ -183,13 +249,30 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
-  .scanlines {
+  .scanlines,
+  .card-sweep,
+  .typing-cover {
     display: none;
+  }
+  [data-reveal="hidden"]:not([data-reveal-stagger]),
+  [data-reveal="hidden"][data-reveal-stagger] > * {
+    opacity: 1;
+    transform: none;
+  }
+  [data-reveal-stagger] > * {
+    transition-delay: 0ms !important;
   }
 }
 
 @media print {
-  .scanlines {
+  .scanlines,
+  .card-sweep,
+  .typing-cover {
     display: none;
+  }
+  [data-reveal="hidden"]:not([data-reveal-stagger]),
+  [data-reveal="hidden"][data-reveal-stagger] > * {
+    opacity: 1;
+    transform: none;
   }
 }

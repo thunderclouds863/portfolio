@@ -1,11 +1,13 @@
 import { Missing } from "@/components/content/missing";
 import { DraftBadge, Val } from "@/components/content/val";
+import { Reveal } from "@/components/motion/reveal";
+import { PipelineProgress } from "@/components/motion/scroll-progress";
 import type { SettingsView } from "@/lib/views";
 
 import { Section } from "./section";
 
 // FR-APR-01: six steps as a pipeline — horizontal on desktop, vertical on mobile.
-// The progress bar is static here; Phase 4 links scaleX to scroll.
+// PipelineProgress fills the bar with scroll and marks the current step (amber).
 function Approach({ settings }: { settings: SettingsView | null }) {
   const steps = settings?.approach ?? [];
 
@@ -15,24 +17,26 @@ function Approach({ settings }: { settings: SettingsView | null }) {
       {steps.length === 0 ? (
         <Missing what="six approach steps in Site settings (FR-APR-01)" />
       ) : (
-        <div className="relative">
-          <div
-            aria-hidden="true"
-            className="bg-green-dim/30 absolute top-[22px] right-0 left-0 hidden h-1 lg:block"
+        <PipelineProgress steps={steps.length}>
+          <Reveal
+            as="ol"
+            stagger
+            className="relative grid gap-6 md:grid-cols-3 lg:grid-cols-6 lg:gap-4"
           >
-            <div data-approach-progress="" className="bg-amber h-full origin-left scale-x-0" />
-          </div>
-          <ol className="relative grid gap-6 md:grid-cols-3 lg:grid-cols-6 lg:gap-4">
             {steps.map((step, index) => (
-              <li key={step.title || index} className="flex gap-4 lg:flex-col">
+              <li
+                key={step.title || index}
+                data-step={index}
+                className="group flex gap-4 lg:flex-col"
+              >
                 <span
                   aria-hidden="true"
-                  className="bg-bg border-green text-label text-green flex size-12 shrink-0 items-center justify-center border-2"
+                  className="bg-bg border-green text-label text-green group-data-[active]:border-amber group-data-[active]:text-amber flex size-12 shrink-0 items-center justify-center border-2"
                 >
                   {String(index + 1).padStart(2, "0")}
                 </span>
                 <div className="flex flex-col gap-2">
-                  <h3 className="text-h3 text-white">
+                  <h3 className="text-h3 group-data-[active]:text-amber text-white">
                     <span className="sr-only">Step {index + 1}: </span>
                     <Val value={step.title} what="step name" />
                   </h3>
@@ -42,8 +46,8 @@ function Approach({ settings }: { settings: SettingsView | null }) {
                 </div>
               </li>
             ))}
-          </ol>
-        </div>
+          </Reveal>
+        </PipelineProgress>
       )}
     </Section>
   );

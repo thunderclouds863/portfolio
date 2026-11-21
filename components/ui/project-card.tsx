@@ -55,6 +55,8 @@ function ProjectCard({ project, flip = false, headingLevel: H = "h3" }: ProjectC
             <Missing what="thumbnail (IN-05)" />
           </div>
         )}
+        {/* FR-PRJ-02: scanline sweep on hover/focus (transform + opacity, 200ms). */}
+        <span aria-hidden="true" className="card-sweep" />
       </div>
 
       <div className="flex flex-col gap-4 p-6 md:col-span-7 md:p-8">

@@ -1,6 +1,8 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
+import { revealAll } from "./helpers";
+
 test("home responds with security headers and one h1", async ({ page }) => {
   const response = await page.goto("/");
   expect(response?.status()).toBe(200);
@@ -15,6 +17,7 @@ test("home responds with security headers and one h1", async ({ page }) => {
 
 test("home has no serious or critical axe violations", async ({ page }) => {
   await page.goto("/");
+  await revealAll(page);
   const results = await new AxeBuilder({ page }).analyze();
   const serious = results.violations.filter(
     (v) => v.impact === "serious" || v.impact === "critical",
