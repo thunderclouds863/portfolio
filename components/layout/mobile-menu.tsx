@@ -21,6 +21,13 @@ const DESKTOP_QUERY = "(min-width: 768px)";
 // focus trap, Esc, scroll lock, aria-expanded and aria-controls on the trigger.
 function MobileMenu() {
   const [open, setOpen] = useState(false);
+  // Active section when the menu opened (FR-NAV-02 indicator inside the overlay).
+  const [activeId, setActiveId] = useState<string | null>(null);
+
+  function onOpenChange(next: boolean) {
+    if (next) setActiveId(document.documentElement.dataset.activeSection ?? null);
+    setOpen(next);
+  }
   const router = useRouter();
   // Section id to focus once the menu has closed ("Navigating → Closed: restore focus").
   const pendingTarget = useRef<string | null>(null);
@@ -67,7 +74,7 @@ function MobileMenu() {
   }
 
   return (
-    <Sheet open={open} onOpenChange={setOpen}>
+    <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetTrigger asChild>
         <Button variant="secondary" size="icon" className="md:hidden" aria-label="Open menu">
           <MenuIcon aria-hidden="true" />
@@ -90,7 +97,8 @@ function MobileMenu() {
                 <a
                   href={item.href}
                   onClick={(e) => onSectionLink(e, item.id, item.href)}
-                  className="text-green hover:text-amber flex min-h-12 items-center font-mono text-lg"
+                  aria-current={activeId === item.id ? "true" : undefined}
+                  className="text-green hover:text-amber aria-[current=true]:text-amber flex min-h-12 items-center font-mono text-lg decoration-2 underline-offset-8 aria-[current=true]:underline"
                 >
                   {item.label}
                 </a>

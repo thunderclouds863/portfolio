@@ -52,3 +52,6 @@ next-env.d.ts
 
 # local editor/agent config
 /.claude/
+
+# local review screenshots
+/screenshots/

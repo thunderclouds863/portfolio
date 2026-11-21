@@ -4,3 +4,29 @@ seoDescription: "TODO(content): meta description from the confirmed headline, ma
 ogText: "TODO(content): text for the social preview image (IN-01)"
 contactResponseTime: "TODO(content): how quickly you reply to messages"
 showStatusChip: true
+capabilities:
+  - key: system_analysis
+    title: System Analyst
+    summary: "TODO(content): what you do as a System Analyst, in one or two sentences"
+    activities: []
+  - key: process_improvement
+    title: Business Process Improvement
+    summary: "TODO(content): what you do in business process improvement, in one or two sentences"
+    activities: []
+  - key: system_development
+    title: System Development
+    summary: "TODO(content): what you do in system development, in one or two sentences"
+    activities: []
+approach:
+  - title: Understand
+    description: "TODO(content): how you do this step"
+  - title: Map as-is
+    description: "TODO(content): how you do this step"
+  - title: Analyze
+    description: "TODO(content): how you do this step"
+  - title: Design to-be
+    description: "TODO(content): how you do this step"
+  - title: Build
+    description: "TODO(content): how you do this step"
+  - title: Verify
+    description: "TODO(content): how you do this step"

@@ -3,11 +3,12 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { navCta, sectionNav } from "@/lib/nav";
 
+import { ActiveSection } from "./active-section";
 import { MobileMenu } from "./mobile-menu";
 
 // FR-NAV-01: sticky, height 64px, z-index 100. Desktop links from 768px;
 // below that the MobileMenu takes over (FR-NAV-04).
-// Active-section indicator (FR-NAV-02) is added in Phase 3 with the sections.
+// FR-NAV-02: ActiveSection sets aria-current on the link of the section in view.
 function Nav() {
   return (
     <header className="bg-bg border-green-dim sticky top-0 z-100 h-(--nav-height) border-b-2">
@@ -35,7 +36,7 @@ function Nav() {
                 <a
                   href={item.href}
                   data-nav-id={item.id}
-                  className="text-green hover:text-amber flex min-h-11 items-center font-mono text-xs lg:text-sm"
+                  className="text-green hover:text-amber aria-[current=true]:text-amber aria-[current=true]:decoration-amber flex min-h-11 items-center font-mono text-xs decoration-2 underline-offset-8 aria-[current=true]:underline lg:text-sm"
                 >
                   {item.label}
                 </a>
@@ -50,6 +51,7 @@ function Nav() {
           </Button>
           <MobileMenu />
         </div>
+        <ActiveSection ids={sectionNav.map((item) => item.id)} />
       </div>
     </header>
   );

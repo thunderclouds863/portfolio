@@ -34,7 +34,7 @@ import {
  * page render and therefore the build. Drafts are never returned.
  */
 
-const reader = createReader(process.cwd(), keystaticConfig);
+export const reader = createReader(process.cwd(), keystaticConfig);
 
 export class ContentValidationError extends Error {
   constructor(
@@ -50,19 +50,23 @@ function formatIssues(error: z.ZodError): string[] {
   return error.issues.map((i) => (i.path.length ? `${i.path.join(".")}: ${i.message}` : i.message));
 }
 
-function parsePublished<T extends z.ZodType>(schema: T, data: unknown, where: string): z.output<T> {
+export function parsePublished<T extends z.ZodType>(
+  schema: T,
+  data: unknown,
+  where: string,
+): z.output<T> {
   const result = schema.safeParse(data);
   if (!result.success) throw new ContentValidationError(where, formatIssues(result.error));
   return result.data;
 }
 
-function checkBody(node: Node, where: string) {
+export function checkBody(node: Node, where: string) {
   const issues = validateMarkdoc(node).map((e) => e.message);
   if (collectText(node).some(hasTodo)) issues.push("body still contains a TODO placeholder");
   if (issues.length) throw new ContentValidationError(where, issues);
 }
 
-const isPublished = (entry: { status: string }) => entry.status === "published";
+export const isPublished = (entry: { status: string }) => entry.status === "published";
 
 // ── Singletons ──────────────────────────────────────────────────────────────
 
