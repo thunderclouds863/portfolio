@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { ProjectCard } from "@/components/ui/project-card";
 import { cn } from "@/lib/utils";
 import type { ProjectView } from "@/lib/views";
+import { Reveal } from "@/components/motion/reveal";
 
 import { Section } from "./section";
 
@@ -15,13 +16,13 @@ function Projects({ projects }: { projects: ProjectView[] }) {
       {projects.length === 0 ? (
         <Missing what="three featured projects (IN-05)" />
       ) : (
-        <ul className="flex flex-col gap-10 md:gap-14">
+        <Reveal as="ul" stagger className="flex flex-col gap-10 md:gap-14">
           {projects.map((project, index) => (
             <li key={project.slug} className={cn("md:w-[92%]", index % 2 === 1 && "md:ml-auto")}>
               <ProjectCard project={project} flip={index % 2 === 1} />
             </li>
           ))}
-        </ul>
+        </Reveal>
       )}
       <div className="mt-12">
         <Button asChild variant="secondary">

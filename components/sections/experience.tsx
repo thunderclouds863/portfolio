@@ -1,5 +1,7 @@
 import { Missing } from "@/components/content/missing";
 import { DraftBadge, Val, isFilled } from "@/components/content/val";
+import { Reveal } from "@/components/motion/reveal";
+import { TimelineTrack } from "@/components/motion/scroll-progress";
 import { Tag } from "@/components/ui/tag";
 import { formatYearMonth, isYearMonth, scopeLabel } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -57,44 +59,41 @@ function Experience({ experience, education }: ExperienceProps) {
       {items.length === 0 ? (
         <Missing what="experience entries (IN-02)" />
       ) : (
-        <ol className="relative flex flex-col gap-12">
-          {/* The vertical line; Phase 4 draws it with scroll (scaleY). */}
-          <span
-            aria-hidden="true"
-            data-timeline-line=""
-            className="bg-green-dim absolute top-2 bottom-2 left-[5px] w-0.5 origin-top"
-          />
-          {items.map((item) => {
-            const current = item.kind === "work" && !item.data.end && isYearMonth(item.data.start);
-            return (
-              <li key={item.key} className="relative grid gap-3 pl-10 md:grid-cols-12 md:gap-8">
-                <span
-                  aria-hidden="true"
-                  className={cn(
-                    "absolute top-1.5 left-0 size-3",
-                    current ? "bg-amber animate-blink" : "bg-green-dim",
-                  )}
-                />
-                <p className="text-meta text-muted md:col-span-3">
-                  {item.kind === "work" ? (
-                    <DateRange start={item.data.start} end={item.data.end} current={current} />
-                  ) : (
-                    <DateRange start={item.data.start} end={item.data.end} current={false} />
-                  )}
-                  {current ? <span className="sr-only"> (current role)</span> : null}
-                </p>
+        <TimelineTrack>
+          <Reveal as="ol" stagger className="relative flex flex-col gap-12">
+            {items.map((item) => {
+              const current =
+                item.kind === "work" && !item.data.end && isYearMonth(item.data.start);
+              return (
+                <li key={item.key} className="relative grid gap-3 pl-10 md:grid-cols-12 md:gap-8">
+                  <span
+                    aria-hidden="true"
+                    className={cn(
+                      "absolute top-1.5 left-0 size-3",
+                      current ? "bg-amber animate-blink" : "bg-green-dim",
+                    )}
+                  />
+                  <p className="text-meta text-muted md:col-span-3">
+                    {item.kind === "work" ? (
+                      <DateRange start={item.data.start} end={item.data.end} current={current} />
+                    ) : (
+                      <DateRange start={item.data.start} end={item.data.end} current={false} />
+                    )}
+                    {current ? <span className="sr-only"> (current role)</span> : null}
+                  </p>
 
-                <div className="flex flex-col gap-3 md:col-span-9">
-                  {item.kind === "work" ? (
-                    <WorkEntry data={item.data} />
-                  ) : (
-                    <EducationEntry data={item.data} />
-                  )}
-                </div>
-              </li>
-            );
-          })}
-        </ol>
+                  <div className="flex flex-col gap-3 md:col-span-9">
+                    {item.kind === "work" ? (
+                      <WorkEntry data={item.data} />
+                    ) : (
+                      <EducationEntry data={item.data} />
+                    )}
+                  </div>
+                </li>
+              );
+            })}
+          </Reveal>
+        </TimelineTrack>
       )}
     </Section>
   );

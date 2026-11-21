@@ -5,6 +5,7 @@ import { DraftBadge, Val } from "@/components/content/val";
 import { PixelIcon, type PixelIconName } from "@/components/pixel/pixel-icon";
 import { cn } from "@/lib/utils";
 import type { ProjectView, SettingsView } from "@/lib/views";
+import { Reveal } from "@/components/motion/reveal";
 
 import { Section } from "./section";
 
@@ -27,7 +28,7 @@ function Capabilities({ settings, projects }: CapabilitiesProps) {
       {items.length === 0 ? (
         <Missing what="three capabilities in Site settings (FR-CAP-01)" />
       ) : (
-        <div className="grid gap-6 lg:grid-cols-12 lg:grid-rows-2">
+        <Reveal stagger className="grid gap-6 lg:grid-cols-12 lg:grid-rows-2">
           {items.map((item, index) => {
             const large = index === 0;
             const evidence = projects.filter((p) => p.capabilities.includes(item.key));
@@ -92,7 +93,7 @@ function Capabilities({ settings, projects }: CapabilitiesProps) {
               </article>
             );
           })}
-        </div>
+        </Reveal>
       )}
     </Section>
   );

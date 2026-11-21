@@ -4,6 +4,7 @@ import { Missing } from "@/components/content/missing";
 import { DraftBadge } from "@/components/content/val";
 import { levelLabel, skillGroups } from "@/lib/format";
 import type { ProjectView, SkillView } from "@/lib/views";
+import { Reveal } from "@/components/motion/reveal";
 
 import { Section } from "./section";
 
@@ -24,7 +25,7 @@ function Stack({ skills, projects }: StackProps) {
       {groups.length === 0 ? (
         <Missing what="skills with honest levels (IN-04)" />
       ) : (
-        <div className="grid gap-x-12 gap-y-10 md:grid-cols-2">
+        <Reveal stagger className="grid gap-x-12 gap-y-10 md:grid-cols-2">
           {groups.map((group) => (
             <section key={group.key} aria-labelledby={`stack-${group.key}`}>
               <h3 id={`stack-${group.key}`} className="text-label text-green mb-4">
@@ -74,7 +75,7 @@ function Stack({ skills, projects }: StackProps) {
               </dl>
             </section>
           ))}
-        </div>
+        </Reveal>
       )}
     </Section>
   );

@@ -13,17 +13,17 @@ function Nav() {
   return (
     <header className="bg-bg border-green-dim sticky top-0 z-100 h-(--nav-height) border-b-2">
       <div className="mx-auto flex h-full max-w-[1200px] items-center justify-between gap-4 px-4 md:px-6">
+        {/* WCAG 2.5.3 label in name: the accessible name contains the visible text
+            ("DAS" below 1024px, the full name above). */}
         <Link
           href="/"
-          aria-label="Desi Armanda Sari, home"
           className="text-label text-green hover:text-amber flex min-h-11 items-center"
         >
-          <span aria-hidden="true" className="lg:hidden">
-            DAS
+          <span className="lg:hidden">
+            DAS<span className="sr-only">, Desi Armanda Sari</span>
           </span>
-          <span aria-hidden="true" className="hidden lg:inline">
-            DESI ARMANDA SARI
-          </span>
+          <span className="hidden lg:inline">DESI ARMANDA SARI</span>
+          <span className="sr-only">, home</span>
           <span aria-hidden="true" className="text-amber animate-blink">
             _
           </span>

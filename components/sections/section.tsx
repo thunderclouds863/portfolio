@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 
+import { Reveal } from "@/components/motion/reveal";
 import { SectionHeader } from "@/components/ui/section-header";
 import { cn } from "@/lib/utils";
 
@@ -28,7 +29,9 @@ function Section({ id, number, title, className, children }: SectionProps) {
       )}
     >
       <div className="mx-auto max-w-[1200px] px-4 md:px-6">
-        <SectionHeader id={titleId} number={number} title={title} className="mb-10 md:mb-14" />
+        <Reveal>
+          <SectionHeader id={titleId} number={number} title={title} className="mb-10 md:mb-14" />
+        </Reveal>
         {children}
       </div>
     </section>

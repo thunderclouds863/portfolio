@@ -6,6 +6,7 @@ import { MarkdocContent } from "@/components/markdoc/markdoc-content";
 import { TerminalFrame } from "@/components/ui/terminal-frame";
 import { formatYearMonth } from "@/lib/format";
 import type { EducationView, ProfileView } from "@/lib/views";
+import { Reveal } from "@/components/motion/reveal";
 
 import { Section } from "./section";
 
@@ -35,7 +36,7 @@ function About({ profile, education }: AboutProps) {
 
   return (
     <Section id="about" number="01" title="About">
-      <div className="grid gap-10 lg:grid-cols-12 lg:gap-12">
+      <Reveal stagger className="grid gap-10 lg:grid-cols-12 lg:gap-12">
         <div className="flex max-w-[68ch] flex-col gap-4 lg:col-span-7 [&_p+p]:mt-4">
           <DraftBadge show={!!profile?.isDraft} className="self-start" />
           {!profile ? (
@@ -73,7 +74,7 @@ function About({ profile, education }: AboutProps) {
             ) : null}
           </dl>
         </TerminalFrame>
-      </div>
+      </Reveal>
     </Section>
   );
 }

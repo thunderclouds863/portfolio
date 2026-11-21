@@ -11,6 +11,7 @@ import { DraftBadge, Val } from "@/components/content/val";
 import { TerminalFrame } from "@/components/ui/terminal-frame";
 import { joinOr, workModeLabel } from "@/lib/format";
 import type { ProfileView, SettingsView } from "@/lib/views";
+import { Reveal } from "@/components/motion/reveal";
 
 import { ContactForm } from "./contact-form";
 import { Section } from "./section";
@@ -36,7 +37,7 @@ function Contact({ profile, settings }: ContactProps) {
 
   return (
     <Section id="contact" number="07" title="Contact">
-      <div className="grid gap-10 lg:grid-cols-12 lg:gap-12">
+      <Reveal stagger className="grid gap-10 lg:grid-cols-12 lg:gap-12">
         <div className="flex flex-col gap-8 lg:col-span-5">
           <DraftBadge show={!!profile?.isDraft || !!settings?.isDraft} className="self-start" />
 
@@ -100,7 +101,7 @@ function Contact({ profile, settings }: ContactProps) {
         <TerminalFrame title="contact.sh" thick className="lg:col-span-7">
           <ContactForm />
         </TerminalFrame>
-      </div>
+      </Reveal>
     </Section>
   );
 }
