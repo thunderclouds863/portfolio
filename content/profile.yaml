@@ -1,0 +1,23 @@
+status: draft
+name: Desi Armanda Sari
+headline: 'TODO(content): hero H1 — "System Analyst who builds what the business actually needs", "From messy process to working system", or your own (IN-01)'
+subheadline: Industrial Engineering graduate working across system analysis, business process improvement, and system development.
+location: "TODO(content): city for the facts panel and JSON-LD, or decide to omit (IN-10)"
+preferredLocations:
+  - Jakarta
+  - Bekasi
+  - Tangerang
+  - Cikarang
+availability:
+  openToWork: true
+  workModes:
+    - on_site
+    - hybrid
+  availableFrom: Immediately
+  freelance: true
+  freelanceServices:
+    - Custom software
+    - Workflow automation
+    - Data processing
+    - Reporting
+links: []
