@@ -170,6 +170,39 @@ export default config({
         ogText: fields.text({ label: "Open Graph image text" }),
         contactResponseTime: fields.text({ label: "Contact response-time text" }),
         showStatusChip: fields.checkbox({ label: "Show status chip", defaultValue: true }),
+        // FR-CAP-01: three roles; the first is shown large. Evidence links come from
+        // published projects tagged with the same capability.
+        capabilities: fields.array(
+          fields.object({
+            key: fields.select({
+              label: "Capability",
+              options: [
+                { label: "System analysis", value: "system_analysis" },
+                { label: "Process improvement", value: "process_improvement" },
+                { label: "System development", value: "system_development" },
+              ],
+              defaultValue: "system_analysis",
+            }),
+            title: fields.text({ label: "Title" }),
+            summary: fields.text({ label: "What you do (one or two sentences)", multiline: true }),
+            activities: fields.array(fields.text({ label: "Activity" }), {
+              label: "Activities",
+              itemLabel: (p) => p.value,
+            }),
+          }),
+          {
+            label: "Capabilities (exactly 3; the first is shown large)",
+            itemLabel: (p) => p.fields.title.value,
+          },
+        ),
+        // FR-APR-01: six steps, Understand → Map as-is → Analyze → Design to-be → Build → Verify.
+        approach: fields.array(
+          fields.object({
+            title: fields.text({ label: "Step" }),
+            description: fields.text({ label: "How you do this step", multiline: true }),
+          }),
+          { label: "Approach steps (exactly 6)", itemLabel: (p) => p.fields.title.value },
+        ),
       },
     }),
   },

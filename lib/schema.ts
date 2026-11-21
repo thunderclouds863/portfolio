@@ -109,6 +109,29 @@ export const SettingsSchema = z.object({
   ogText: requiredText("OG text"),
   contactResponseTime: requiredText("contact response-time text"),
   showStatusChip: z.boolean(),
+  // FR-CAP-01: exactly the three roles, each once.
+  capabilities: z
+    .array(
+      z.object({
+        key: z.enum(["system_analysis", "process_improvement", "system_development"]),
+        title: requiredText("capability title"),
+        summary: requiredText("capability summary"),
+        activities: z.array(requiredText("capability activity")).min(1, "at least one activity"),
+      }),
+    )
+    .length(3, "exactly 3 capabilities")
+    .refine((items) => new Set(items.map((i) => i.key)).size === items.length, {
+      message: "each capability may appear only once",
+    }),
+  // FR-APR-01: six pipeline steps.
+  approach: z
+    .array(
+      z.object({
+        title: requiredText("approach step title"),
+        description: requiredText("approach step description"),
+      }),
+    )
+    .length(6, "exactly 6 approach steps"),
 });
 
 // ── Experience / Education ──────────────────────────────────────────────────
