@@ -1,9 +1,9 @@
-// Phase 0 placeholder. Home sections are built in Phase 3.
+// Placeholder until Phase 3 builds the home sections.
 export default function Home() {
   return (
-    <main className="mx-auto flex min-h-dvh max-w-3xl flex-col justify-center gap-4 px-4">
-      <h1 className="text-green text-2xl">Desi Armanda Sari</h1>
-      <p>Portfolio scaffold. Sections arrive in later phases.</p>
-    </main>
+    <div className="mx-auto flex max-w-[1200px] flex-col gap-4 px-4 py-24 md:px-6">
+      <h1 className="text-display-1 text-green glow">Desi Armanda Sari</h1>
+      <p>Portfolio scaffold. Sections arrive in Phase 3.</p>
+    </div>
   );
 }
