@@ -3,7 +3,7 @@ import type { Entry } from "@keystatic/core/reader";
 import type keystaticConfig from "@/keystatic.config";
 
 import { checkBody, isPublished, parsePublished, reader } from "./content";
-import { collectText } from "./markdoc";
+import { collectText, extractHeadings, type TocHeading } from "./markdoc";
 import {
   EducationSchema,
   ExperienceSchema,
@@ -12,6 +12,7 @@ import {
   SettingsSchema,
   SkillSchema,
   hasTodo,
+  todoMessage,
 } from "./schema";
 
 /*
@@ -62,10 +63,7 @@ const YEAR_MONTH = /^\d{4}-(0[1-9]|1[0-2])$/;
 const sortableMonth = (value: string | null | undefined, fallback: string) =>
   value && YEAR_MONTH.test(value) ? value : fallback;
 
-/** "TODO(content): x (IN-02)" → "x (IN-02)". */
-export function todoMessage(text: string): string {
-  return text.replace(/^.*?TODO(\(content\))?:?\s*/i, "").trim() || "content needed";
-}
+export { todoMessage };
 
 async function visibleCollection<E extends { status: string }, V>(
   list: Promise<readonly { slug: string; entry: E }[]>,
@@ -77,6 +75,53 @@ async function visibleCollection<E extends { status: string }, V>(
   return all
     .filter(({ entry }) => drafts || isPublished(entry))
     .map(({ slug, entry }) => (isPublished(entry) ? publish(slug, entry) : draft(slug, entry)));
+}
+
+/** Visible projects (published; plus drafts in preview), sorted by order then title. */
+export async function loadProjects({ drafts }: { drafts: boolean }): Promise<ProjectView[]> {
+  return (
+    await visibleCollection(
+      reader.collections.projects.all(),
+      drafts,
+      (slug, { status: _s, body: _b, ...data }) => {
+        parsePublished(ProjectSchema, { slug, ...data }, `content/projects/${slug}`);
+        return { slug, ...data, isDraft: false };
+      },
+      (slug, { status: _s, body: _b, ...data }) => ({ slug, ...data, isDraft: true }),
+    )
+  ).sort((a, b) => (a.order ?? 99) - (b.order ?? 99) || a.title.localeCompare(b.title));
+}
+
+export type CaseStudyView = {
+  project: ProjectView;
+  /** Markdoc body as AST JSON (cache-serializable). */
+  bodyAst: string;
+  headings: TocHeading[];
+  prev: { slug: string; title: string } | null;
+  next: { slug: string; title: string } | null;
+};
+
+/** One case study with its body, TOC headings and prev/next neighbours. Null if not visible. */
+export async function loadCaseStudy(
+  slug: string,
+  { drafts }: { drafts: boolean },
+): Promise<CaseStudyView | null> {
+  const projects = await loadProjects({ drafts });
+  const index = projects.findIndex((p) => p.slug === slug);
+  const project = projects[index];
+  if (!project) return null;
+  const entry = await reader.collections.projects.read(slug);
+  if (!entry) return null;
+  const { node } = await entry.body();
+  if (!project.isDraft) checkBody(node, `content/projects/${slug} (body)`);
+  const neighbour = (p: ProjectView | undefined) => (p ? { slug: p.slug, title: p.title } : null);
+  return {
+    project,
+    bodyAst: JSON.stringify(node),
+    headings: extractHeadings(node),
+    prev: neighbour(projects[index - 1]),
+    next: neighbour(projects[index + 1]),
+  };
 }
 
 export async function loadHomeData({ drafts }: { drafts: boolean }): Promise<HomeData> {
@@ -106,17 +151,7 @@ export async function loadHomeData({ drafts }: { drafts: boolean }): Promise<Hom
     settings = { ...data, isDraft: status !== "published" };
   }
 
-  const projects = (
-    await visibleCollection(
-      reader.collections.projects.all(),
-      drafts,
-      (slug, { status: _s, body: _b, ...data }) => {
-        parsePublished(ProjectSchema, { slug, ...data }, `content/projects/${slug}`);
-        return { slug, ...data, isDraft: false };
-      },
-      (slug, { status: _s, body: _b, ...data }) => ({ slug, ...data, isDraft: true }),
-    )
-  ).sort((a, b) => (a.order ?? 99) - (b.order ?? 99) || a.title.localeCompare(b.title));
+  const projects = await loadProjects({ drafts });
 
   const experience = (
     await visibleCollection(

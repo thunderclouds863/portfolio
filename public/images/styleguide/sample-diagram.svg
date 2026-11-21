@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 160" width="480" height="160" font-family="monospace" font-size="14">
+  <rect width="480" height="160" fill="#0B140D"/>
+  <g fill="none" stroke="#2CFF56" stroke-width="2">
+    <rect x="20" y="55" width="110" height="50"/>
+    <rect x="185" y="55" width="110" height="50"/>
+    <rect x="350" y="55" width="110" height="50"/>
+    <path d="M130 80h50M295 80h50"/>
+  </g>
+  <g fill="#2CFF56">
+    <path d="M180 80l-8-5v10zM345 80l-8-5v10z"/>
+    <text x="75" y="85" text-anchor="middle">Input</text>
+    <text x="240" y="85" text-anchor="middle">Process</text>
+    <text x="405" y="85" text-anchor="middle">Output</text>
+  </g>
+</svg>

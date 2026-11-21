@@ -1,6 +1,5 @@
-import { hasTodo } from "@/lib/schema";
+import { hasTodo, todoMessage } from "@/lib/schema";
 import { cn } from "@/lib/utils";
-import { todoMessage } from "@/lib/views";
 
 import { Missing } from "./missing";
 

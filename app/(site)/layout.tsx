@@ -1,21 +1,9 @@
-import { Footer } from "@/components/layout/footer";
-import { Nav } from "@/components/layout/nav";
-import { ScanlineOverlay } from "@/components/layout/scanline-overlay";
-import { SkipLink } from "@/components/layout/skip-link";
+import { SiteChrome } from "@/components/layout/site-chrome";
 
 import "../globals.css";
 
-// Public site chrome: skip link, sticky nav, main landmark, footer, scanlines.
+// Public site layout. Global styles live here (not in the root layout) so the
+// Keystatic admin at /keystatic is not styled by them.
 export default function SiteLayout({ children }: LayoutProps<"/">) {
-  return (
-    <div className="flex min-h-dvh flex-col antialiased">
-      <SkipLink />
-      <Nav />
-      <main id="main" tabIndex={-1} className="flex-1 focus:outline-none">
-        {children}
-      </main>
-      <Footer />
-      <ScanlineOverlay />
-    </div>
-  );
+  return <SiteChrome>{children}</SiteChrome>;
 }

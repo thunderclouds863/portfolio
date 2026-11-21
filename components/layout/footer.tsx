@@ -7,7 +7,7 @@ import { footerNav, sectionNav } from "@/lib/nav";
 // /privacy link, "Built with Next.js, deployed on Vercel".
 function Footer() {
   return (
-    <footer className="border-green-dim mt-auto border-t-2">
+    <footer className="border-green-dim mt-auto border-t-2 print:hidden">
       <div className="mx-auto grid max-w-[1200px] gap-8 px-4 py-12 md:grid-cols-12 md:px-6">
         <nav aria-label="Footer" className="md:col-span-5">
           <h2 className="text-label text-green mb-4">Index</h2>

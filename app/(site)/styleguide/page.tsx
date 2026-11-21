@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { Missing } from "@/components/content/missing";
+import { ZoomableFigure } from "@/components/markdoc/zoomable-figure";
 import { Reveal } from "@/components/motion/reveal";
 import { PipelineProgress, TimelineTrack } from "@/components/motion/scroll-progress";
 import { PixelIcon } from "@/components/pixel/pixel-icon";
@@ -284,6 +285,17 @@ export default function StyleguidePage() {
               ))}
             </ol>
           </PipelineProgress>
+        </div>
+      </Block>
+
+      <Block title="Lightbox">
+        <div className="max-w-2xl">
+          <ZoomableFigure
+            src="/images/styleguide/sample-diagram.svg"
+            alt="Sample flowchart: Input, then Process, then Output"
+            caption="Sample diagram (styleguide only)"
+            kind="Diagram"
+          />
         </div>
       </Block>
 

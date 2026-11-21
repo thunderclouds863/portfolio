@@ -8,7 +8,7 @@ type RevealProps = {
   stagger?: boolean;
   className?: string;
   children: ReactNode;
-  [key: `aria-${string}`]: string | undefined;
+  [key: `aria-${string}` | `data-${string}`]: string | undefined;
 };
 
 /**

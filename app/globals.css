@@ -237,6 +237,78 @@
   transform: translateY(100%);
 }
 
+/*
+ * /projects capability filter (FR-PL-01). The client chip bar sets
+ * data-active-filter; non-matching projects are hidden with CSS only.
+ */
+body:has([data-active-filter="analysis"]) [data-project-list] > li:not([data-caps~="analysis"]),
+body:has([data-active-filter="process"]) [data-project-list] > li:not([data-caps~="process"]),
+body:has([data-active-filter="development"])
+  [data-project-list]
+  > li:not([data-caps~="development"]),
+body:has([data-active-filter="data"]) [data-project-list] > li:not([data-caps~="data"]) {
+  display: none;
+}
+
+/* Case-study body typography (Markdoc output). */
+@layer components {
+  .case-body > p,
+  .case-body > ul,
+  .case-body > ol,
+  .case-body > blockquote,
+  .case-body > table {
+    max-width: 68ch;
+    margin-top: 1rem;
+  }
+  .case-body ul {
+    list-style: square;
+    padding-left: 1.25rem;
+  }
+  .case-body ol {
+    list-style: decimal;
+    padding-left: 1.5rem;
+  }
+  .case-body li + li {
+    margin-top: 0.375rem;
+  }
+  .case-body li::marker {
+    color: var(--color-green-dim);
+  }
+  .case-body strong {
+    color: var(--color-white);
+    font-weight: 600;
+  }
+  .case-body a {
+    color: var(--color-green);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  .case-body a:hover {
+    color: var(--color-amber);
+  }
+  .case-body code {
+    font-family: var(--font-mono);
+    color: var(--color-white);
+  }
+  .case-body blockquote {
+    border-left: 4px solid var(--color-green-dim);
+    padding-left: 1rem;
+  }
+  .case-body table {
+    border-collapse: collapse;
+  }
+  .case-body th,
+  .case-body td {
+    border: 1px solid var(--color-green-dim);
+    padding: 0.375rem 0.75rem;
+    text-align: left;
+  }
+  .case-body hr {
+    border-color: var(--color-green-dim);
+    margin-block: 2rem;
+  }
+}
+
 /* PRD section 7 hard rule 3. */
 @media (prefers-reduced-motion: reduce) {
   html {
@@ -264,7 +336,27 @@
   }
 }
 
+/* FR-CV-03: print stylesheet — white A4, near-black text, no effects (token colours only). */
+@page {
+  size: A4;
+  margin: 16mm;
+}
+
 @media print {
+  html,
+  body {
+    background: var(--color-white) !important;
+  }
+  body,
+  body * {
+    color: var(--color-bg) !important;
+    background: transparent !important;
+    border-color: var(--color-bg) !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    animation: none !important;
+    transition: none !important;
+  }
   .scanlines,
   .card-sweep,
   .typing-cover {

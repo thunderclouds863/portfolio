@@ -1,10 +1,9 @@
-import Markdoc, { type Node } from "@markdoc/markdoc";
-
 import { Missing } from "@/components/content/missing";
 import { DraftBadge, Val, isFilled } from "@/components/content/val";
 import { MarkdocContent } from "@/components/markdoc/markdoc-content";
 import { TerminalFrame } from "@/components/ui/terminal-frame";
 import { formatYearMonth } from "@/lib/format";
+import { nodeFromJson } from "@/lib/markdoc";
 import type { EducationView, ProfileView } from "@/lib/views";
 import { Reveal } from "@/components/motion/reveal";
 
@@ -19,12 +18,6 @@ function Fact({ label, children }: { label: string; children: React.ReactNode })
       <dd className="text-white">{children}</dd>
     </div>
   );
-}
-
-/** The About body is cached as Markdoc AST JSON (see lib/views.ts); rebuild the document node. */
-function documentFromJson(json: string): Node {
-  const parsed = Markdoc.Ast.fromJSON(json);
-  return Array.isArray(parsed) ? new Markdoc.Ast.Node("document", {}, parsed) : parsed;
 }
 
 // FR-ABT-01: two short paragraphs + facts panel in a terminal frame.
@@ -44,7 +37,7 @@ function About({ profile, education }: AboutProps) {
           ) : profile.aboutTodo ? (
             <Missing what={profile.aboutTodo} />
           ) : (
-            <MarkdocContent node={documentFromJson(profile.aboutAst)} />
+            <MarkdocContent node={nodeFromJson(profile.aboutAst)} />
           )}
         </div>
 
