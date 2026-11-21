@@ -2,8 +2,11 @@ import type { Metadata } from "next";
 
 import { fontVariables } from "./fonts";
 
+// PRD section 11 SEO: title template, canonical URLs from NEXT_PUBLIC_SITE_URL.
+// Full metadata, OG image and JSON-LD come in Phase 7.
 export const metadata: Metadata = {
-  title: "Desi Armanda Sari",
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
+  title: { default: "Desi Armanda Sari", template: "%s — Desi Armanda Sari" },
   description: "TODO(content): meta description from confirmed headline (IN-01)",
 };
 

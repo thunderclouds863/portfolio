@@ -279,3 +279,8 @@ export function findDuplicateSlugs(items: readonly { slug: string }[]): string[]
 export function hasTodo(text: string): boolean {
   return TODO_PATTERN.test(text);
 }
+
+/** "TODO(content): x (IN-02)" → "x (IN-02)". */
+export function todoMessage(text: string): string {
+  return text.replace(/^.*?TODO((content))?:?s*/i, "").trim() || "content needed";
+}

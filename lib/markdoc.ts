@@ -1,5 +1,7 @@
 import Markdoc, { Tag, type Config, type Node, type ValidationError } from "@markdoc/markdoc";
 
+import { hasTodo, todoMessage } from "./schema";
+
 /*
  * Markdoc rendering contract — PRD 18.3 / FR-CMS-05.
  * Only these tags are allowed; Markdoc.validate reports any other tag as an
@@ -48,6 +50,18 @@ function inlineText(node: Node): string {
 
 export const markdocConfig: Config = {
   nodes: {
+    // Draft preview only: a TODO(content) paragraph renders as a MISSING marker.
+    // Published bodies never contain TODO (the content gate rejects them).
+    paragraph: {
+      render: "p",
+      transform(node, config) {
+        const text = inlineText(node);
+        if (hasTodo(text)) {
+          return new Tag("p", {}, [new Tag("Missing", { what: todoMessage(text) }, [])]);
+        }
+        return new Tag("p", node.transformAttributes(config), node.transformChildren(config));
+      },
+    },
     heading: {
       render: "Heading",
       children: ["inline"],
@@ -136,4 +150,10 @@ export function collectImageSources(node: Node): string[] {
     }
   }
   return out;
+}
+
+/** Rebuilds a document node from cached AST JSON (cache entries must be serializable). */
+export function nodeFromJson(json: string): Node {
+  const parsed = Markdoc.Ast.fromJSON(json);
+  return Array.isArray(parsed) ? new Markdoc.Ast.Node("document", {}, parsed) : parsed;
 }
