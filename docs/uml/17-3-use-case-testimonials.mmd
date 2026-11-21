@@ -1,0 +1,24 @@
+flowchart LR
+  V((Visitor))
+  A((Testimonial author))
+  O((Desi - admin))
+  LI[[LinkedIn OIDC]]
+  SB[[Supabase]]
+  subgraph T[Testimonials module]
+    U1([Read testimonials])
+    U2([Sign in with LinkedIn])
+    U3([Submit testimonial])
+    U4([Edit / delete own testimonial])
+    U5([Moderate: approve / reject / unpublish])
+    U6([Import LinkedIn recommendations])
+    U7([Receive new-submission email])
+  end
+  V --> U1
+  A --> U2 & U3 & U4
+  U3 -. include .-> U2
+  U4 -. include .-> U2
+  O --> U5 & U6 & U7
+  U5 -. include .-> U2
+  U2 --- LI
+  U3 --- SB
+  U5 --- SB

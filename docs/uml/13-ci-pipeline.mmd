@@ -1,0 +1,15 @@
+flowchart LR
+  A[PR opened / pushed] --> B[Install with lockfile]
+  B --> C[Lint + typecheck + format check]
+  C --> D[Unit tests]
+  D --> E[next build]
+  E --> F[Playwright e2e + axe]
+  F --> G[npm audit high]
+  A --> P[Vercel preview deploy]
+  P --> L[Lighthouse CI on preview]
+  G --> M{All green?}
+  L --> M
+  M -- No --> X[Block merge]
+  M -- Yes --> Y[Merge to main]
+  Y --> Z[Vercel production deploy]
+  Z --> S[Post-deploy smoke test]

@@ -1,0 +1,37 @@
+sequenceDiagram
+  autonumber
+  actor A as Author
+  participant B as Browser
+  participant N as Next.js server
+  participant SA as Supabase Auth
+  participant LI as LinkedIn
+  participant DB as Supabase Postgres (RLS)
+  participant RS as Resend
+
+  A->>B: Click "Write a testimonial"
+  B->>N: GET /testimonials/write
+  N-->>B: Not signed in -> "Sign in with LinkedIn"
+  A->>B: Click sign in
+  B->>SA: signInWithOAuth(linkedin_oidc, PKCE)
+  SA->>LI: Authorization request (openid profile email)
+  LI-->>A: Consent screen
+  A->>LI: Allow
+  LI-->>SA: Authorization code
+  SA-->>B: Redirect to /auth/callback?code=...
+  B->>N: GET /auth/callback
+  N->>SA: exchangeCodeForSession(code)
+  SA-->>N: Session (httpOnly cookies)
+  N-->>B: Redirect to form, name prefilled from LinkedIn claim
+  A->>B: Fill relationship, headline, URL, text, consent + Turnstile
+  B->>N: Server Action submitTestimonial
+  N->>N: Zod validation + Turnstile verify + get verified user
+  N->>DB: insert (user_id = auth.uid())
+  DB->>DB: Trigger sets author_name from LinkedIn metadata, forces status = pending
+  alt duplicate (already has one)
+    DB-->>N: unique violation
+    N-->>B: "You already wrote one — edit it instead"
+  else ok
+    DB-->>N: row
+    N->>RS: Notify Desi (name + 80-char preview + admin link)
+    N-->>B: Status: PENDING REVIEW
+  end

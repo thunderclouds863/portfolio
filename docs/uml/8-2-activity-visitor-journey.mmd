@@ -1,0 +1,21 @@
+flowchart TD
+  A([Land on site]) --> B[Read hero: role, status, location]
+  B --> C{Relevant?}
+  C -- No --> Z([Leave])
+  C -- Yes --> D{Visitor goal}
+  D -- Screen candidate --> E[Scan experience timeline]
+  E --> F[Open /cv]
+  F --> G[Download PDF]
+  D -- Assess depth --> H[Open featured project]
+  H --> I[Read case study: problem, role, design, outcome]
+  I --> J{Convinced?}
+  J -- Need more --> K[Next project / Approach section]
+  K --> I
+  J -- Yes --> L[Go to contact]
+  D -- Hire for a project --> L
+  G --> L
+  L --> M[Fill and submit form]
+  M --> N{Valid and human?}
+  N -- No --> O[Show field errors] --> M
+  N -- Yes --> P[Email sent to owner]
+  P --> Q([Success message])

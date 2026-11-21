@@ -1,0 +1,21 @@
+sequenceDiagram
+  autonumber
+  actor O as Desi
+  participant G as GitHub
+  participant CI as GitHub Actions
+  participant V as Vercel
+  participant CDN as Vercel Edge Network
+
+  O->>G: Push branch with edited MDX / code
+  O->>G: Open pull request
+  G->>CI: Trigger workflow
+  CI->>CI: Install, lint, typecheck, unit tests, build, e2e, a11y
+  G->>V: Trigger preview deployment
+  V-->>G: Preview URL on PR
+  O->>V: Review preview (desktop + mobile)
+  CI-->>G: Checks pass
+  O->>G: Merge to main
+  G->>V: Production build
+  V->>CDN: Promote static assets + serverless function
+  CDN-->>O: Live on custom domain
+  Note over V: Broken release? Instant rollback to previous deployment

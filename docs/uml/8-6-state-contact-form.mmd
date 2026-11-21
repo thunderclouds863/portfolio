@@ -1,0 +1,15 @@
+stateDiagram-v2
+  [*] --> Idle
+  Idle --> Editing: user types
+  Editing --> Invalid: submit with errors
+  Invalid --> Editing: user fixes field
+  Editing --> Submitting: submit, client valid
+  Submitting --> Success: 200 ok
+  Submitting --> VerificationFailed: 400 verification_failed
+  Submitting --> DeliveryFailed: 502 delivery_failed
+  Submitting --> NetworkError: timeout / offline
+  VerificationFailed --> Editing: reset Turnstile, retry
+  DeliveryFailed --> Editing: retry
+  NetworkError --> Editing: retry
+  Success --> Idle: send another message
+  Success --> [*]

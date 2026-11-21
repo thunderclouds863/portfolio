@@ -1,0 +1,40 @@
+sequenceDiagram
+  autonumber
+  actor V as Visitor
+  participant B as Browser (ContactForm)
+  participant TS as Cloudflare Turnstile
+  participant S as Server handler (Server Action / Route Handler)
+  participant RS as Resend API
+  participant M as Owner inbox
+
+  V->>B: Fill fields
+  B->>TS: Render widget, run challenge
+  TS-->>B: token
+  V->>B: Submit
+  B->>B: Client Zod validation
+  alt invalid
+    B-->>V: Field errors, focus first invalid
+  else valid
+    B->>S: POST {name, email, type, message, consent, token, honeypot, renderedAt}
+    S->>S: Reject if honeypot filled or submitted < 3 s
+    S->>S: Server Zod validation + strip CR/LF from header fields
+    S->>TS: siteverify(secret, token, remoteip)
+    TS-->>S: success / failure
+    alt verification failed
+      S-->>B: 400 {error: "verification_failed"}
+      B-->>V: Error state + retry
+    else verified
+      S->>RS: send(from, to, replyTo=email, subject, text)
+      alt send ok
+        RS-->>S: 200 {id}
+        S-->>B: 200 {ok: true}
+        B-->>V: MESSAGE RECEIVED
+        RS->>M: Deliver email
+      else provider error
+        RS-->>S: 4xx/5xx
+        S->>S: Log error code only (no message body)
+        S-->>B: 502 {error: "delivery_failed"}
+        B-->>V: Error + direct email link
+      end
+    end
+  end

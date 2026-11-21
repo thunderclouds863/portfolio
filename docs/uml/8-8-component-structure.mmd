@@ -1,0 +1,47 @@
+flowchart TB
+  subgraph Server["Server Components (rendered at build)"]
+    Layout[RootLayout: fonts, metadata, Nav, Footer, ScanlineOverlay]
+    Home[HomePage]
+    Hero[HeroSection]
+    About[AboutSection]
+    Caps[CapabilitiesSection]
+    Exp[ExperienceSection]
+    Proj[ProjectsSection]
+    Appr[ApproachSection]
+    Stk[StackSection]
+    Cnt[ContactSection]
+    PDetail[ProjectPage]
+    CVPage[CvPage]
+  end
+  subgraph Client["Client Components (hydrated, minimal)"]
+    Nav[Nav + MobileMenu + ActiveSection observer]
+    Parallax[ParallaxLayer]
+    Reveal[Reveal wrapper]
+    Typing[TypingLine]
+    Form[ContactForm + Turnstile widget]
+    Filter[ProjectFilter]
+    Lightbox[DiagramLightbox]
+  end
+  subgraph Content["Content layer"]
+    Data[content/*.ts: profile, experience, skills]
+    MDX[content/projects/*.mdx]
+    Schema[lib/schema.ts: Zod]
+  end
+  subgraph Backend["Server-only"]
+    Action[contact handler]
+    Mail[lib/email.ts: Resend]
+    Verify[lib/turnstile.ts]
+  end
+  Layout --> Home & PDetail & CVPage
+  Home --> Hero & About & Caps & Exp & Proj & Appr & Stk & Cnt
+  Hero --> Parallax & Typing
+  Exp --> Reveal
+  Proj --> Reveal
+  Cnt --> Form
+  Layout --> Nav
+  Form --> Action
+  Action --> Verify & Mail
+  Home --> Data
+  PDetail --> MDX
+  Data --> Schema
+  MDX --> Schema
