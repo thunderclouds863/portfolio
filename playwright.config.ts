@@ -15,7 +15,10 @@ export default defineConfig({
   webServer: {
     command: "npm run build && npm run start",
     url: baseURL,
-    reuseExistingServer: !process.env.CI,
+    // Always test a fresh production build; never silently reuse a running dev server.
+    reuseExistingServer: false,
     timeout: 240_000,
+    // Build the dev-only /styleguide route into the test build (app/styleguide/page.tsx).
+    env: { ENABLE_STYLEGUIDE: "1" },
   },
 });

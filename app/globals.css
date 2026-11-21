@@ -1,18 +1,195 @@
 @import "tailwindcss";
 
-/* Phase 0 placeholder. Phase 1 replaces this with the full PRD section 6 token set. */
+/*
+ * Design tokens — PRD section 6.
+ * Tailwind's default palette, radius and shadow scales are cleared so only
+ * PRD tokens can be used. Mapping to the PRD token names:
+ *   --bg → bg, --panel → panel, --green → green, --green-dim → green-dim,
+ *   --text-muted → muted, --amber → amber, --white → white,
+ *   --yellow → yellow, --red → red.
+ * Keep in sync with lib/tokens.ts (a unit test compares them).
+ */
 @theme {
+  --color-*: initial;
   --color-bg: #050505;
-  --color-text-muted: #a3b8a8;
+  --color-panel: #0b140d;
   --color-green: #2cff56;
+  --color-green-dim: #1f9e3a;
+  --color-muted: #a3b8a8;
+  --color-amber: #ffb200;
+  --color-white: #ffffff;
+  --color-yellow: #ffd700;
+  --color-red: #ff0000;
+
+  --radius-*: initial;
+
+  --shadow-*: initial;
+  --shadow-pixel: 4px 4px 0 var(--color-green-dim);
+  --shadow-pixel-hover: 6px 6px 0 var(--color-amber);
+  --shadow-pixel-amber: 4px 4px 0 var(--color-amber);
+
+  --ease-pixel: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --animate-fade-in: fade-in 150ms var(--ease-pixel);
+  --animate-fade-out: fade-out 150ms var(--ease-pixel);
+  --animate-rise-in: rise-in 250ms var(--ease-pixel);
+  --animate-blink: blink 1s steps(1, end) infinite;
+
+  --breakpoint-xs: 20rem;
 }
 
-html {
-  color-scheme: dark;
+/* Font families come from next/font CSS variables set on <html> (app/fonts.ts).
+   Not "inline": the @utility rules below need --font-* emitted as real variables. */
+@theme {
+  --font-pixel: var(--font-press-start), ui-monospace, monospace;
+  --font-body: var(--font-plex-sans), system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains-mono), ui-monospace, monospace;
 }
 
-body {
-  background: var(--color-bg);
-  color: var(--color-text-muted);
-  font-family: system-ui, sans-serif;
+:root {
+  --dur-fast: 150ms;
+  --dur-base: 250ms;
+  --dur-reveal: 420ms;
+  --nav-height: 4rem;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* Typography roles — PRD section 6 typography table. */
+@utility text-display-1 {
+  font-family: var(--font-pixel);
+  font-weight: 400;
+  font-size: clamp(1.5rem, 4vw, 3rem);
+  line-height: 1.3;
+}
+@utility text-display-2 {
+  font-family: var(--font-pixel);
+  font-weight: 400;
+  font-size: clamp(1.125rem, 2.5vw, 1.75rem);
+  line-height: 1.4;
+}
+@utility text-h3 {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 1.25rem;
+  line-height: 1.4;
+}
+@utility text-label {
+  font-family: var(--font-pixel);
+  font-weight: 400;
+  font-size: 0.75rem;
+  line-height: 1.6;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+@utility text-meta {
+  font-family: var(--font-mono);
+  font-weight: 400;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+/* Glow: hero H1 and focus only (PRD section 6). */
+@utility glow {
+  text-shadow: 0 0 8px rgb(44 255 86 / 0.35);
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+    background: var(--color-bg);
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background: var(--color-bg);
+    color: var(--color-muted);
+    font-family: var(--font-body);
+    font-size: 1rem;
+    line-height: 1.7;
+  }
+
+  /* Anchored targets are not hidden under the sticky nav (FR-NAV-01). */
+  [id] {
+    scroll-margin-top: calc(var(--nav-height) + 1rem);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-amber);
+    outline-offset: 3px;
+  }
+
+  ::selection {
+    background: var(--color-green);
+    color: var(--color-bg);
+  }
+
+  a,
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  [role="checkbox"],
+  [role="combobox"],
+  label[for] {
+    cursor: pointer;
+  }
+}
+
+/*
+ * Scanline overlay — PRD section 6 components table.
+ * A hard-stop repeating pattern (no colour blending), opacity <= 0.06.
+ */
+.scanlines {
+  position: fixed;
+  inset: 0;
+  z-index: 400;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    var(--color-green) 0 1px,
+    transparent 1px 3px
+  );
+}
+
+/* PRD section 7 hard rule 3. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .scanlines {
+    display: none;
+  }
+}
+
+@media print {
+  .scanlines {
+    display: none;
+  }
 }
