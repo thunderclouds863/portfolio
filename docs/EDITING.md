@@ -53,6 +53,16 @@ Screenshots will be added once the site is deployed with GitHub storage (Phase 9
 - **Recommendation:** paste the LinkedIn text word for word (you may only shorten it with `[…]`),
   and tick **Permission to republish confirmed** only after the recommender agreed.
 
+## Update the CV PDF
+
+The download is **your own CV file**, served as-is (it is not generated from the `/cv` page).
+To replace it: in the editor open **Profile → CV PDF** and upload the new file, or replace
+`public/cv/desi-armanda-sari-cv.pdf` directly. Visitors always download it as
+`desi-armanda-sari-cv.pdf`.
+
+Note: the file is public. Your current CV includes your phone number by your choice
+(see `docs/decisions/0002-owner-overrides.md`); remove it from the file if you change your mind.
+
 ## Images
 
 - Use PNG, JPG/WebP or SVG. Keep thumbnails under 120 KB and other images under 500 KB.

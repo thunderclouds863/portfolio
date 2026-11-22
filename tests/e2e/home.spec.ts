@@ -1,7 +1,8 @@
 import { expect, test, type Page } from "@playwright/test";
 
 // Phase 3 — home sections. Runs against a production build, where only Published
-// content renders (currently none), so these tests check structure, not copy.
+// content renders, so these tests check structure, not copy. Testimonials is a
+// conditional section (FR-TST-01: shown only when something is published).
 
 const SECTIONS = [
   { id: "about", label: "./about" },
@@ -27,11 +28,16 @@ test.describe("home sections (1280px)", () => {
     await page.goto("/");
     await expect(page.locator("h1")).toHaveCount(1);
     const ids = await page.locator("main > section[id]").evaluateAll((els) => els.map((e) => e.id));
-    expect(ids).toEqual(["top", ...SECTIONS.map((s) => s.id)]);
-    for (const [i, s] of SECTIONS.entries()) {
-      const section = page.locator(`#${s.id}`);
-      await expect(section).toHaveAttribute("aria-labelledby", `${s.id}-title`);
-      await expect(section.locator("h2")).toContainText(`0${i + 1} //`);
+    // PRD order; Testimonials, when present, sits right after Projects.
+    const expected = SECTIONS.map((s) => s.id);
+    if (ids.includes("testimonials"))
+      expected.splice(expected.indexOf("projects") + 1, 0, "testimonials");
+    expect(ids).toEqual(["top", ...expected]);
+    // Section numbers follow the rendered order (01 // …), with no gaps.
+    for (const [i, id] of expected.entries()) {
+      const section = page.locator(`#${id}`);
+      await expect(section).toHaveAttribute("aria-labelledby", `${id}-title`);
+      await expect(section.locator("h2").first()).toContainText(`0${i + 1} //`);
     }
   });
 

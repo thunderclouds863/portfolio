@@ -272,15 +272,15 @@ body:has([data-active-relationship="other"])
   display: none;
 }
 
-/* Case-study body typography (Markdoc output). */
+/* Case-study body typography (Markdoc output). Markdoc wraps a document in
+   <article>, so blocks sit one level down: match both depths. */
 @layer components {
-  .case-body > p,
-  .case-body > ul,
-  .case-body > ol,
-  .case-body > blockquote,
-  .case-body > table {
+  :is(.case-body, .case-body > article) > :is(p, ul, ol, blockquote, table) {
     max-width: 68ch;
     margin-top: 1rem;
+  }
+  :is(.case-body, .case-body > article) > :first-child {
+    margin-top: 0;
   }
   .case-body ul {
     list-style: square;
