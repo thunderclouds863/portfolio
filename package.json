@@ -17,7 +17,8 @@
     "content:check": "vitest run tests/content",
     "links:check": "node scripts/check-links.mjs",
     "deploy:check": "node scripts/post-deploy-check.mjs",
-    "cv:pdf": "node scripts/generate-cv-pdf.mjs"
+    "cv:pdf": "node scripts/generate-cv-pdf.mjs",
+    "portrait": "node scripts/generate-portrait.mjs"
   },
   "dependencies": {
     "@keystatic/core": "0.6.10",
