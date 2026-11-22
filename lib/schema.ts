@@ -226,25 +226,39 @@ export const GalleryImageSchema = z.object({
   caption: optionalText("caption"),
 });
 
-export const ProjectSchema = z.object({
-  slug: z.string().min(1),
-  title: requiredText("title"),
-  summary: requiredText("summary"),
-  problem: requiredText("problem"),
-  type: ProjectType,
-  capabilities: z.array(Capability).min(1, "at least one capability"),
-  role: requiredText("role"),
-  contribution: ContributionScope,
-  teamSize: z.number().int().positive().nullable(),
-  period: requiredText("period"),
-  stack: z.array(requiredText("stack item")),
-  outcomes: z.array(OutcomeSchema),
-  featured: z.boolean(),
-  order: z.number().int(),
-  thumbnail: publicPath("thumbnail"),
-  thumbnailAlt: requiredText("thumbnail alt text"),
-  gallery: z.array(GalleryImageSchema),
-});
+export const ProjectSchema = z
+  .object({
+    slug: z.string().min(1),
+    title: requiredText("title"),
+    summary: requiredText("summary"),
+    problem: requiredText("problem"),
+    type: ProjectType,
+    capabilities: z.array(Capability).min(1, "at least one capability"),
+    role: requiredText("role"),
+    contribution: ContributionScope,
+    teamSize: z.number().int().positive().nullable(),
+    period: requiredText("period"),
+    stack: z.array(requiredText("stack item")),
+    outcomes: z.array(OutcomeSchema),
+    featured: z.boolean(),
+    order: z.number().int(),
+    // Optional (owner request): a project may be published before it has a screenshot.
+    thumbnail: optionalText("thumbnail").refine(
+      (s) => s === null || s.startsWith("/"),
+      "thumbnail must be a site-relative path",
+    ),
+    thumbnailAlt: optionalText("thumbnail alt text"),
+    // Link to the running demo app (opens in a new tab).
+    demoUrl: optionalText("demo URL").refine(
+      (s) => s === null || /^https:\/\/\S+$/.test(s),
+      "demo URL must start with https://",
+    ),
+    gallery: z.array(GalleryImageSchema),
+  })
+  .refine((p) => p.thumbnail === null || p.thumbnailAlt !== null, {
+    message: "a thumbnail needs alt text",
+    path: ["thumbnailAlt"],
+  });
 
 // ── Skills / Recommendations ────────────────────────────────────────────────
 
