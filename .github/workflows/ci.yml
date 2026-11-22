@@ -45,11 +45,16 @@ jobs:
         run: npm run build
 
       - name: Link check on the built site
+        # Port 3100, not 3000: Playwright starts its own server on 3000 next.
+        # `kill %1` would only stop the npm wrapper, so stop the Next.js server by name.
         run: |
-          npm run start > /tmp/next-start.log 2>&1 &
-          for i in $(seq 1 60); do curl -sf -o /dev/null http://localhost:3000/ && break; sleep 1; done
-          npm run links:check
-          kill %1
+          npx next start -p 3100 > /tmp/next-start.log 2>&1 &
+          for i in $(seq 1 60); do curl -sf -o /dev/null http://localhost:3100/ && break; sleep 1; done
+          status=0
+          npm run links:check -- http://localhost:3100 || status=$?
+          pkill -f "next-server" || true
+          pkill -f "next start" || true
+          exit $status
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium webkit

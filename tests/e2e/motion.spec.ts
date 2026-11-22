@@ -60,6 +60,18 @@ test.describe("full motion, desktop 1280px", () => {
     await expect(header).toHaveAttribute("data-reveal", "shown");
   });
 
+  test("a fast jump past sections still reveals every one of them", async ({ page }) => {
+    await page.goto("/");
+    // Wait for the reveals to arm, then jump in one frame (fling / End key).
+    await expect(page.locator('[data-reveal="hidden"]').first()).toBeAttached({
+      timeout: 15_000,
+    });
+    await page.evaluate(() =>
+      window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "instant" }),
+    );
+    await expect(page.locator('[data-reveal="hidden"]')).toHaveCount(0);
+  });
+
   test("content in the first viewport is never hidden", async ({ page }) => {
     await page.goto("/");
     await expect(page.locator("#top [data-reveal]")).toHaveCount(0);
