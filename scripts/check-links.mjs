@@ -94,7 +94,9 @@ async function crawl() {
     const page = await fetchPage(pathname);
     pages.set(pathname, page);
     if (!page.html) continue;
-    for (const raw of [...anchorHrefs(page.html), ...assetUrls(page.html)]) {
+    const links = anchorHrefs(page.html).map((raw) => ({ raw, isLink: true }));
+    const assets = assetUrls(page.html).map((raw) => ({ raw, isLink: false }));
+    for (const { raw, isLink } of [...links, ...assets]) {
       if (/^(mailto|tel|javascript|data|blob):/i.test(raw)) continue;
       let url;
       try {
@@ -104,7 +106,10 @@ async function crawl() {
         continue;
       }
       references.push({ from: pathname, url });
-      if (url.origin === BASE.origin && !isSkipped(url.pathname)) {
+      // Only <a href> targets are crawled as pages. Assets (images, scripts,
+      // next/image URLs such as /_next/image?url=...) are checked as assets,
+      // with their query string; crawling them as pages dropped the query.
+      if (isLink && url.origin === BASE.origin && !isSkipped(url.pathname)) {
         const target = url.pathname;
         if (!pages.has(target) && !queue.includes(target) && !/\.[a-z0-9]+$/i.test(target)) {
           queue.push(target);

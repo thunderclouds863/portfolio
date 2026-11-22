@@ -233,3 +233,187 @@ test.describe("mobile 375px: reveals only", { tag: "@mobile" }, () => {
     await expect(page.locator("[data-timeline-line]")).toHaveCSS("transform", "none");
   });
 });
+
+// Phase 9b — bolder decoration within PRD 7: page-wide L0 grid, L1 glyphs at
+// section dividers, hero pointer tilt (<= 6px), pixel-art portrait (SVG).
+const translate = (page: Page, selector: string) =>
+  page
+    .locator(selector)
+    .first()
+    .evaluate((el) => {
+      const t = getComputedStyle(el).transform;
+      if (t === "none") return { x: 0, y: 0 };
+      const m = new DOMMatrixReadOnly(t);
+      return { x: m.m41, y: m.m42 };
+    });
+
+test.describe("decorative motion, desktop 1280px", () => {
+  test.use({ viewport: { width: 1280, height: 800 }, reducedMotion: "no-preference" });
+
+  test("page-wide grid drifts with scroll and never moves more than one period", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    const gridY = async () => (await translate(page, '[data-layer="page-L0"]')).y;
+    // Hydrated once the layer has its inline transform.
+    await expect
+      .poll(() => page.locator('[data-layer="page-L0"]').getAttribute("style"))
+      .toMatch(/translate3d/);
+    const start = await gridY();
+    const offsets = [start];
+    for (const y of [333, 1250, 2600]) {
+      await scrollTo(page, y);
+      // Scroll updates arrive on the next frames (later in WebKit): wait for the value.
+      await expect.poll(gridY).not.toBe(offsets[offsets.length - 1]);
+      offsets.push(await gridY());
+    }
+    for (const o of offsets) expect(Math.abs(o)).toBeLessThanOrEqual(32);
+  });
+
+  test("section glyphs slide sideways, within 120px, and sit above the heading", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    // Wait for hydration (slow in WebKit): the grid gets its inline transform then.
+    await expect
+      .poll(() => page.locator('[data-layer="page-L0"]').getAttribute("style"))
+      .toMatch(/translate3d/);
+    const glyphs = page.locator("#experience .section-glyphs");
+    await expect(glyphs).toHaveAttribute("aria-hidden", "true");
+    // The strip moves while it crosses the viewport: sample it near the bottom,
+    // then near the top of the screen.
+    const stripTop = await glyphs.evaluate((el) => el.getBoundingClientRect().top + window.scrollY);
+    await scrollTo(page, stripTop - 650);
+    await page.waitForTimeout(200);
+    const a = (await translate(page, '#experience [data-layer="section-L1"]')).x;
+    await scrollTo(page, stripTop - 150);
+    const glyphX = async () => (await translate(page, '#experience [data-layer="section-L1"]')).x;
+    await expect.poll(glyphX).not.toBe(a);
+    const b = await glyphX();
+    for (const x of [a, b]) expect(Math.abs(x)).toBeLessThanOrEqual(60);
+    // Never behind text: the strip ends before the section heading starts.
+    const strip = await glyphs.boundingBox();
+    const heading = await page.locator("#experience-title").boundingBox();
+    expect(strip!.y + strip!.height).toBeLessThanOrEqual(heading!.y);
+  });
+
+  test("hero layers follow the mouse by at most 6px; the portrait stays still", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    // The listener attaches after hydration: keep moving until the layers respond.
+    const offsets = () =>
+      page.locator(".tilt-layer").evaluateAll((els) =>
+        els.map((el) => {
+          const m = new DOMMatrixReadOnly(getComputedStyle(el).transform);
+          return { m41: m.m41, m42: m.m42 };
+        }),
+      );
+    await expect(async () => {
+      await page.mouse.move(1200, 700);
+      await page.mouse.move(1270, 790);
+      await page.waitForTimeout(300);
+      expect((await offsets()).some((m) => m.m41 !== 0 || m.m42 !== 0)).toBe(true);
+    }).toPass();
+    const tilts = await offsets();
+    expect(tilts.length).toBeGreaterThanOrEqual(3);
+    expect(tilts.some((m) => m.m41 !== 0 || m.m42 !== 0)).toBe(true);
+    for (const m of tilts) {
+      expect(Math.abs(m.m41)).toBeLessThanOrEqual(6);
+      expect(Math.abs(m.m42)).toBeLessThanOrEqual(6);
+    }
+    const portrait = page.getByRole("img", { name: "Portrait of Desi Armanda Sari" });
+    await expect(portrait).toBeVisible();
+    await expect(portrait).toHaveCSS("transform", "none");
+  });
+
+  test("the hero photo keeps the H1 as the LCP element (FR-HERO-02 goal)", async ({
+    page,
+    browserName,
+  }) => {
+    test.skip(browserName !== "chromium", "LCP entries are exposed in Chromium only");
+    await page.goto("/");
+    await expect(page.getByRole("img", { name: "Portrait of Desi Armanda Sari" })).toBeVisible();
+    const lcp = await page.evaluate(
+      () =>
+        new Promise<string>((resolve) => {
+          new PerformanceObserver((list) => {
+            resolve(list.getEntries().at(-1)?.["element" as never]?.["tagName" as never] ?? "");
+          }).observe({ type: "largest-contentful-paint", buffered: true });
+        }),
+    );
+    expect(lcp).toBe("H1");
+  });
+
+  test("the session log types its lines once, then shows them complete", async ({ page }) => {
+    await page.goto("/");
+    const log = page.locator("#top [aria-hidden=true]", { hasText: "session.log" }).first();
+    await expect(log).toContainText("$ whoami"); // in the HTML from the start
+    // Each line has a cover that slides fully off when its line has typed.
+    const covers = log.locator(".typing-cover");
+    await expect(covers.first()).toBeAttached();
+    await expect
+      .poll(
+        () =>
+          covers.evaluateAll((els) =>
+            els.every((el) => new DOMMatrixReadOnly(getComputedStyle(el).transform).m41 > 0),
+          ),
+        { timeout: 10_000 },
+      )
+      .toBe(true);
+  });
+
+  test("section strips type themselves as they scroll in", async ({ page }) => {
+    await page.goto("/");
+    await expect
+      .poll(() => page.locator('[data-layer="page-L0"]').getAttribute("style"))
+      .toMatch(/translate3d/);
+    const strip = page.locator('#experience [data-layer="section-L1"]');
+    const shown = () =>
+      strip.evaluate(
+        (el) => [...el.children].filter((c) => getComputedStyle(c).opacity !== "0").length,
+      );
+    const total = await strip.evaluate((el) => el.children.length);
+    const top = await strip.evaluate((el) => el.getBoundingClientRect().top + window.scrollY);
+    // Re-scroll on every attempt: a scroll can be cut short by the page's smooth
+    // scrolling in WebKit. Strip just entered the screen: mostly untyped.
+    await expect(async () => {
+      await scrollTo(page, top - 760);
+      await page.waitForTimeout(250);
+      expect(await shown()).toBeLessThan(total);
+    }).toPass();
+    // Well into the screen: fully typed.
+    await expect(async () => {
+      await scrollTo(page, top - 300);
+      await page.waitForTimeout(250);
+      expect(await shown()).toBe(total);
+    }).toPass();
+  });
+});
+
+test.describe("decorative motion is off under reduced motion", () => {
+  test.use({ viewport: { width: 1280, height: 800 }, reducedMotion: "reduce" });
+
+  test("grid, glyphs and tilt stay still", async ({ page }) => {
+    await page.goto("/");
+    await page.mouse.move(1270, 790);
+    await scrollTo(page, 1500);
+    await page.waitForTimeout(300);
+    expect(await translate(page, '[data-layer="page-L0"]')).toEqual({ x: 0, y: 0 });
+    expect(await translate(page, '[data-layer="section-L1"]')).toEqual({ x: 0, y: 0 });
+    expect(await translate(page, ".tilt-layer")).toEqual({ x: 0, y: 0 });
+  });
+});
+
+test.describe("decorative motion on phones", { tag: "@mobile" }, () => {
+  test.use({ viewport: { width: 375, height: 812 }, reducedMotion: "no-preference" });
+
+  test("grid is static, section glyphs are hidden, portrait is shown", async ({ page }) => {
+    await page.goto("/");
+    await scrollTo(page, 1200);
+    await page.waitForTimeout(300);
+    expect(await translate(page, '[data-layer="page-L0"]')).toEqual({ x: 0, y: 0 });
+    await expect(page.locator(".section-glyphs").first()).toBeHidden();
+    await expect(page.getByRole("img", { name: "Portrait of Desi Armanda Sari" })).toBeAttached();
+  });
+});
