@@ -84,7 +84,13 @@ export default async function CvPage() {
                 >
                   {link.label}
                 </a>
-                <span className="hidden print:inline"> ({link.url!.replace(/^mailto:/, "")})</span>
+                {/* On paper a link needs its address, unless the label already is it. */}
+                {link.url!.replace(/^mailto:/, "") !== link.label ? (
+                  <span className="hidden print:inline">
+                    {" "}
+                    ({link.url!.replace(/^mailto:/, "")})
+                  </span>
+                ) : null}
               </li>
             ))
           ) : (

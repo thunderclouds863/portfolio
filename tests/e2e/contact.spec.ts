@@ -136,8 +136,11 @@ test("a delivery failure shows an error with retry and keeps the input", async (
   await page.clock.fastForward(4000);
   await sendButton(page).click();
   await expect(status(page)).toContainText("Your message could not be sent right now.");
-  // No email is published in the production test build, so the fallback is "try later".
-  await expect(status(page)).toContainText("Please try again later.");
+  // Fallback (Phase 6 decision): the published email from Profile links, or
+  // "try again later" when no email is published.
+  await expect(status(page)).toContainText(
+    /You can also write directly to \S+@\S+\.|Please try again later\./,
+  );
   await expect(form.getByLabel(/^Message/)).toHaveValue(
     "Hello, this is a test message from the e2e suite.",
   );
