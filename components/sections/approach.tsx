@@ -8,11 +8,11 @@ import { Section } from "./section";
 
 // FR-APR-01: six steps as a pipeline — horizontal on desktop, vertical on mobile.
 // PipelineProgress fills the bar with scroll and marks the current step (amber).
-function Approach({ settings }: { settings: SettingsView | null }) {
+function Approach({ settings, number = "05" }: { settings: SettingsView | null; number?: string }) {
   const steps = settings?.approach ?? [];
 
   return (
-    <Section id="approach" number="05" title="Approach">
+    <Section id="approach" number={number} title="Approach">
       <DraftBadge show={!!settings?.isDraft} className="mb-6" />
       {steps.length === 0 ? (
         <Missing what="six approach steps in Site settings (FR-APR-01)" />

@@ -1,0 +1,12 @@
+entry: Tarindo Administrative Intern
+status: draft
+organization: PT Tarindo, Pati
+role: Administrative Intern – System Analysis & Design
+start: "2024-01"
+end: "2024-02"
+highlights:
+  - text: Analyzed inventory across 3 production branches and found the root causes of stock mismatches and late reporting.
+    scope: owner
+  - text: Proposed a centralized inventory system and built a web prototype using RAD.
+    scope: owner
+tags: []

@@ -14,10 +14,32 @@ export function formatYearMonth(value: string | null | undefined): string | null
   return `${MONTHS[Number(match[2]) - 1]} ${match[1]}`;
 }
 
+/** "2025-06-24" → "Jun 2025". */
+export function formatIsoDate(value: string | null | undefined): string | null {
+  return value ? formatYearMonth(value.slice(0, 7)) : null;
+}
+
 export const scopeLabel: Record<string, string> = {
   owner: "Owner",
   core_team: "Core team",
   supporting: "Supporting role, not core team",
+};
+
+/** Short form for per-bullet scope tags. */
+export const scopeShortLabel: Record<string, string> = {
+  owner: "Owner",
+  core_team: "Core team",
+  supporting: "Supporting",
+};
+
+/** Testimonial relationships (PRD 17.2 FR-TST-04). */
+export const relationshipLabel: Record<string, string> = {
+  manager: "Manager",
+  colleague: "Colleague",
+  client: "Client",
+  lecturer: "Lecturer",
+  classmate: "Classmate",
+  other: "Other",
 };
 
 export const capabilityLabel: Record<string, string> = {

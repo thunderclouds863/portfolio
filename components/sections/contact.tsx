@@ -24,10 +24,10 @@ const linkIcons = {
   website: GlobeIcon,
 } as const;
 
-type ContactProps = { profile: ProfileView | null; settings: SettingsView | null };
+type ContactProps = { profile: ProfileView | null; settings: SettingsView | null; number?: string };
 
 // FR-CTA-01: form + direct links + availability text + response expectation.
-function Contact({ profile, settings }: ContactProps) {
+function Contact({ profile, settings, number = "07" }: ContactProps) {
   const availability = profile?.availability;
   const workModes = (availability?.workModes ?? []).map((m) => workModeLabel[m] ?? m);
   // Links without a URL (e.g. half-filled drafts) are not rendered.
@@ -36,7 +36,7 @@ function Contact({ profile, settings }: ContactProps) {
   );
 
   return (
-    <Section id="contact" number="07" title="Contact">
+    <Section id="contact" number={number} title="Contact">
       <Reveal stagger className="grid gap-10 lg:grid-cols-12 lg:gap-12">
         <div className="flex flex-col gap-8 lg:col-span-5">
           <DraftBadge show={!!profile?.isDraft || !!settings?.isDraft} className="self-start" />

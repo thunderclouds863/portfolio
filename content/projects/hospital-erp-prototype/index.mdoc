@@ -1,0 +1,78 @@
+---
+title: Hospital ERP Prototype
+status: draft
+featured: true
+order: 3
+type: freelance
+capabilities: []
+role: Freelance system analyst & developer
+contribution: owner
+period: "TODO(content): start month – end month (IN-05)"
+stack:
+  - Odoo Community Edition
+  - Python
+  - PostgreSQL
+  - XML views
+  - Docker
+summary: Hospital ERP prototype on Odoo Community Edition, connecting procurement, inventory, pharmacy, billing and finance.
+problem: Not every hospital requirement could be met with standard Odoo Community Edition features.
+outcomes: []
+thumbnailAlt: "TODO(content): describe the thumbnail image (IN-05)"
+gallery: []
+---
+## Context
+
+A freelance project to build a hospital ERP prototype on Odoo Community Edition. The requirements covered procurement, inventory, pharmacy operations, billing, receivables, payables and financial reporting.
+
+## Problem
+
+Not every requirement could be supported by the standard Community Edition functionality. For example, the full Accounting functionality is not available in Community Edition.
+
+## My role
+
+Owner: I mapped the requirements into ERP workflows, analyzed the gaps, and developed the custom modules.
+
+## As-is analysis
+
+TODO(content): how the hospital's processes worked before, and the main pain points (IN-05).
+
+## Requirements
+
+- Procurement, inventory and pharmacy operations.
+- Billing, receivables and payables.
+- Financial reporting.
+
+## Solution design
+
+I treated the platform limits as a problem-solving exercise rather than blockers:
+
+{% Steps %}
+{% Step title="Business requirement" /%}
+{% Step title="Identify the system gap" /%}
+{% Step title="Evaluate native capability" /%}
+{% Step title="Design a workaround" /%}
+{% Step title="Develop a custom module" /%}
+{% Step title="Integrate and test" /%}
+{% /Steps %}
+
+For each requirement I asked: what can the existing system already do, what is missing, and what is the simplest practical way to bridge the gap. Where full Accounting was not available, I designed a hybrid approach: standard Odoo Invoicing combined with custom modules for hospital-specific financial requirements.
+
+TODO(content): workflow diagram across Procurement → Inventory → Finance (IN-05).
+
+## Build
+
+I configured standard Odoo functionality where it was sufficient and developed custom Odoo modules in Python for the rest, integrated with Odoo's existing workflows instead of building a separate system. The development environment used PostgreSQL, XML views, and Docker with Docker Compose.
+
+TODO(content): screenshots with dummy data (IN-05).
+
+## Verification
+
+TODO(content): how the prototype was tested (IN-05).
+
+## Outcome
+
+The prototype runs in a Dockerized local development environment, which gives an isolated, reproducible setup for development, testing and iteration before a possible server or cloud deployment.
+
+## Reflection
+
+ERP development is not always about finding the perfect tool. Sometimes it is about working with the tools and constraints you have, understanding the gap, and engineering a practical solution.

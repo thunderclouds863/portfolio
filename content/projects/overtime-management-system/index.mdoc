@@ -1,0 +1,76 @@
+---
+title: Overtime Management System
+status: draft
+featured: true
+order: 2
+type: work
+capabilities: []
+role: Designed and built the system
+contribution: owner
+period: 2026-09 – 2026-11
+stack:
+  - Node.js
+  - Express
+  - PostgreSQL
+  - HTML/JavaScript
+  - Tailwind CSS
+  - Supabase Storage
+  - Brevo API
+summary: Web-based system that moved overtime handling at Cimory Group from chat messages and manual Excel recaps into one traceable workflow.
+problem: Each overtime recap took HR about 4 hours of collecting attendance data and chasing missing records.
+outcomes:
+  - statement: HR's overtime recap time went from about 4 hours to about 5 minutes.
+    verified: true
+    evidence: Before the system, HR requested tap-in/tap-out data from HR Ops, followed up with employees on null records and looked for supporting proof for each null entry, about 4 hours per recap. With the system, the recap is generated automatically in about 5 minutes.
+thumbnailAlt: "TODO(content): describe the thumbnail image (IN-05)"
+gallery: []
+---
+## Context
+
+At Cimory Group, overtime was handled through chat messages and manual Excel recaps. Overtime management is not only about recording working hours: it involves submission, location verification, multi-level approvals, notifications, and reporting that has to be consistent and traceable.
+
+## Problem
+
+Before the system, HR had to request tap-in and tap-out data from HR Ops, follow up with employees on null records, and look for supporting proof for each null entry. Each recap took about 4 hours.
+
+## My role
+
+Owner: I designed and developed the system end to end, from database design and backend logic to frontend development and deployment.
+
+## As-is analysis
+
+I mapped the process end to end: overtime submission, location check, approval hierarchy, HR administration and reporting.
+
+TODO(content): the as-is process map. Add it with the Diagram component (IN-05).
+
+## Requirements
+
+I translated the operational rules into system logic:
+
+- Location check: GPS coordinates validated against a 100-meter geofence around the office.
+- Approval routing by organizational structure, with flexibility for specific cases.
+- Approve or reject requests directly from email, using signed tokens.
+- Revision requests.
+- Automatic rejection of overtime with an actual duration under one hour, notifying the employee and informing the manager.
+
+## Solution design
+
+TODO(content): to-be process and data model (ERD) diagrams (IN-05).
+
+## Build
+
+The system is built with Node.js, Express, PostgreSQL, HTML/JavaScript and Tailwind CSS, with Supabase Storage for files and the Brevo API for email. It generates Excel recaps for HR administration and PDF overtime records with hash-based verification, and accepts proof-of-work photo uploads.
+
+TODO(content): screenshots with dummy data (IN-05).
+
+## Verification
+
+TODO(content): how the system was tested — UAT, test cases, pilot (IN-05).
+
+## Outcome
+
+HR's overtime recap time went from about 4 hours to about 5 minutes, because the recap is now generated automatically.
+
+## Reflection
+
+Building a system like this meant understanding the business process, translating operational rules into system logic, designing dynamic approval workflows, and considering data security and traceability. It also reinforced a view I hold: people analytics is not only about analyzing the data that exists; it is also about improving the processes that produce that data.

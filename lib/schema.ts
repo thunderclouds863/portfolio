@@ -99,6 +99,31 @@ export const ProfileSchema = z.object({
   availability: AvailabilitySchema,
   links: z.array(SocialLinkSchema).min(1, "at least one link is required"),
   cvPdf: publicPath("CV PDF"),
+  languages: z.array(
+    z.object({
+      language: requiredText("language"),
+      level: requiredText("language level"),
+      evidence: optionalText("language evidence"),
+    }),
+  ),
+  certifications: z.array(
+    z.object({
+      name: requiredText("certification name"),
+      issuer: requiredText("certification issuer"),
+      year: requiredText("certification year").pipe(
+        z.string().regex(/^\d{4}$/, "year must be YYYY"),
+      ),
+      url: z.string().nullish(),
+    }),
+  ),
+  publications: z.array(
+    z.object({
+      title: requiredText("publication title"),
+      venue: requiredText("publication venue"),
+      date: isoDate("publication date"),
+      url: requiredText("publication link").pipe(z.url()),
+    }),
+  ),
 });
 
 export const SettingsSchema = z.object({
@@ -152,8 +177,11 @@ export const ExperienceSchema = z.object({
         .regex(/^\d{4}-(0[1-9]|1[0-2])$/, "end must be YYYY-MM or empty for a current role")
         .nullable(),
     ),
-  scope: ContributionScope,
-  highlights: z.array(requiredText("highlight")).min(2, "2–4 highlights").max(4, "2–4 highlights"),
+  // Contribution scope is stated per bullet (AGENTS.md: always state scope).
+  highlights: z
+    .array(z.object({ text: requiredText("highlight"), scope: ContributionScope }))
+    .min(2, "2–4 highlights (FR-EXP-01)")
+    .max(4, "2–4 highlights (FR-EXP-01)"),
   tags: z.array(requiredText("tag")),
 });
 
@@ -223,6 +251,7 @@ export const RecommendationSchema = z.object({
   authorName: requiredText("author name"),
   authorHeadline: requiredText("author headline"),
   relationship: Relationship,
+  relationshipLabel: optionalText("relationship label"),
   text: requiredText("recommendation text"),
   date: isoDate("date"),
   permissionConfirmed: z.literal(true, {

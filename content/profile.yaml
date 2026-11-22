@@ -1,8 +1,8 @@
 status: draft
 name: Desi Armanda Sari
-headline: 'TODO(content): hero H1 — "System Analyst who builds what the business actually needs", "From messy process to working system", or your own (IN-01)'
-subheadline: Industrial Engineering graduate working across system analysis, business process improvement, and system development.
-location: "TODO(content): city for the facts panel and JSON-LD, or decide to omit (IN-10)"
+headline: System Analyst who builds what the business actually needs.
+subheadline: System Analyst · Business Process Improvement · Data Analysis & Reporting
+location: West Jakarta, Indonesia
 preferredLocations:
   - Jakarta
   - Bekasi
@@ -20,4 +20,31 @@ availability:
     - Workflow automation
     - Data processing
     - Reporting
-links: []
+links:
+  - label: desi.arr863@gmail.com
+    url: mailto:desi.arr863@gmail.com
+    icon: email
+  - label: LinkedIn
+    url: https://www.linkedin.com/in/desi-armanda-sari/
+    icon: linkedin
+  - label: GitHub
+    url: https://github.com/thunderclouds863
+    icon: github
+languages:
+  - language: English
+    level: Professional working proficiency
+    evidence: EF SET 72/100 (C2), May 2026 · TOEFL Prediction 597, Apr 2025
+certifications:
+  - name: Project Risk Management
+    issuer: Indonesia Risk Management Professional Association (IRMAPA)
+    year: "2023"
+    url: ""
+  - name: Python for Data Science series
+    issuer: DQLab
+    year: "2023"
+    url: ""
+publications:
+  - title: "Perancangan Sistem Informasi Manajemen Inventory Berbasis Web dengan Metode Rapid Application Development (Studi Kasus: PT Tarindo Juwana)"
+    venue: E-Journal Undip
+    date: "2025-06-24"
+    url: https://ejournal3.undip.ac.id/index.php/ieoj/article/view/51957/33938

@@ -3,7 +3,16 @@ import { expect, test } from "@playwright/test";
 // Case studies against `next dev` with the Draft preview: no project is
 // published yet, so the production build has no case-study pages to test.
 
-const SLUGS = ["thermal-comfort-monitoring", "hris-migration-support", "dss-lab-tools"];
+const SLUGS = [
+  "fptk-sourcing-database",
+  "overtime-management-system",
+  "hospital-erp-prototype",
+  "customer-chat-qa-engine",
+  "sales-academy-lms",
+  "thermal-comfort-monitoring",
+  "survey-report-automation",
+  "recruitment-data-compiler",
+];
 const TEMPLATE_HEADINGS = [
   "Context",
   "Problem",
@@ -31,13 +40,14 @@ test.describe("case-study layout (1280px)", () => {
   test.use({ viewport: { width: 1280, height: 800 } });
 
   test("snapshot, template headings, per-page title and back link", async ({ page }) => {
-    await page.goto("/projects/hris-migration-support");
-    await expect(page).toHaveTitle("HRIS Migration Support at Cimory — Desi Armanda Sari");
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-      "HRIS Migration Support at Cimory",
-    );
+    await page.goto("/projects/overtime-management-system");
+    await expect(page).toHaveTitle("Overtime Management System — Desi Armanda Sari");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Overtime Management System");
     const snapshot = page.getByRole("region", { name: "Project snapshot" });
-    await expect(snapshot).toContainText("Supporting role, not core team");
+    await expect(snapshot).toContainText("Owner");
+    await expect(snapshot).toContainText(
+      "HR's overtime recap time went from about 4 hours to about 5 minutes.",
+    );
     for (const name of TEMPLATE_HEADINGS) {
       await expect(page.getByRole("heading", { level: 2, name, exact: true })).toBeVisible();
     }
@@ -48,7 +58,7 @@ test.describe("case-study layout (1280px)", () => {
     // Canonical URL.
     await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
       "href",
-      /\/projects\/hris-migration-support$/,
+      /\/projects\/overtime-management-system$/,
     );
   });
 
@@ -67,19 +77,22 @@ test.describe("case-study layout (1280px)", () => {
   });
 
   test("previous / next follow the project order", async ({ page }) => {
-    await page.goto("/projects/hris-migration-support");
+    await page.goto("/projects/overtime-management-system");
     const more = page.getByRole("navigation", { name: "More projects" });
     await expect(more.locator('a[rel="prev"]')).toHaveAttribute(
       "href",
-      "/projects/thermal-comfort-monitoring",
+      "/projects/fptk-sourcing-database",
     );
-    await expect(more.locator('a[rel="next"]')).toHaveAttribute("href", "/projects/dss-lab-tools");
-    await page.goto("/projects/thermal-comfort-monitoring");
+    await expect(more.locator('a[rel="next"]')).toHaveAttribute(
+      "href",
+      "/projects/hospital-erp-prototype",
+    );
+    await page.goto("/projects/fptk-sourcing-database");
     await expect(more.locator('a[rel="prev"]')).toHaveCount(0);
   });
 
   test("draft TODO paragraphs render as MISSING markers, not raw TODO text", async ({ page }) => {
-    await page.goto("/projects/dss-lab-tools");
+    await page.goto("/projects/hospital-erp-prototype");
     await expect(page.locator("[data-todo-content]").first()).toBeVisible();
     await expect(page.locator(".case-body")).not.toContainText("TODO(content)");
   });
@@ -89,7 +102,7 @@ test.describe("mobile (375px)", () => {
   test.use({ viewport: { width: 375, height: 812 } });
 
   test("table of contents is hidden and nothing overflows", async ({ page }) => {
-    await page.goto("/projects/hris-migration-support");
+    await page.goto("/projects/overtime-management-system");
     await expect(page.getByRole("navigation", { name: "On this page" })).toBeHidden();
     const overflow = await page.evaluate(
       () => document.documentElement.scrollWidth - window.innerWidth,

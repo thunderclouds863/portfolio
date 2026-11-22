@@ -7,11 +7,12 @@ import { DraftBadge, Val, isFilled } from "@/components/content/val";
 import { MarkdocContent } from "@/components/markdoc/markdoc-content";
 import { Button } from "@/components/ui/button";
 import {
+  formatIsoDate,
   formatYearMonth,
   isYearMonth,
   joinOr,
   levelLabel,
-  scopeLabel,
+  scopeShortLabel,
   skillGroups,
   workModeLabel,
 } from "@/lib/format";
@@ -140,19 +141,23 @@ export default async function CvPage() {
                     <Val value={e.organization} what="organization" />{" "}
                     <DraftBadge show={e.isDraft} className="print:hidden" />
                   </h3>
-                  <p className="text-meta text-muted">
-                    {range(e.start, e.end, current)} {"·"}{" "}
-                    {e.scope === "unset" ? (
-                      <Missing what="contribution scope (IN-02)" />
-                    ) : (
-                      scopeLabel[e.scope]
-                    )}
-                  </p>
+                  <p className="text-meta text-muted">{range(e.start, e.end, current)}</p>
                   {e.highlights.length > 0 ? (
                     <ul className="flex list-[square] flex-col gap-1 pl-5">
                       {e.highlights.map((h) => (
-                        <li key={h}>
-                          <Val value={h} what="highlight" />
+                        <li key={h.text}>
+                          <Val value={h.text} what="highlight" />
+                          {h.scope === "unset" ? (
+                            <>
+                              {" "}
+                              <Missing what="contribution scope" />
+                            </>
+                          ) : (
+                            <span className="text-meta text-muted">
+                              {" "}
+                              ({scopeShortLabel[h.scope]})
+                            </span>
+                          )}
                         </li>
                       ))}
                     </ul>
@@ -217,6 +222,74 @@ export default async function CvPage() {
           </dl>
         )}
       </CvSection>
+
+      {profile && profile.languages.length > 0 ? (
+        <CvSection id="cv-languages" title="Languages">
+          <ul className="flex flex-col gap-2">
+            {profile.languages.map((l) => (
+              <li key={l.language}>
+                <span className="text-white">{l.language}</span>:{" "}
+                <Val value={l.level} what="language level" />
+                {isFilled(l.evidence) ? (
+                  <span className="text-meta text-muted"> ({l.evidence})</span>
+                ) : null}
+              </li>
+            ))}
+          </ul>
+        </CvSection>
+      ) : null}
+
+      {profile && profile.certifications.length > 0 ? (
+        <CvSection id="cv-certifications" title="Certifications">
+          <ul className="flex flex-col gap-2">
+            {profile.certifications.map((c) => (
+              <li key={c.name}>
+                {c.url ? (
+                  <a
+                    href={c.url}
+                    className="text-green hover:text-amber underline underline-offset-4"
+                  >
+                    {c.name}
+                  </a>
+                ) : (
+                  <span className="text-white">{c.name}</span>
+                )}
+                <span className="text-meta text-muted">
+                  {" "}
+                  {"·"} {c.issuer}, {c.year}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </CvSection>
+      ) : null}
+
+      {profile && profile.publications.length > 0 ? (
+        <CvSection id="cv-publications" title="Publications">
+          <ul className="flex flex-col gap-2">
+            {profile.publications.map((p) => (
+              <li key={p.title}>
+                {p.url ? (
+                  <a
+                    href={p.url}
+                    lang="id"
+                    className="text-green hover:text-amber underline underline-offset-4"
+                  >
+                    {p.title}
+                  </a>
+                ) : (
+                  <span lang="id">{p.title}</span>
+                )}
+                <span className="text-meta text-muted">
+                  {" "}
+                  {"·"} {p.venue}
+                  {formatIsoDate(p.date) ? `, ${formatIsoDate(p.date)}` : null}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </CvSection>
+      ) : null}
 
       <CvSection id="cv-projects" title="Selected projects">
         {projects.length === 0 ? (

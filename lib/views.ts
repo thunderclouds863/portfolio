@@ -10,6 +10,7 @@ import {
   ProfileSchema,
   ProjectSchema,
   SettingsSchema,
+  RecommendationSchema,
   SkillSchema,
   hasTodo,
   todoMessage,
@@ -42,6 +43,8 @@ export type EducationView = Omit<Entry<Cfg["collections"]["education"]>, "status
   Draftable & { slug: string };
 export type SkillView = Omit<Entry<Cfg["collections"]["skills"]>, "status"> &
   Draftable & { slug: string };
+export type RecommendationView = Omit<Entry<Cfg["collections"]["recommendations"]>, "status"> &
+  Draftable & { slug: string };
 
 export type HomeData = {
   profile: ProfileView | null;
@@ -52,6 +55,8 @@ export type HomeData = {
   projects: ProjectView[];
   featuredProjects: ProjectView[];
   skills: SkillView[];
+  /** LinkedIn recommendations (testimonial source A, PRD 17), newest first. */
+  recommendations: RecommendationView[];
 };
 
 /** Draft preview is on in `next dev` unless CONTENT_DRAFT_PREVIEW=0. Never in builds. */
@@ -197,9 +202,22 @@ export async function loadHomeData({ drafts }: { drafts: boolean }): Promise<Hom
     )
   ).sort((a, b) => a.name.localeCompare(b.name));
 
+  const recommendations = (
+    await visibleCollection(
+      reader.collections.recommendations.all(),
+      drafts,
+      (slug, { status: _s, ...data }) => {
+        parsePublished(RecommendationSchema, { slug, ...data }, `content/recommendations/${slug}`);
+        return { slug, ...data, isDraft: false };
+      },
+      (slug, { status: _s, ...data }) => ({ slug, ...data, isDraft: true }),
+    )
+  ).sort((a, b) => (b.date ?? "").localeCompare(a.date ?? ""));
+
   return {
     profile,
     settings,
+    recommendations,
     experience,
     education,
     projects,

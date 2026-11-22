@@ -1,0 +1,89 @@
+---
+title: FPTK & Sourcing Database
+status: draft
+featured: true
+order: 1
+type: work
+capabilities: []
+role: Designed and built the system
+contribution: owner
+period: 2026-08 – 2026-10
+stack:
+  - Python
+  - Pandas
+  - Streamlit
+  - PostgreSQL
+summary: Centralized web application that replaced a manual Excel compilation of recruitment data for 5 business units and 25+ recruiters at Cimory Group.
+problem: Recruitment data lived in many Excel files with inconsistent formats, compiled by hand in over 3 hours per cycle.
+outcomes:
+  - statement: Replaced a manual Excel compilation of over 3 hours per cycle; the system is now used regularly by the team.
+    verified: false
+    evidence: ""
+thumbnailAlt: "TODO(content): describe the thumbnail image (IN-05)"
+gallery: []
+---
+## Context
+
+At Cimory Group, recruitment data for 5 business units came from FPTK (manpower request) and sourcing files kept by 25+ recruiter PICs. Compiling it was a manual Excel process that took over 3 hours per cycle.
+
+## Problem
+
+The workflow relied on multiple Excel files, repetitive manual checks and recurring data compilation. Headers and date formats were not consistent between files.
+
+## My role
+
+Owner: I designed and built the system, from analyzing the existing workflow to the shared web application.
+
+## As-is analysis
+
+I analyzed the existing compilation workflow before changing it.
+
+TODO(content): process map of the manual compilation and the main pain points. Add it with the Diagram component (IN-05).
+
+## Requirements
+
+- Multi-source data input from recruiters across business units.
+- Role-based access control and upload cycle management.
+- Strict validation with clear error reports.
+- Business rules for SLA calculations and data categorization.
+- An audit trail so changes stay traceable.
+
+TODO(content): non-functional requirements, if any (IN-05).
+
+## Solution design
+
+Instead of solving everything at once, I rebuilt the workflow in stages as the requirements grew.
+
+{% Steps %}
+{% Step title="Excel to VBA: automating the process" %}
+Automated the data compilation, standardized inconsistent headers and date formats, and added validation to catch errors earlier.
+{% /Step %}
+{% Step title="VBA to Python: structuring the logic" %}
+Moved the processing logic to Python with Pandas for more structured validation, clearer error reports, and business rules for SLA calculations and data categorization.
+{% /Step %}
+{% Step title="Python to Streamlit and PostgreSQL: building the system" %}
+Developed a centralized web application to replace the Excel-based compilation workflow.
+{% /Step %}
+{% /Steps %}
+
+I designed the relational data structure, role-based access, upload cycles and audit trail for multi-user data governance.
+
+TODO(content): data model (ERD) diagram (IN-05).
+
+## Build
+
+The system is built with Python, Pandas, Streamlit and PostgreSQL. It validates data with schema mapping, date and field normalization and duplicate handling, and includes dashboards for recruitment progress, SLA monitoring and recruiter-level performance. It covers 2,000+ FPTK records and 100,000+ sourcing candidates.
+
+TODO(content): screenshots with dummy data (IN-05).
+
+## Verification
+
+TODO(content): how the system was tested before the team used it — UAT, test data, pilot (IN-05).
+
+## Outcome
+
+The system replaced a manual Excel compilation of over 3 hours per cycle and is now used regularly by the team.
+
+## Reflection
+
+Streamlit was a practical choice for rapid development, but more complex workflows may eventually need a different architecture; I'm exploring FastAPI and React as next steps. Sustainable improvement also needs time, clear priorities, and room for testing, refactoring, documentation and maintenance.

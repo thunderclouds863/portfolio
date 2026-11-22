@@ -250,6 +250,28 @@ body:has([data-active-filter="data"]) [data-project-list] > li:not([data-caps~="
   display: none;
 }
 
+/* /testimonials relationship filter (FR-TST-02), same pattern as /projects. */
+body:has([data-active-relationship="manager"])
+  [data-testimonial-list]
+  > li:not([data-relationship="manager"]),
+body:has([data-active-relationship="colleague"])
+  [data-testimonial-list]
+  > li:not([data-relationship="colleague"]),
+body:has([data-active-relationship="client"])
+  [data-testimonial-list]
+  > li:not([data-relationship="client"]),
+body:has([data-active-relationship="lecturer"])
+  [data-testimonial-list]
+  > li:not([data-relationship="lecturer"]),
+body:has([data-active-relationship="classmate"])
+  [data-testimonial-list]
+  > li:not([data-relationship="classmate"]),
+body:has([data-active-relationship="other"])
+  [data-testimonial-list]
+  > li:not([data-relationship="other"]) {
+  display: none;
+}
+
 /* Case-study body typography (Markdoc output). */
 @layer components {
   .case-body > p,

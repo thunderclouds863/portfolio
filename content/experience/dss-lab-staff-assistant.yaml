@@ -1,0 +1,14 @@
+entry: DSS Lab Staff and Assistant
+status: draft
+organization: Decision Support System Laboratory, Diponegoro University
+role: Skill & Development Division Staff; Laboratory Assistant
+start: "2023-06"
+end: "2025-06"
+highlights:
+  - text: "Taught practicums to 300+ students: Python (180+), Arduino IoT (150+), MS Access information systems and ExtendSim."
+    scope: core_team
+  - text: Taught Excel VBA automation to accounting students.
+    scope: core_team
+  - text: Tutored 100+ students on Industrial Engineering projects using MCDM and Odoo ERP.
+    scope: core_team
+tags: []

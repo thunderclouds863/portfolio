@@ -3,7 +3,7 @@ import { DraftBadge, Val, isFilled } from "@/components/content/val";
 import { Reveal } from "@/components/motion/reveal";
 import { TimelineTrack } from "@/components/motion/scroll-progress";
 import { Tag } from "@/components/ui/tag";
-import { formatYearMonth, isYearMonth, scopeLabel } from "@/lib/format";
+import { formatYearMonth, isYearMonth, scopeShortLabel } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import type { EducationView, ExperienceView } from "@/lib/views";
 
@@ -99,6 +99,16 @@ function Experience({ experience, education }: ExperienceProps) {
   );
 }
 
+/** Contribution scope per bullet (AGENTS.md: always state scope). */
+function ScopeNote({ scope }: { scope: string }) {
+  if (scope === "unset") return <Missing what="contribution scope" />;
+  return (
+    <span className="text-meta text-yellow whitespace-nowrap">
+      [ {scopeShortLabel[scope]} ]<span className="sr-only"> contribution</span>
+    </span>
+  );
+}
+
 function WorkEntry({ data }: { data: ExperienceView }) {
   return (
     <>
@@ -112,22 +122,15 @@ function WorkEntry({ data }: { data: ExperienceView }) {
         </h3>
         <DraftBadge show={data.isDraft} />
       </div>
-      <p className="text-meta text-yellow">
-        {data.scope === "unset" ? (
-          <Missing what="contribution scope (IN-02)" />
-        ) : (
-          <>scope: {scopeLabel[data.scope]}</>
-        )}
-      </p>
       {data.highlights.length > 0 ? (
         <ul className="flex max-w-[68ch] flex-col gap-2">
           {data.highlights.map((h) => (
-            <li key={h} className="flex gap-2">
+            <li key={h.text} className="flex gap-2">
               <span aria-hidden="true" className="text-green-dim">
                 {"▸"}
               </span>
               <span>
-                <Val value={h} what="highlight" />
+                <Val value={h.text} what="highlight" /> <ScopeNote scope={h.scope} />
               </span>
             </li>
           ))}

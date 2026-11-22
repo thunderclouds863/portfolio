@@ -8,11 +8,11 @@ import { Reveal } from "@/components/motion/reveal";
 
 import { Section } from "./section";
 
-type StackProps = { skills: SkillView[]; projects: ProjectView[] };
+type StackProps = { skills: SkillView[]; projects: ProjectView[]; number?: string };
 
 // FR-STK-01: tools grouped by purpose, proficiency as words tied to evidence.
 // No percentage bars.
-function Stack({ skills, projects }: StackProps) {
+function Stack({ skills, projects, number = "06" }: StackProps) {
   const titles = new Map(projects.map((p) => [p.slug, p.title]));
   const groups = [
     ...skillGroups.map((g) => ({ ...g, items: skills.filter((s) => s.group === g.key) })),
@@ -21,7 +21,7 @@ function Stack({ skills, projects }: StackProps) {
   ].filter((g) => g.items.length > 0);
 
   return (
-    <Section id="stack" number="06" title="Stack">
+    <Section id="stack" number={number} title="Stack">
       {groups.length === 0 ? (
         <Missing what="skills with honest levels (IN-04)" />
       ) : (
