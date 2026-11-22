@@ -121,8 +121,9 @@
     -webkit-text-size-adjust: 100%;
   }
 
+  /* No body background: html paints it, and a body background would cover the
+     page-wide L0 grid (z-index -1, components/motion/page-grid.tsx). */
   body {
-    background: var(--color-bg);
     color: var(--color-muted);
     font-family: var(--font-body);
     font-size: 1rem;
@@ -167,6 +168,123 @@
   background-image: repeating-linear-gradient(
     to bottom,
     var(--color-green) 0 1px,
+    transparent 1px 3px
+  );
+}
+
+/*
+ * Parallax decoration — PRD section 7. Token colours only; hard-stop patterns
+ * (no colour blending). All of it is aria-hidden and ignores the pointer.
+ */
+/* L0, whole page: fixed dot-and-line grid behind all content (components/motion/page-grid.tsx). */
+.page-grid-frame {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+.page-grid {
+  position: absolute;
+  inset: -32px 0 0 0; /* one period taller, so the wrapped drift never shows an edge */
+  opacity: 0.22;
+  background-image:
+    radial-gradient(circle, var(--color-green) 0 1px, transparent 1.5px),
+    linear-gradient(to right, var(--color-green-dim) 0 1px, transparent 1px),
+    linear-gradient(to bottom, var(--color-green-dim) 0 1px, transparent 1px);
+  background-size:
+    32px 32px,
+    32px 32px,
+    32px 32px;
+  background-position:
+    -16px -16px,
+    0 0,
+    0 0;
+}
+/* L1 at section dividers: lives in the section's empty top padding (section-glyphs.tsx). */
+.section-glyphs {
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: clamp(4rem, 8vw, 8rem);
+  display: none;
+  align-items: center;
+  justify-content: flex-end;
+  overflow: hidden;
+  pointer-events: none;
+  padding-inline: max(1.5rem, calc((100% - 1200px) / 2 + 1.5rem));
+}
+@media (min-width: 768px) {
+  .section-glyphs {
+    display: flex;
+  }
+}
+.section-glyphs-line {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  white-space: nowrap;
+  /* Full green-dim (5.8:1): dimmer text would fail WCAG AA contrast, even though
+     it is decorative (axe checks visible text whether or not it is aria-hidden). */
+  color: var(--color-green-dim);
+}
+/* Hero pointer tilt (components/motion/pointer-tilt.tsx): <= 6px, by --depth. */
+.tilt-layer {
+  transform: translate3d(
+    calc(var(--tilt-x, 0) * var(--depth, 0) * 1px),
+    calc(var(--tilt-y, 0) * var(--depth, 0) * 1px),
+    0
+  );
+  transition: transform 220ms var(--ease-pixel);
+}
+
+/* Mobile orbit menu (components/layout/mobile-menu.tsx, owner override 4).
+   Items launch from the corner button to their place on the arc: transform and
+   opacity only; the global reduced-motion rule makes this instant. */
+@keyframes orbit-launch {
+  from {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.6);
+  }
+}
+@keyframes orbit-fade {
+  from {
+    opacity: 0;
+  }
+}
+.orbit-overlay {
+  background: var(--color-bg);
+  opacity: 0.88;
+  animation: orbit-fade 160ms var(--ease-pixel) backwards;
+}
+.orbit-path {
+  animation: orbit-fade 400ms var(--ease-pixel) 120ms backwards;
+}
+.orbit-item {
+  transform: translate(var(--orbit-x), var(--orbit-y));
+  transform-origin: bottom right;
+  animation: orbit-launch 280ms var(--ease-pixel) var(--orbit-delay, 0ms) backwards;
+}
+
+/* Hero photo (owner override 2): blended into the theme, never animated.
+   Slightly see-through so the L0 grid reads through the light wall; a green
+   colour wash and CRT scanlines tie it to the palette. Token colours only. */
+.hero-photo {
+  filter: grayscale(0.3) contrast(1.08) brightness(0.82);
+  opacity: 0.9;
+}
+.hero-photo-tint {
+  background: var(--color-green);
+  mix-blend-mode: color;
+  opacity: 0.16;
+  pointer-events: none;
+}
+.hero-photo-scanlines {
+  pointer-events: none;
+  opacity: 0.35;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    var(--color-bg) 0 1px,
     transparent 1px 3px
   );
 }
@@ -348,6 +466,9 @@ body:has([data-active-relationship="other"])
   .typing-cover {
     display: none;
   }
+  .tilt-layer {
+    transform: none;
+  }
   [data-reveal="hidden"]:not([data-reveal-stagger]),
   [data-reveal="hidden"][data-reveal-stagger] > * {
     opacity: 1;
@@ -383,8 +504,10 @@ body:has([data-active-relationship="other"])
   }
   .scanlines,
   .card-sweep,
-  .typing-cover {
-    display: none;
+  .typing-cover,
+  .page-grid-frame,
+  .section-glyphs {
+    display: none !important;
   }
   [data-reveal="hidden"]:not([data-reveal-stagger]),
   [data-reveal="hidden"][data-reveal-stagger] > * {

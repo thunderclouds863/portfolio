@@ -171,12 +171,17 @@ for (const viewport of [
 test("a featured card on the home page opens its case study", async ({ page }) => {
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.goto("/#projects");
-  await page
-    .locator("#projects")
-    .getByRole("link", { name: "Overtime Management System" })
-    .first()
-    .click();
-  await expect(page).toHaveURL(/\/projects\/overtime-management-system$/);
+  // A click that lands before hydration can be dropped by the router, so retry;
+  // but give each attempt time: `next dev` compiles the case-study route on its
+  // first visit, and clicking again would restart that navigation.
+  await expect(async () => {
+    await page
+      .locator("#projects")
+      .getByRole("link", { name: "Overtime Management System" })
+      .first()
+      .click();
+    await expect(page).toHaveURL(/\/projects\/overtime-management-system$/, { timeout: 15_000 });
+  }).toPass({ timeout: 60_000 });
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Overtime Management System");
   await page.goBack();
   await expect(page).toHaveURL(/\/#projects$|\/$/);
