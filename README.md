@@ -37,6 +37,23 @@ Environment variables are listed in `.env.example` (PRD section 13). Variables s
 | `npm run test`                            | Unit tests (Vitest, `tests/unit`)                                                            |
 | `npm run test:e2e`                        | End-to-end + accessibility tests (Playwright, `tests/e2e`); builds and starts the app itself |
 
+## Contact form
+
+The form posts to a Server Action (`app/actions/contact.ts`): honeypot, 3-second minimum, shared Zod
+validation, Cloudflare Turnstile (`lib/turnstile.ts`), then a plain-text email through Resend
+(`lib/email.ts`). Nothing is stored; logs contain error codes only.
+
+| Variable                         | Where            | Local development                                   |
+| -------------------------------- | ---------------- | --------------------------------------------------- |
+| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | browser + server | `1x00000000000000000000AA` (Cloudflare test key)    |
+| `TURNSTILE_SECRET_KEY`           | server only      | `1x0000000000000000000000000000000AA` (test secret) |
+| `RESEND_API_KEY`                 | server only      | a Resend key with sending access                    |
+| `CONTACT_TO_EMAIL`               | server only      | your inbox                                          |
+| `CONTACT_FROM_EMAIL`             | server only      | an address on a Resend-verified domain              |
+
+Without Resend, set `CONTACT_TEST_MODE=1` in `.env.local` to simulate delivery (refused on Vercel
+production). The Playwright build always runs in test mode and fakes the Turnstile script.
+
 ## Generated files
 
 `scripts/generate-routes.mjs` writes `lib/generated/project-slugs.json` (published case-study slugs,

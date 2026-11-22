@@ -86,7 +86,7 @@ test.describe("home sections (1280px)", () => {
     await expect(visual).toContainText("| INPUT |--->| PROCESS |--->| OUTPUT |");
   });
 
-  test("contact form has the FR-CF-01 fields and cannot be submitted yet", async ({ page }) => {
+  test("contact form has the FR-CF-01 fields", async ({ page }) => {
     await page.goto("/");
     const form = page.getByRole("form", { name: "Contact form" });
     await expect(form.getByLabel(/^Name/)).toBeVisible();
@@ -100,7 +100,7 @@ test.describe("home sections (1280px)", () => {
     ]);
     await expect(form.getByLabel(/^Message/)).toBeVisible();
     await expect(form.getByRole("checkbox")).toBeVisible();
-    await expect(form.getByRole("button", { name: "[ Send message ]" })).toBeDisabled();
+    await expect(form.getByRole("button", { name: "[ Send message ]" })).toBeEnabled();
   });
 });
 
