@@ -38,7 +38,17 @@ function Nav() {
                   data-nav-id={item.id}
                   className="text-green hover:text-amber aria-[current=true]:text-amber aria-[current=true]:decoration-amber flex min-h-11 items-center font-mono text-xs decoration-2 underline-offset-8 aria-[current=true]:underline lg:text-sm"
                 >
-                  {item.label}
+                  {/* Tablet widths drop the "./" so all section links fit beside the CV button. */}
+                  {/* One inline wrapper: inside the flex link, separate items would put a space
+                      into the accessible name ("./ about"). */}
+                  {item.label.startsWith("./") ? (
+                    <span>
+                      <span className="md:max-lg:hidden">./</span>
+                      {item.label.slice(2)}
+                    </span>
+                  ) : (
+                    item.label
+                  )}
                 </a>
               </li>
             ))}

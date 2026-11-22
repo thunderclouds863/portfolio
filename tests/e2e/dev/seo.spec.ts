@@ -22,7 +22,7 @@ test("home has a JSON-LD Person built from the profile", async ({ page }) => {
     name: "Desi Armanda Sari",
     jobTitle: "System Analyst",
     address: { addressLocality: "West Jakarta, Indonesia" },
-    alumniOf: [{ name: "Diponegoro University" }],
+    alumniOf: [{ name: "Diponegoro University" }, { name: "SMAN 2 Purworejo" }],
   });
   expect(person!.sameAs).toEqual([
     "https://www.linkedin.com/in/desi-armanda-sari/",
