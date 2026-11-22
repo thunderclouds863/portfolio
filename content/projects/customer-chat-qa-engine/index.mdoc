@@ -1,0 +1,65 @@
+---
+title: Customer Chat QA Analysis Engine
+status: draft
+featured: false
+order: 4
+type: work
+capabilities: []
+role: Built the engine
+contribution: owner
+period: 2025-10 – 2026-01
+stack:
+  - Python
+  - Pandas
+  - scikit-learn (TF-IDF)
+  - Streamlit
+summary: Python engine that automates quality analysis of customer service live chats at PT Toyota-Astra Motor.
+problem: Manual QA review of 1,000+ monthly live-chat tickets took a full day.
+outcomes:
+  - statement: Reduced a day-long manual review of 1,000+ monthly tickets to under 30 minutes.
+    verified: false
+    evidence: ""
+thumbnailAlt: "TODO(content): describe the thumbnail image (IN-05)"
+gallery: []
+---
+## Context
+
+Quality review of customer service live chats at PT Toyota-Astra Motor, covering 1,000+ tickets per month.
+
+## Problem
+
+Manual quality review of unstructured chat text took a full day and did not scale.
+
+## My role
+
+Owner: I built the engine.
+
+## As-is analysis
+
+TODO(content): how the QA review was done before, and its pain points (IN-05).
+
+## Requirements
+
+TODO(content): what the QA team needed from the engine (IN-05).
+
+## Solution design
+
+The engine combines rule-based logic with TF-IDF text similarity. The rules handle fixed parameters such as SLA compliance; the similarity layer identifies the main customer issue and compares agent replies with a set of standard answers.
+
+TODO(content): architecture diagram (IN-05).
+
+## Build
+
+The engine detects the first and final agent replies, classifies inquiry severity and calculates lead time. It handles real-world chat patterns: greetings, bot navigation, reopened tickets and customers who leave without replying. Results are delivered through a Streamlit app with Excel and PDF reports for the QA team.
+
+## Verification
+
+TODO(content): how the results were checked against manual review (IN-05).
+
+## Outcome
+
+Reduced a day-long manual review of 1,000+ monthly tickets to under 30 minutes.
+
+## Reflection
+
+TODO(content): what you would do differently (IN-05).

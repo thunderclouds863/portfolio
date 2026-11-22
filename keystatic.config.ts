@@ -152,6 +152,38 @@ export default config({
           { label: "Social links", itemLabel: (p) => p.fields.label.value },
         ),
         cvPdf: fields.file({ label: "CV PDF", directory: "public/cv", publicPath: "/cv/" }),
+        languages: fields.array(
+          fields.object({
+            language: fields.text({ label: "Language" }),
+            level: fields.text({
+              label: "Level",
+              description: "e.g. Professional working proficiency",
+            }),
+            evidence: fields.text({
+              label: "Evidence (optional)",
+              description: "e.g. EF SET 72/100 (C2), May 2026",
+            }),
+          }),
+          { label: "Languages", itemLabel: (p) => p.fields.language.value },
+        ),
+        certifications: fields.array(
+          fields.object({
+            name: fields.text({ label: "Name" }),
+            issuer: fields.text({ label: "Issuer" }),
+            year: fields.text({ label: "Year", description: "YYYY" }),
+            url: fields.url({ label: "Credential URL (optional)" }),
+          }),
+          { label: "Certifications", itemLabel: (p) => p.fields.name.value },
+        ),
+        publications: fields.array(
+          fields.object({
+            title: fields.text({ label: "Title (original language)", multiline: true }),
+            venue: fields.text({ label: "Venue", description: "e.g. E-Journal Undip" }),
+            date: fields.date({ label: "Date" }),
+            url: fields.url({ label: "Link" }),
+          }),
+          { label: "Publications", itemLabel: (p) => p.fields.title.value },
+        ),
       },
     }),
 
@@ -293,11 +325,14 @@ export default config({
         role: fields.text({ label: "Role / title" }),
         start: yearMonth("Start month"),
         end: yearMonth("End month", "YYYY-MM, or leave empty if current"),
-        scope: contributionScope,
-        highlights: fields.array(fields.text({ label: "Highlight", multiline: true }), {
-          label: "Highlights (2–4)",
-          itemLabel: (p) => p.value,
-        }),
+        // Contribution scope is stated per bullet (owner / core team / supporting).
+        highlights: fields.array(
+          fields.object({
+            text: fields.text({ label: "Highlight", multiline: true }),
+            scope: contributionScope,
+          }),
+          { label: "Highlights (2–4)", itemLabel: (p) => p.fields.text.value },
+        ),
         tags: fields.array(fields.text({ label: "Tag" }), {
           label: "Tags",
           itemLabel: (p) => p.value,
@@ -386,6 +421,10 @@ export default config({
             { label: "Other", value: "other" },
           ],
           defaultValue: "colleague",
+        }),
+        relationshipLabel: fields.text({
+          label: "Relationship as shown (optional)",
+          description: "Overrides the label above on the site, e.g. Supervisor, Former schoolmate",
         }),
         text: fields.text({
           label: "Recommendation (verbatim)",

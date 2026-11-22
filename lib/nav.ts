@@ -15,6 +15,7 @@ export const navCta = { href: "/cv", label: "[ CV ]" } as const;
 
 export const footerNav: readonly { href: string; label: string }[] = [
   { href: "/projects", label: "Projects" },
+  { href: "/testimonials", label: "Testimonials" },
   { href: "/cv", label: "CV" },
   { href: "/privacy", label: "Privacy" },
 ];

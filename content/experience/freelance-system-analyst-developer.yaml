@@ -1,0 +1,12 @@
+entry: Freelance System Analyst & Developer
+status: draft
+organization: Self-employed (remote)
+role: Freelance System Analyst & Developer
+start: "2023-06"
+end: ""
+highlights:
+  - text: Delivered projects for individuals and small organizations, from requirements to a working system.
+    scope: owner
+  - text: Built Odoo ERP customizations, FlexSim and ExtendSim simulation models, Excel VBA tools, web information systems and Arduino IoT prototypes.
+    scope: owner
+tags: []

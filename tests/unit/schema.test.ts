@@ -122,10 +122,14 @@ describe("ExperienceSchema", () => {
     role: "Example role",
     start: "2024-01",
     end: "",
-    scope: "supporting",
-    highlights: ["One", "Two"],
+    highlights: [
+      { text: "One", scope: "owner" },
+      { text: "Two", scope: "supporting" },
+    ],
     tags: [],
   };
+  const bullets = (n: number) =>
+    Array.from({ length: n }, (_, i) => ({ text: `Bullet ${i + 1}`, scope: "owner" }));
 
   it("accepts a current role (empty end) and normalises it to null", () => {
     const result = ExperienceSchema.safeParse(valid);
@@ -140,15 +144,21 @@ describe("ExperienceSchema", () => {
     expect(issuePaths(ExperienceSchema.safeParse({ ...valid, end: "2024-13" }))).toContain("end");
   });
 
-  it("requires a contribution scope", () => {
-    expect(issuePaths(ExperienceSchema.safeParse({ ...valid, scope: "unset" }))).toContain("scope");
+  it("requires a contribution scope on every bullet", () => {
+    const result = ExperienceSchema.safeParse({
+      ...valid,
+      highlights: [
+        { text: "One", scope: "owner" },
+        { text: "Two", scope: "unset" },
+      ],
+    });
+    expect(issuePaths(result)).toContain("highlights.1.scope");
   });
 
   it("requires 2–4 highlights", () => {
-    expect(ExperienceSchema.safeParse({ ...valid, highlights: ["One"] }).success).toBe(false);
-    expect(
-      ExperienceSchema.safeParse({ ...valid, highlights: ["1", "2", "3", "4", "5"] }).success,
-    ).toBe(false);
+    expect(ExperienceSchema.safeParse({ ...valid, highlights: bullets(1) }).success).toBe(false);
+    expect(ExperienceSchema.safeParse({ ...valid, highlights: bullets(4) }).success).toBe(true);
+    expect(ExperienceSchema.safeParse({ ...valid, highlights: bullets(5) }).success).toBe(false);
   });
 });
 

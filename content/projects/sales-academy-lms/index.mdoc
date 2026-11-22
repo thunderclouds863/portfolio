@@ -1,0 +1,68 @@
+---
+title: Sales Academy LMS
+status: draft
+featured: false
+order: 5
+type: work
+capabilities: []
+role: Designed and built the platform; later handed over to IT
+contribution: owner
+period: 2026-09 – 2026-10
+stack:
+  - Node.js
+  - Express
+  - NestJS
+  - PostgreSQL
+  - Cloudflare R2
+  - k6
+  - Power BI
+summary: Learning platform for the Cimory and Kanzler sales teams that grew into a broader LMS initiative and was handed over to IT.
+problem: "TODO(content): one-line problem for the project card (IN-05)"
+outcomes:
+  - statement: "Load-tested with k6: 0.17% errors at 1,000 virtual users and 0.01% errors in a 1-hour soak test."
+    verified: false
+    evidence: ""
+thumbnailAlt: "TODO(content): describe the thumbnail image (IN-05)"
+gallery: []
+---
+## Context
+
+A digital learning platform for the Cimory Group and Kanzler sales teams that evolved into a broader Learning Management System initiative.
+
+## Problem
+
+TODO(content): what the sales training process lacked before the platform (IN-05).
+
+## My role
+
+Owner: I translated the HR and sales-training needs into features and built the platform. As the scope expanded, it was handed over to the IT team for further development and production deployment.
+
+## As-is analysis
+
+TODO(content): how sales training worked before (IN-05).
+
+## Requirements
+
+- Video modules with viewing-progress validation, chapter quizzes, XP, badges and leaderboards.
+- A content management system with Excel bulk import, so HR can manage learning content without code changes.
+- Authentication, content protection and performance testing.
+
+## Solution design
+
+The backend started with Express.js. As the scope grew, I developed a hybrid architecture with Express.js and NestJS using the Strangler Pattern, so selected components could migrate step by step without rewriting the whole backend. Learning videos are stored in Cloudflare R2 object storage, separate from the application server.
+
+## Build
+
+Node.js, Express, NestJS, PostgreSQL, Cloudflare R2 and permission-based Power BI reporting.
+
+## Verification
+
+Seven k6 test scenarios: smoke, load, stress, spike, soak, database benchmarking and object storage benchmarking.
+
+## Outcome
+
+0.17% errors at 1,000 virtual users in the stress test and 0.01% errors in a 1-hour soak test. The project was handed over to IT for production deployment.
+
+## Reflection
+
+TODO(content): what you would do differently (IN-05).

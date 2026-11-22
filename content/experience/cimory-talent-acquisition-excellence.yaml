@@ -1,0 +1,14 @@
+entry: Cimory Talent Acquisition Excellence
+status: draft
+organization: Cimory Group
+role: HR Development Specialist – Corporate Talent Acquisition Excellence (System Improvement)
+start: "2026-06"
+end: "2026-08"
+highlights:
+  - text: Built a schema-driven Excel VBA compiler that standardized about 17 recruiter files into one dataset.
+    scope: owner
+  - text: Automated about 60–70% of the weekly Board of Directors recruitment report, including the Excel-to-PowerPoint update.
+    scope: owner
+  - text: Ran end-to-end recruitment operations across business units.
+    scope: core_team
+tags: []

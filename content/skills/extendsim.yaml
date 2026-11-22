@@ -1,6 +1,5 @@
 name: ExtendSim
 status: draft
-group: unset
-level: unset
-evidence:
-  - dss-lab-tools
+group: tools
+level: project
+evidence: []
