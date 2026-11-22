@@ -61,3 +61,8 @@ next-env.d.ts
 
 # Lighthouse CI reports
 /.lighthouseci/
+
+# Kept locally, never published (public repo): PRD with the personal inventory,
+# and case-study sentences awaiting confirmation.
+/docs/PRD.md
+/docs/intake/

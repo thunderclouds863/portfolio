@@ -89,4 +89,6 @@ Step-by-step guide: [`docs/EDITING.md`](docs/EDITING.md).
 
 Vercel with Git integration: every PR gets a preview, merging to `main` deploys production.
 Rollback: Vercel "Instant Rollback" to the previous production deployment, then fix forward on a branch.
-Full runbook: PRD section 13 (completed in Phase 9).
+Step-by-step launch checklist (who does what, where each secret is set):
+[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md). After a deploy, run
+`npm run deploy:check -- https://<domain>` for the automated post-deploy checks.
