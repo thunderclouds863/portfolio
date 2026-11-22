@@ -251,3 +251,58 @@ test.describe("styleguide", () => {
     await expect(page.getByRole("dialog")).toBeHidden();
   });
 });
+
+// Owner override 4 (docs/decisions/0002): mobile orbit menu in the bottom corner.
+test.describe("mobile orbit menu", { tag: "@mobile" }, () => {
+  for (const viewport of [
+    { width: 375, height: 812 },
+    { width: 320, height: 640 },
+  ]) {
+    test(`button sits in the bottom-right corner; the orbit fits ${viewport.width}px`, async ({
+      page,
+    }) => {
+      await page.setViewportSize(viewport);
+      await page.goto("/");
+      const button = page.locator('button[aria-label="Open menu"]');
+      const box = (await button.boundingBox())!;
+      expect(box.width).toBeGreaterThanOrEqual(44);
+      expect(viewport.width - (box.x + box.width)).toBeLessThan(40); // right corner
+      expect(viewport.height - (box.y + box.height)).toBeLessThan(40); // bottom corner
+      await button.click();
+      const links = page.getByRole("dialog", { name: "Menu" }).getByRole("link");
+      await expect(links).toHaveCount(8); // 7 sections + CV
+      // Wait until the launch animations have finished (slower in WebKit).
+      // (Only the orbit items: the blinking cursors animate forever.)
+      await page.waitForFunction(() =>
+        [...document.querySelectorAll(".orbit-item")].every((el) =>
+          el.getAnimations().every((a) => a.playState !== "running"),
+        ),
+      );
+      const boxes = await links.evaluateAll((els) =>
+        els.map((e) => {
+          const r = e.getBoundingClientRect();
+          return { l: r.left, r: r.right, t: r.top, b: r.bottom, h: r.height };
+        }),
+      );
+      for (const b of boxes) {
+        expect(b.h).toBeGreaterThanOrEqual(44); // WCAG 2.5.8 / PRD target size
+        expect(b.l).toBeGreaterThanOrEqual(0);
+        expect(b.r).toBeLessThanOrEqual(viewport.width);
+        expect(b.t).toBeGreaterThanOrEqual(0);
+      }
+      for (let i = 0; i < boxes.length; i += 1) {
+        for (let j = i + 1; j < boxes.length; j += 1) {
+          const [a, c] = [boxes[i]!, boxes[j]!];
+          const overlap = a.l < c.r && c.l < a.r && a.t < c.b && c.t < a.b;
+          expect(overlap, `links ${i} and ${j} overlap`).toBe(false);
+        }
+      }
+    });
+  }
+
+  test("the button is not shown on desktop", async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto("/");
+    await expect(page.locator('button[aria-label="Open menu"]')).toBeHidden();
+  });
+});
