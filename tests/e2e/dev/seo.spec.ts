@@ -31,7 +31,7 @@ test("home has a JSON-LD Person built from the profile", async ({ page }) => {
 });
 
 test("draft case studies are noindex and carry no CreativeWork yet", async ({ page }) => {
-  await page.goto("/projects/overtime-management-system");
+  await page.goto("/projects/hospital-erp-prototype");
   await expect(page.locator('meta[name="robots"]').first()).toHaveAttribute("content", /noindex/);
   expect(await jsonLd(page)).toEqual([]);
 });
