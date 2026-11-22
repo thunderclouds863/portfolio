@@ -35,9 +35,17 @@ test("home shows the recommendations after Projects, verbatim, without dates", a
     "I had the pleasure of working with Desi as her direct supervisor.",
   );
   await expect(section).not.toContainText(/2025|2026|November|July/);
-  // Asymmetric: the first card is the large one.
-  const widths = await cards.evaluateAll((els) => els.map((e) => e.getBoundingClientRect().width));
-  expect(widths[0]).toBeGreaterThan(widths[1]! + 40);
+  // Asymmetric: a full-width lead quote above the others, which share a row
+  // (not the Capabilities shape of one large block beside two stacked ones).
+  const boxes = await cards.evaluateAll((els) =>
+    els.map((e) => {
+      const r = e.getBoundingClientRect();
+      return { top: r.top, width: r.width };
+    }),
+  );
+  expect(boxes[0]!.width).toBeGreaterThan(boxes[1]!.width + 40);
+  expect(boxes[1]!.top).toBeGreaterThan(boxes[0]!.top);
+  expect(Math.abs(boxes[1]!.top - boxes[2]!.top)).toBeLessThan(2);
   await expect(section.getByRole("link", { name: "[ All testimonials ]" })).toHaveAttribute(
     "href",
     "/testimonials",

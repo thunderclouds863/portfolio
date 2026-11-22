@@ -112,7 +112,7 @@ function ContactForm({ fallbackEmail }: ContactFormProps) {
         <p role="status" aria-live="polite" className="sr-only">
           {announcement}
         </p>
-        <p ref={successRef} tabIndex={-1} className="text-display-2 text-green glow">
+        <p ref={successRef} tabIndex={-1} className="text-display-2 text-green">
           MESSAGE RECEIVED
         </p>
         <p>Thank you. Your message was delivered and you will get a reply by email.</p>
