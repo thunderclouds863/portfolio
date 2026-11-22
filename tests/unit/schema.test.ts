@@ -99,9 +99,20 @@ describe("ProjectSchema", () => {
     expect(issuePaths(result)).toContain("gallery.0.alt");
   });
 
-  it("rejects a missing thumbnail", () => {
-    const result = ProjectSchema.safeParse({ ...validProject, thumbnail: null });
-    expect(issuePaths(result)).toContain("thumbnail");
+  it("accepts no thumbnail, but a thumbnail needs alt text", () => {
+    expect(
+      ProjectSchema.safeParse({ ...validProject, thumbnail: null, thumbnailAlt: "" }).success,
+    ).toBe(true);
+    const result = ProjectSchema.safeParse({ ...validProject, thumbnailAlt: "" });
+    expect(issuePaths(result)).toContain("thumbnailAlt");
+  });
+
+  it("accepts an https demo link and rejects anything else", () => {
+    expect(
+      ProjectSchema.safeParse({ ...validProject, demoUrl: "https://demo.example.com" }).success,
+    ).toBe(true);
+    const result = ProjectSchema.safeParse({ ...validProject, demoUrl: "javascript:alert(1)" });
+    expect(issuePaths(result)).toContain("demoUrl");
   });
 });
 

@@ -216,7 +216,7 @@ export async function validateAllContent(): Promise<string[]> {
   const projects = (await attempt(() => getProjects())) ?? [];
   for (const p of projects) {
     const full = await attempt(() => getProject(p.slug));
-    const images = [p.thumbnail, ...p.gallery.map((g) => g.image)];
+    const images = [...(p.thumbnail ? [p.thumbnail] : []), ...p.gallery.map((g) => g.image)];
     if (full) images.push(...collectImageSources(full.body));
     for (const src of images) {
       if (!publicFileExists(src))

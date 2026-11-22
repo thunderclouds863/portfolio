@@ -299,8 +299,15 @@ export default config({
           }),
           { label: "Outcomes", itemLabel: (p) => p.fields.statement.value },
         ),
-        thumbnail: projectImage("Thumbnail"),
-        thumbnailAlt: fields.text({ label: "Thumbnail alt text" }),
+        thumbnail: projectImage("Thumbnail (optional)"),
+        thumbnailAlt: fields.text({
+          label: "Thumbnail alt text",
+          description: "Required when there is a thumbnail",
+        }),
+        demoUrl: fields.url({
+          label: "Live demo link (optional)",
+          description: "https://… — shown as a [ live demo ] button on the card and case study",
+        }),
         gallery: fields.array(
           fields.object({
             image: projectImage("Image"),

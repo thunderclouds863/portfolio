@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 
 import { Missing } from "@/components/content/missing";
 import { Val, isFilled } from "@/components/content/val";
+import { DemoLink } from "@/components/ui/project-card";
 import { Tag } from "@/components/ui/tag";
 import { TerminalFrame } from "@/components/ui/terminal-frame";
 import { capabilityLabel, projectTypeLabel, scopeLabel } from "@/lib/format";
@@ -44,6 +45,11 @@ function CaseStudySnapshot({ project }: { project: ProjectView }) {
         <Row label="period">
           <Val value={project.period} what="period (IN-05)" />
         </Row>
+        {project.demoUrl ? (
+          <Row label="demo">
+            <DemoLink href={project.demoUrl} title={project.title} />
+          </Row>
+        ) : null}
         <Row label="type">{projectTypeLabel[project.type] ?? project.type}</Row>
         <Row label="capabilities">
           {project.capabilities.length > 0 ? (
