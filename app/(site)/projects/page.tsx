@@ -8,11 +8,14 @@ import { ProjectFilter } from "@/components/projects/project-filter";
 import { ProjectCard } from "@/components/ui/project-card";
 import { capabilityFilters, filterValuesFor, type FilterValue } from "@/lib/filters";
 import { getHomeData } from "@/lib/home-data";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Projects",
-  alternates: { canonical: "/projects" },
-};
+  description:
+    "Case studies by Desi Armanda Sari: the problem, her role, the process analysis, the system and the outcome.",
+  path: "/projects",
+});
 
 // FR-PL-01: all projects, filterable by capability; filter state in the URL query.
 // The list is server-rendered once; the client filter only marks which value is

@@ -72,8 +72,6 @@ export const WorkMode = z.enum(["on_site", "hybrid", "remote"]);
 export const SocialIcon = z.enum(["email", "linkedin", "github", "whatsapp", "website"]);
 export const InquiryType = z.enum(["job", "freelance", "collaboration", "other"]);
 
-export const Status = z.enum(["draft", "published"]);
-
 // ── Profile ─────────────────────────────────────────────────────────────────
 
 export const SocialLinkSchema = z.object({

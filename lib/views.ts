@@ -68,8 +68,6 @@ const YEAR_MONTH = /^\d{4}-(0[1-9]|1[0-2])$/;
 const sortableMonth = (value: string | null | undefined, fallback: string) =>
   value && YEAR_MONTH.test(value) ? value : fallback;
 
-export { todoMessage };
-
 async function visibleCollection<E extends { status: string }, V>(
   list: Promise<readonly { slug: string; entry: E }[]>,
   drafts: boolean,
