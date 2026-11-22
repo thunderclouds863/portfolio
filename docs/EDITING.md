@@ -65,15 +65,12 @@ Note: the file is public. Your current CV includes your phone number by your cho
 
 ## Change the hero portrait
 
-The hero shows a pixel-art version of your photo, drawn as SVG (so the page keeps its fast
-first paint and no photo file is published). The original photo stays on your computer only:
-`assets/portrait/source/` is git-ignored.
+The hero shows your real photo (`public/images/profile/desi-armanda-sari.jpg`), tinted and
+overlaid with scanlines so it blends into the theme. The photo is public.
 
-1. Save the new photo as `assets/portrait/source/desi.jpg` (square, plain light background
-   works best: the background is removed automatically).
-2. Run `npm run portrait`. It writes `components/sections/portrait-pixels.ts`.
-   Optional: `npm run portrait -- --size 64 --colors 18` (more pixels or colours = more detail).
-3. Check the hero with `npm run dev`, then commit `portrait-pixels.ts` (never the photo).
+1. Replace that file with the new photo, keeping the file name. Portrait orientation works best;
+   the frame shows it at 4:5 with the face around 30% from the top.
+2. Check the hero with `npm run dev` at desktop and phone widths, then commit the file.
 
 ## Images
 

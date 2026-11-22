@@ -322,15 +322,72 @@ test.describe("decorative motion, desktop 1280px", () => {
       expect(Math.abs(m.m41)).toBeLessThanOrEqual(6);
       expect(Math.abs(m.m42)).toBeLessThanOrEqual(6);
     }
-    const portrait = page.getByRole("img", { name: "Pixel-art portrait of Desi Armanda Sari" });
+    const portrait = page.getByRole("img", { name: "Portrait of Desi Armanda Sari" });
     await expect(portrait).toBeVisible();
     await expect(portrait).toHaveCSS("transform", "none");
   });
 
-  test("the hero has no raster image (the H1 stays the LCP element)", async ({ page }) => {
+  test("the hero photo keeps the H1 as the LCP element (FR-HERO-02 goal)", async ({
+    page,
+    browserName,
+  }) => {
+    test.skip(browserName !== "chromium", "LCP entries are exposed in Chromium only");
     await page.goto("/");
-    await expect(page.locator("#top img")).toHaveCount(0);
-    await expect(page.locator("#top svg[role=img]")).toHaveCount(1);
+    await expect(page.getByRole("img", { name: "Portrait of Desi Armanda Sari" })).toBeVisible();
+    const lcp = await page.evaluate(
+      () =>
+        new Promise<string>((resolve) => {
+          new PerformanceObserver((list) => {
+            resolve(list.getEntries().at(-1)?.["element" as never]?.["tagName" as never] ?? "");
+          }).observe({ type: "largest-contentful-paint", buffered: true });
+        }),
+    );
+    expect(lcp).toBe("H1");
+  });
+
+  test("the session log types its lines once, then shows them complete", async ({ page }) => {
+    await page.goto("/");
+    const log = page.locator("#top [aria-hidden=true]", { hasText: "session.log" }).first();
+    await expect(log).toContainText("$ whoami"); // in the HTML from the start
+    // Each line has a cover that slides fully off when its line has typed.
+    const covers = log.locator(".typing-cover");
+    await expect(covers.first()).toBeAttached();
+    await expect
+      .poll(
+        () =>
+          covers.evaluateAll((els) =>
+            els.every((el) => new DOMMatrixReadOnly(getComputedStyle(el).transform).m41 > 0),
+          ),
+        { timeout: 10_000 },
+      )
+      .toBe(true);
+  });
+
+  test("section strips type themselves as they scroll in", async ({ page }) => {
+    await page.goto("/");
+    await expect
+      .poll(() => page.locator('[data-layer="page-L0"]').getAttribute("style"))
+      .toMatch(/translate3d/);
+    const strip = page.locator('#experience [data-layer="section-L1"]');
+    const shown = () =>
+      strip.evaluate(
+        (el) => [...el.children].filter((c) => getComputedStyle(c).opacity !== "0").length,
+      );
+    const total = await strip.evaluate((el) => el.children.length);
+    const top = await strip.evaluate((el) => el.getBoundingClientRect().top + window.scrollY);
+    // Re-scroll on every attempt: a scroll can be cut short by the page's smooth
+    // scrolling in WebKit. Strip just entered the screen: mostly untyped.
+    await expect(async () => {
+      await scrollTo(page, top - 760);
+      await page.waitForTimeout(250);
+      expect(await shown()).toBeLessThan(total);
+    }).toPass();
+    // Well into the screen: fully typed.
+    await expect(async () => {
+      await scrollTo(page, top - 300);
+      await page.waitForTimeout(250);
+      expect(await shown()).toBe(total);
+    }).toPass();
   });
 });
 
@@ -357,8 +414,6 @@ test.describe("decorative motion on phones", { tag: "@mobile" }, () => {
     await page.waitForTimeout(300);
     expect(await translate(page, '[data-layer="page-L0"]')).toEqual({ x: 0, y: 0 });
     await expect(page.locator(".section-glyphs").first()).toBeHidden();
-    await expect(
-      page.getByRole("img", { name: "Pixel-art portrait of Desi Armanda Sari" }),
-    ).toBeAttached();
+    await expect(page.getByRole("img", { name: "Portrait of Desi Armanda Sari" })).toBeAttached();
   });
 });

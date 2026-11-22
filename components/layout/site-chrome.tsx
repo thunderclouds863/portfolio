@@ -12,7 +12,9 @@ import { SkipLink } from "./skip-link";
 // and app/not-found.tsx.
 function SiteChrome({ children }: { children: ReactNode }) {
   return (
-    <div className="flex min-h-dvh flex-col antialiased">
+    // Phones: room below the footer so the fixed orbit menu button never hides
+    // the last line of the page.
+    <div className="flex min-h-dvh flex-col pb-24 antialiased md:pb-0">
       <PageGrid />
       <SkipLink />
       <Nav />
