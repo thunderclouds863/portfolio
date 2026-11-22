@@ -18,11 +18,14 @@ import {
 } from "@/lib/format";
 import { getHomeData } from "@/lib/home-data";
 import { nodeFromJson } from "@/lib/markdoc";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "CV",
-  alternates: { canonical: "/cv" },
-};
+  description:
+    "CV of Desi Armanda Sari: experience, education, skills and selected projects, with a PDF download.",
+  path: "/cv",
+});
 
 const CV_FILE_NAME = "desi-armanda-sari-cv.pdf"; // FR-CV-02
 

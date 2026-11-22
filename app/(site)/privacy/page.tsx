@@ -3,12 +3,13 @@ import type { ReactNode } from "react";
 
 import { Missing } from "@/components/content/missing";
 import { getHomeData } from "@/lib/home-data";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Privacy",
   description: "What the contact form collects, why, and who processes it.",
-  alternates: { canonical: "/privacy" },
-};
+  path: "/privacy",
+});
 
 const LAST_UPDATED = "22 November 2026";
 

@@ -6,9 +6,11 @@ import { DraftBadge, Val, isFilled } from "@/components/content/val";
 import { MarkdocContent } from "@/components/markdoc/markdoc-content";
 import { ZoomableFigure } from "@/components/markdoc/zoomable-figure";
 import { CaseStudySnapshot } from "@/components/projects/case-study-snapshot";
+import { JsonLd } from "@/components/seo/json-ld";
 import { Tag } from "@/components/ui/tag";
 import { capabilityLabel, projectTypeLabel } from "@/lib/format";
 import { nodeFromJson } from "@/lib/markdoc";
+import { caseStudyJsonLd, pageMetadata } from "@/lib/seo";
 import { getCaseStudy, getProjectSlugs } from "@/lib/site-data";
 
 // FR-PD-01: generated statically from the content files.
@@ -25,14 +27,13 @@ export async function generateMetadata({
   const study = await getCaseStudy(slug);
   if (!study) return { title: "Project not found" };
   const { project } = study;
-  const description = isFilled(project.summary) ? project.summary : undefined;
-  return {
+  return pageMetadata({
     title: project.title,
-    description,
-    alternates: { canonical: `/projects/${slug}` },
-    openGraph: { type: "article", title: project.title, description, url: `/projects/${slug}` },
-    ...(project.isDraft ? { robots: { index: false, follow: false } } : {}),
-  };
+    description: isFilled(project.summary) ? project.summary : undefined,
+    path: `/projects/${slug}`,
+    type: "article",
+    noindex: project.isDraft,
+  });
 }
 
 // Case study (PRD section 3 template): snapshot, Markdoc body with sticky TOC on
@@ -49,6 +50,7 @@ export default async function CaseStudyPage({ params }: PageProps<"/projects/[sl
 
   return (
     <article className="mx-auto max-w-[1200px] px-4 py-12 md:px-6 md:py-16">
+      <JsonLd data={project.isDraft ? null : caseStudyJsonLd(project)} />
       <header className="flex flex-col gap-5 pb-10">
         <Link
           href="/projects"

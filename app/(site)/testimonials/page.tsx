@@ -10,11 +10,13 @@ import {
 } from "@/components/testimonials/relationship-filter";
 import { TestimonialCard, relationshipText } from "@/components/testimonials/testimonial-card";
 import { getHomeData } from "@/lib/home-data";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Testimonials",
-  alternates: { canonical: "/testimonials" },
-};
+  description: "LinkedIn recommendations for Desi Armanda Sari, published with permission.",
+  path: "/testimonials",
+});
 
 // FR-TST-02: all testimonials, filterable by relationship (state in the URL).
 // Source A only for now (LinkedIn recommendations); site submissions (source B)

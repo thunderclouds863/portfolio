@@ -27,13 +27,24 @@ function Reveal({ as: Comp = "div", stagger = false, className, children, ...res
     const el = ref.current;
     if (!el) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const { top } = el.getBoundingClientRect();
-    if (top < window.innerHeight) return; // already on screen: never hide it
 
-    el.dataset.reveal = "hidden";
+    // The observer's first callback reports where the element is without forcing
+    // a synchronous layout (no getBoundingClientRect during hydration).
+    let first = true;
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (!entry?.isIntersecting) return;
+        if (!entry) return;
+        if (first) {
+          first = false;
+          // Already on (or above) screen: never hide it.
+          if (entry.boundingClientRect.top < window.innerHeight) {
+            observer.disconnect();
+            return;
+          }
+          el.dataset.reveal = "hidden";
+          return;
+        }
+        if (!entry.isIntersecting) return;
         el.dataset.reveal = "shown";
         observer.disconnect();
       },

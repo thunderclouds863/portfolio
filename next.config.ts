@@ -51,6 +51,8 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   cacheComponents: true,
   partialPrefetching: true,
+  // PRD section 11: modern image formats for next/image.
+  images: { formats: ["image/avif", "image/webp"] },
   turbopack: {
     rules: {
       "*.css": {
