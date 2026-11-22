@@ -22,6 +22,8 @@ const CHECK_EXTERNAL = !args.includes("--no-external");
 const SKIP_PATHS = [/^\/keystatic/, /^\/api\//, /^\/admin/];
 /** Hosts known to reject bots: a non-2xx answer there is a warning only. */
 const BOT_HOSTILE = [/(^|\.)linkedin\.com$/];
+// Free-tier demo apps sleep when idle and answer 503 or time out until they wake up.
+const SLEEPING_DEMOS = [/\.onrender\.com$/, /\.streamlit\.app$/];
 
 const TIMEOUT_MS = 15_000;
 const UA = "Mozilla/5.0 (compatible; portfolio-link-check/1.0)";
@@ -94,7 +96,8 @@ async function crawl() {
     const page = await fetchPage(pathname);
     pages.set(pathname, page);
     if (!page.html) continue;
-    for (const raw of [...anchorHrefs(page.html), ...assetUrls(page.html)]) {
+    const anchors = new Set(anchorHrefs(page.html));
+    for (const raw of [...anchors, ...assetUrls(page.html)]) {
       if (/^(mailto|tel|javascript|data|blob):/i.test(raw)) continue;
       let url;
       try {
@@ -104,7 +107,9 @@ async function crawl() {
         continue;
       }
       references.push({ from: pathname, url });
-      if (url.origin === BASE.origin && !isSkipped(url.pathname)) {
+      // Only <a href> targets are crawled as pages. Assets (e.g. /_next/image?url=…,
+      // which has no file extension) are checked later with their full query string.
+      if (anchors.has(raw) && url.origin === BASE.origin && !isSkipped(url.pathname)) {
         const target = url.pathname;
         if (!pages.has(target) && !queue.includes(target) && !/\.[a-z0-9]+$/i.test(target)) {
           queue.push(target);
@@ -180,6 +185,8 @@ async function checkExternal() {
       const host = new URL(href).hostname;
       if (BOT_HOSTILE.some((re) => re.test(host)))
         warnings.push(`${line} (host blocks automated checks)`);
+      else if (SLEEPING_DEMOS.some((re) => re.test(host)))
+        warnings.push(`${line} (demo app may be asleep)`);
       else failures.push(line);
     }),
   );
