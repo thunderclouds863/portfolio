@@ -203,12 +203,13 @@ test.describe("reduced motion (prefers-reduced-motion: reduce)", () => {
   });
 });
 
-test.describe("mobile 375px: reveals only", () => {
+test.describe("mobile 375px: reveals only", { tag: "@mobile" }, () => {
   test.use({ viewport: { width: 375, height: 812 }, reducedMotion: "no-preference" });
 
   test("no parallax, no scroll-linked line; reveals still run", async ({ page }) => {
     await page.goto("/");
-    await expect(page.locator('[data-reveal="hidden"]').first()).toBeAttached();
+    // Reveals arm after hydration, which takes longer in emulated mobile WebKit.
+    await expect(page.locator('[data-reveal="hidden"]').first()).toBeAttached({ timeout: 15_000 });
     await scrollTo(page, 600);
     await page.waitForTimeout(300);
     for (const layer of ["L0", "L1", "L3"]) {

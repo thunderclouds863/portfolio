@@ -20,12 +20,22 @@ async function fakeTurnstile(page: Page, token = DUMMY_TOKEN) {
   );
 }
 
-async function openForm(page: Page) {
+async function openForm(page: Page, { freezeTime = false } = {}) {
   await page.clock.install();
+  // Date.now() stands still (timers keep running), so "elapsed" stays under 3s
+  // however slowly the browser fills the form.
+  if (freezeTime) await page.clock.setFixedTime(new Date());
   await page.goto("/#contact");
   const form = page.getByRole("form", { name: "Contact form" });
   await expect(form).toBeVisible();
-  await expect(form.locator("[data-fake-turnstile]")).toBeAttached();
+  // The widget loads when it comes within 400px of the viewport; on short phone
+  // viewports /#contact lands above that, so scroll to it like a visitor would.
+  // (Instant scroll: the site's smooth scrolling keeps the element "unstable".)
+  await form
+    .locator("[data-turnstile]")
+    .evaluate((el) => el.scrollIntoView({ block: "center", behavior: "instant" }));
+  // The widget loads lazily after hydration; slow WebKit runs need more than 5s.
+  await expect(form.locator("[data-fake-turnstile]")).toBeAttached({ timeout: 15_000 });
   return form;
 }
 
@@ -113,7 +123,7 @@ test("the button shows TRANSMITTING... and is disabled while sending", async ({ 
 });
 
 test("submitting faster than 3 seconds asks to send again (no fake success)", async ({ page }) => {
-  await openForm(page);
+  await openForm(page, { freezeTime: true });
   await fillValid(page);
   await sendButton(page).click();
   await expect(status(page)).toHaveText("That was quick. Please wait a moment, then send again.");

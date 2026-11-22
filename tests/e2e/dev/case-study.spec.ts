@@ -127,3 +127,43 @@ test("/projects lists every draft project and the filter hides non-matching ones
   await expect(items.filter({ visible: true })).toHaveCount(0);
   await expect(page.getByRole("status")).toHaveText("No projects in this category yet.");
 });
+
+// PRD 12: project card -> detail -> back, at desktop and phone widths.
+for (const viewport of [
+  { width: 1280, height: 800 },
+  { width: 375, height: 812 },
+]) {
+  test(`project card -> case study -> back (${viewport.width}px)`, async ({ page }) => {
+    await page.setViewportSize(viewport);
+    await page.goto("/projects");
+    const card = page.locator("[data-project-list] > li").filter({ hasText: "Sales Academy LMS" });
+    await card.getByRole("link", { name: "Sales Academy LMS" }).click();
+    await expect(page).toHaveURL(/\/projects\/sales-academy-lms$/);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Sales Academy LMS");
+
+    // The in-page back link returns to the index.
+    await page.getByRole("link", { name: "< back to projects" }).click();
+    await expect(page).toHaveURL(/\/projects$/);
+    await expect(page.getByRole("heading", { level: 1, name: "Projects" })).toBeVisible();
+
+    // Browser history works both ways.
+    await page.goBack();
+    await expect(page).toHaveURL(/\/projects\/sales-academy-lms$/);
+    await page.goBack();
+    await expect(page).toHaveURL(/\/projects$/);
+  });
+}
+
+test("a featured card on the home page opens its case study", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto("/#projects");
+  await page
+    .locator("#projects")
+    .getByRole("link", { name: "Overtime Management System" })
+    .first()
+    .click();
+  await expect(page).toHaveURL(/\/projects\/overtime-management-system$/);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Overtime Management System");
+  await page.goBack();
+  await expect(page).toHaveURL(/\/#projects$|\/$/);
+});

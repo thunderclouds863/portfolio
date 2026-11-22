@@ -34,7 +34,13 @@ async function hasVisibleFocusRing(page: Page) {
 test.describe("desktop (1280px)", () => {
   test.use({ viewport: { width: 1280, height: 800 } });
 
-  test("skip link is first, visible on focus and moves focus to main", async ({ page }) => {
+  test("skip link is first, visible on focus and moves focus to main", async ({
+    page,
+    browserName,
+  }) => {
+    // WebKit's default Tab order skips links (Safari's "Press Tab to highlight each
+    // item" is off by default), so link keyboard order is asserted in Chromium.
+    test.skip(browserName === "webkit", "WebKit Tab order skips links by default");
     await page.goto("/");
     await page.keyboard.press("Tab");
     const skip = page.getByRole("link", { name: "Skip to content" });
@@ -46,7 +52,9 @@ test.describe("desktop (1280px)", () => {
 
   test("keyboard reaches logo, every section link and the CTA, with amber focus", async ({
     page,
+    browserName,
   }) => {
+    test.skip(browserName === "webkit", "WebKit Tab order skips links by default");
     await page.goto("/");
     await page.keyboard.press("Tab"); // skip link
     await page.keyboard.press("Tab");
@@ -98,7 +106,7 @@ test.describe("desktop (1280px)", () => {
   });
 });
 
-test.describe("mobile menu (375px)", () => {
+test.describe("mobile menu (375px)", { tag: "@mobile" }, () => {
   test.use({ viewport: { width: 375, height: 812 } });
 
   test("opens with aria-expanded, traps focus, closes on Esc and restores focus", async ({
@@ -160,7 +168,7 @@ test.describe("mobile menu (375px)", () => {
   });
 });
 
-test.describe("320px has no horizontal overflow", () => {
+test.describe("320px has no horizontal overflow", { tag: "@mobile" }, () => {
   test.use({ viewport: { width: 320, height: 640 } });
 
   for (const path of ["/", "/styleguide"]) {
@@ -225,8 +233,14 @@ test.describe("styleguide", () => {
   test("select and dialog work from the keyboard", async ({ page }) => {
     await page.goto("/styleguide");
     const trigger = page.getByRole("combobox", { name: "Inquiry type" });
-    await trigger.focus();
-    await page.keyboard.press("Enter");
+    // Enter pressed before hydration finishes (slow WebKit runs) is lost; retry.
+    await expect(async () => {
+      await trigger.focus();
+      await page.keyboard.press("Enter");
+      await expect(page.getByRole("option", { name: "Collaboration" })).toBeVisible({
+        timeout: 2000,
+      });
+    }).toPass();
     await page.getByRole("option", { name: "Collaboration" }).click();
     await expect(trigger).toContainText("Collaboration");
 

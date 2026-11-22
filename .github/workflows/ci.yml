@@ -1,0 +1,102 @@
+# PRD section 13 CI pipeline. Action majors checked against their repositories
+# on 2026-11-22: actions/checkout v7, actions/setup-node v7, actions/upload-artifact v7.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  # Node 24 LTS: matches package.json "engines" and local development.
+  NODE_VERSION: 24
+
+jobs:
+  verify:
+    name: Lint, test, build, e2e
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install (lockfile)
+        run: npm ci
+
+      - name: Lint, typecheck, format check
+        run: npm run lint && npm run typecheck && npm run format:check
+
+      - name: Unit and content tests
+        run: npm run test
+
+      # prebuild also runs the content gate (published entries must validate).
+      - name: Build
+        run: npm run build
+
+      - name: Link check on the built site
+        run: |
+          npm run start > /tmp/next-start.log 2>&1 &
+          for i in $(seq 1 60); do curl -sf -o /dev/null http://localhost:3000/ && break; sleep 1; done
+          npm run links:check
+          kill %1
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium webkit
+
+      # Builds its own production server (with test-only env) and a `next dev`
+      # server for the Draft-preview project; see playwright.config.ts.
+      - name: Playwright e2e + axe (Chromium, WebKit, desktop + mobile)
+        run: npm run test:e2e
+
+      - name: Upload Playwright report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 14
+
+      - name: npm audit (high and above)
+        run: npm audit --audit-level=high
+
+  lighthouse:
+    name: Lighthouse CI
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+
+      - name: Install (lockfile)
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      # PRD 13 targets the Vercel preview URL. Until the Vercel project exists this
+      # runs against `next start` on the runner (budgets in lighthouserc.json).
+      - name: Lighthouse CI (mobile, 3 runs per URL)
+        run: npx --yes @lhci/cli@0.16.1 autorun
+
+      - name: Upload Lighthouse reports
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: lighthouse-reports
+          path: .lighthouseci/
+          retention-days: 14

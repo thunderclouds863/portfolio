@@ -58,3 +58,6 @@ next-env.d.ts
 
 # generated at dev/build/typecheck time (scripts/generate-routes.mjs)
 /lib/generated/
+
+# Lighthouse CI reports
+/.lighthouseci/
