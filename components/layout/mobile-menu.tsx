@@ -2,37 +2,76 @@
 
 import { MenuIcon, XIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState, type MouseEvent } from "react";
+import { Dialog as DialogPrimitive } from "radix-ui";
+import { useEffect, useRef, useState, type CSSProperties, type MouseEvent } from "react";
 
-import { Button } from "@/components/ui/button";
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetDescription,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import { cn } from "@/lib/utils";
 import { navCta, sectionNav } from "@/lib/nav";
 
 const DESKTOP_QUERY = "(min-width: 768px)";
 
-// FR-NAV-04 / PRD 8.7: full-screen overlay below 768px. Radix provides the
-// focus trap, Esc, scroll lock, aria-expanded and aria-controls on the trigger.
+/** Button size, vertical step between orbit items, how far the arc bows left. */
+const BUTTON_PX = 56;
+const STEP_PX = 54;
+const BOW_PX = 56;
+/** Approximate chip box, for drawing the orbit line through the chips' middles. */
+const CHIP_W = 112;
+const CHIP_H = 44;
+
+type OrbitItem = { key: string; href: string; label: string; id?: string; primary?: boolean };
+
+const ITEMS: readonly OrbitItem[] = [
+  ...sectionNav.map((item) => ({ key: item.id, href: item.href, label: item.label, id: item.id })),
+  { key: "cv", href: navCta.href, label: navCta.label, primary: true },
+];
+
+/**
+ * Offset of item i from the button's bottom-right corner (chips share that
+ * anchor): stacked upwards above the button, the middle of the arc bowing left.
+ */
+function orbitPosition(i: number, n: number) {
+  const t = n > 1 ? i / (n - 1) : 0;
+  return {
+    x: -Math.round(BOW_PX * Math.sin(Math.PI * t)),
+    y: -(BUTTON_PX + 10 + i * STEP_PX),
+  };
+}
+
+/** The dashed orbit: from the button centre through the middle of every chip. */
+const SVG_W = BOW_PX + CHIP_W + 20;
+const SVG_H = BUTTON_PX + 10 + ITEMS.length * STEP_PX;
+const ORBIT_D = [
+  `M${SVG_W - BUTTON_PX / 2} ${SVG_H - BUTTON_PX / 2}`,
+  ...ITEMS.map((_, i) => {
+    const p = orbitPosition(i, ITEMS.length);
+    return `L${SVG_W + p.x - CHIP_W / 2} ${SVG_H + p.y - CHIP_H / 2}`;
+  }),
+].join(" ");
+
+const buttonClass =
+  "bg-panel border-green text-green shadow-pixel hover:border-amber hover:text-amber fixed right-5 bottom-5 z-[210] inline-flex size-14 items-center justify-center border-2 md:hidden";
+
+/**
+ * Mobile navigation (owner override 4, docs/decisions/0002): a square pixel
+ * button fixed in the bottom-right corner opens the sections as an "orbit", an
+ * arc of links launched from the button. Radix Dialog provides the focus trap,
+ * Esc, scroll lock, aria-expanded/aria-controls and focus return. Links >= 44px.
+ * Under reduced motion the items appear without the launch animation.
+ */
 function MobileMenu() {
   const [open, setOpen] = useState(false);
-  // Active section when the menu opened (FR-NAV-02 indicator inside the overlay).
+  // Active section when the menu opened (FR-NAV-02 indicator inside the menu).
   const [activeId, setActiveId] = useState<string | null>(null);
+  const router = useRouter();
+  // Section id to focus once the menu has closed ("Navigating -> Closed: restore focus").
+  const pendingTarget = useRef<string | null>(null);
 
   function onOpenChange(next: boolean) {
     if (next) setActiveId(document.documentElement.dataset.activeSection ?? null);
     setOpen(next);
   }
-  const router = useRouter();
-  // Section id to focus once the menu has closed ("Navigating → Closed: restore focus").
-  const pendingTarget = useRef<string | null>(null);
 
-  // "Closed → Closed: viewport ≥ 768px" — close if the viewport grows past the breakpoint.
+  // Close if the viewport grows past the breakpoint.
   useEffect(() => {
     const mq = window.matchMedia(DESKTOP_QUERY);
     const onChange = (e: MediaQueryListEvent) => {
@@ -44,16 +83,15 @@ function MobileMenu() {
 
   function onSectionLink(event: MouseEvent<HTMLAnchorElement>, id: string, href: string) {
     const target = document.getElementById(id);
+    event.preventDefault();
     if (!target) {
       // Not on the home page: let the router navigate to "/#id" after closing.
       pendingTarget.current = null;
       setOpen(false);
-      event.preventDefault();
       router.push(href);
       return;
     }
     // Same page: close first (releases the scroll lock), then scroll and focus.
-    event.preventDefault();
     pendingTarget.current = id;
     setOpen(false);
   }
@@ -74,47 +112,79 @@ function MobileMenu() {
   }
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetTrigger asChild>
-        <Button variant="secondary" size="icon" className="md:hidden" aria-label="Open menu">
-          <MenuIcon aria-hidden="true" />
-        </Button>
-      </SheetTrigger>
-      <SheetContent onCloseAutoFocus={onCloseAutoFocus}>
-        <div className="border-green-dim flex h-(--nav-height) shrink-0 items-center justify-between border-b-2 px-4">
-          <SheetTitle>Menu</SheetTitle>
-          <SheetClose asChild>
-            <Button variant="secondary" size="icon" aria-label="Close menu">
-              <XIcon aria-hidden="true" />
-            </Button>
-          </SheetClose>
-        </div>
-        <SheetDescription>Site sections and CV link</SheetDescription>
-        <nav aria-label="Mobile" className="flex flex-1 flex-col px-4 py-8">
-          <ul className="flex flex-col gap-2">
-            {sectionNav.map((item) => (
-              <li key={item.id}>
-                <a
-                  href={item.href}
-                  onClick={(e) => onSectionLink(e, item.id, item.href)}
-                  aria-current={activeId === item.id ? "true" : undefined}
-                  className="text-green hover:text-amber aria-[current=true]:text-amber flex min-h-12 items-center font-mono text-lg decoration-2 underline-offset-8 aria-[current=true]:underline"
-                >
-                  {item.label}
-                </a>
-              </li>
-            ))}
-          </ul>
-          <div className="mt-8">
-            <Button asChild>
-              <a href={navCta.href} onClick={() => setOpen(false)}>
-                {navCta.label}
-              </a>
-            </Button>
-          </div>
-        </nav>
-      </SheetContent>
-    </Sheet>
+    <DialogPrimitive.Root open={open} onOpenChange={onOpenChange}>
+      <DialogPrimitive.Trigger className={buttonClass} aria-label="Open menu">
+        <MenuIcon aria-hidden="true" />
+      </DialogPrimitive.Trigger>
+      <DialogPrimitive.Portal>
+        {/* Radix applies the body scroll lock inside Overlay, so it must be rendered. */}
+        <DialogPrimitive.Overlay className="orbit-overlay fixed inset-0 z-[200]" />
+        <DialogPrimitive.Content
+          onCloseAutoFocus={onCloseAutoFocus}
+          className="fixed inset-0 z-[205] overflow-hidden"
+        >
+          <DialogPrimitive.Title className="sr-only">Menu</DialogPrimitive.Title>
+          <DialogPrimitive.Description className="sr-only">
+            Site sections and CV link
+          </DialogPrimitive.Description>
+
+          {/* Decorative orbit line along the arc. */}
+          <svg
+            aria-hidden="true"
+            className="orbit-path text-green-dim pointer-events-none fixed right-5 bottom-5"
+            width={SVG_W}
+            height={SVG_H}
+          >
+            <path
+              d={ORBIT_D}
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeDasharray="4 6"
+            />
+          </svg>
+
+          <nav aria-label="Mobile">
+            <ul>
+              {ITEMS.map((item, i) => {
+                const p = orbitPosition(i, ITEMS.length);
+                const style = {
+                  "--orbit-x": `${p.x}px`,
+                  "--orbit-y": `${p.y}px`,
+                  "--orbit-delay": `${i * 35}ms`,
+                } as CSSProperties;
+                const current = !!item.id && activeId === item.id;
+                return (
+                  <li key={item.key} className="orbit-item fixed right-5 bottom-5" style={style}>
+                    <a
+                      href={item.href}
+                      onClick={
+                        item.id
+                          ? (e) => onSectionLink(e, item.id!, item.href)
+                          : () => setOpen(false)
+                      }
+                      aria-current={current ? "true" : undefined}
+                      className={cn(
+                        "shadow-pixel flex min-h-11 min-w-28 items-center justify-end border-2 px-3 font-mono text-sm whitespace-nowrap",
+                        item.primary
+                          ? "bg-amber border-amber text-bg"
+                          : "bg-panel border-green text-green hover:border-amber hover:text-amber aria-[current=true]:border-amber aria-[current=true]:text-amber",
+                      )}
+                    >
+                      {item.label}
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          </nav>
+
+          <DialogPrimitive.Close className={buttonClass} aria-label="Close menu">
+            <XIcon aria-hidden="true" />
+          </DialogPrimitive.Close>
+        </DialogPrimitive.Content>
+      </DialogPrimitive.Portal>
+    </DialogPrimitive.Root>
   );
 }
 

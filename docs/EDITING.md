@@ -66,6 +66,15 @@ To replace it: in the editor open **Profile → CV PDF** and upload the new file
 Note: the file is public. Your current CV includes your phone number by your choice
 (see `docs/decisions/0002-owner-overrides.md`); remove it from the file if you change your mind.
 
+## Change the hero portrait
+
+The hero shows your real photo (`public/images/profile/desi-armanda-sari.jpg`), tinted and
+overlaid with scanlines so it blends into the theme. The photo is public.
+
+1. Replace that file with the new photo, keeping the file name. Portrait orientation works best;
+   the frame shows it at 4:5 with the face around 30% from the top.
+2. Check the hero with `npm run dev` at desktop and phone widths, then commit the file.
+
 ## Images
 
 - Use PNG, JPG/WebP or SVG. Keep thumbnails under 120 KB and other images under 500 KB.
