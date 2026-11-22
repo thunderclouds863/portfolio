@@ -238,6 +238,57 @@
   transition: transform 220ms var(--ease-pixel);
 }
 
+/* Mobile orbit menu (components/layout/mobile-menu.tsx, owner override 4).
+   Items launch from the corner button to their place on the arc: transform and
+   opacity only; the global reduced-motion rule makes this instant. */
+@keyframes orbit-launch {
+  from {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.6);
+  }
+}
+@keyframes orbit-fade {
+  from {
+    opacity: 0;
+  }
+}
+.orbit-overlay {
+  background: var(--color-bg);
+  opacity: 0.88;
+  animation: orbit-fade 160ms var(--ease-pixel) backwards;
+}
+.orbit-path {
+  animation: orbit-fade 400ms var(--ease-pixel) 120ms backwards;
+}
+.orbit-item {
+  transform: translate(var(--orbit-x), var(--orbit-y));
+  transform-origin: bottom right;
+  animation: orbit-launch 280ms var(--ease-pixel) var(--orbit-delay, 0ms) backwards;
+}
+
+/* Hero photo (owner override 2): blended into the theme, never animated.
+   Slightly see-through so the L0 grid reads through the light wall; a green
+   colour wash and CRT scanlines tie it to the palette. Token colours only. */
+.hero-photo {
+  filter: grayscale(0.3) contrast(1.08) brightness(0.82);
+  opacity: 0.9;
+}
+.hero-photo-tint {
+  background: var(--color-green);
+  mix-blend-mode: color;
+  opacity: 0.16;
+  pointer-events: none;
+}
+.hero-photo-scanlines {
+  pointer-events: none;
+  opacity: 0.35;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    var(--color-bg) 0 1px,
+    transparent 1px 3px
+  );
+}
+
 /*
  * Reveals — PRD section 7 (components/motion/reveal.tsx). Elements are hidden only
  * after hydration and only if they start below the viewport, so content is

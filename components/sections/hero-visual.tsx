@@ -1,30 +1,41 @@
+import Image from "next/image";
 import type { CSSProperties, ReactNode } from "react";
 
 import { ParallaxLayer } from "@/components/motion/parallax-layer";
 import { PointerTilt } from "@/components/motion/pointer-tilt";
+import { TypeLog } from "@/components/motion/type-log";
 import { PixelIcon } from "@/components/pixel/pixel-icon";
 import { cn } from "@/lib/utils";
 
-import { PixelPortrait } from "./pixel-portrait";
+import photo from "../../public/images/profile/desi-armanda-sari.jpg";
 
-// FR-HERO-02: the hero visual is CSS/SVG only (no raster image; the H1 stays the
-// LCP element). PRD 7 layers, by depth:
-//   L0 pixel grid      scroll 0.15, tilt 2px
-//   L1 binary + ASCII  scroll 0.35, tilt 4px
-//   L2 portrait        content: never moves
-//   L3 pixel sprites   scroll 1.15, tilt 6px (the PRD maximum)
-// Decorative layers are aria-hidden; the portrait has an accessible name.
+// Hero visual: Desi's real photo (owner override 2, docs/decisions/0002) with
+// the PRD 7 parallax layers around and in front of it. By depth:
+//   L0 pixel grid inside the frame   scroll 0.15, tilt 2px
+//   photo (content)                  never moves
+//   L1 binary columns + scanlines    scroll 0.35, tilt 4px
+//   L3 sprites + typing log          scroll 1.15, tilt 6px (PRD max), they
+//                                    overlap the frame edge for visible depth
+// Decorative layers are aria-hidden; the photo has alt text.
 
-// Plain ASCII only: box-drawing glyphs are outside the Latin font subset and fall
-// back to a font with different widths, which breaks the alignment.
+const BINARY = ["01000100", "01000101", "01010011", "01001001", "00100000", "01000001"];
+
+// FR-HERO-02 / Phase 3: the ASCII Input -> Process -> Output diagram. Plain ASCII:
+// box-drawing glyphs fall outside the font subset and break the alignment.
 const DIAGRAM = [
   "+-------+    +---------+    +--------+",
   "| INPUT |--->| PROCESS |--->| OUTPUT |",
   "+-------+    +---------+    +--------+",
 ].join("\n");
 
-const BINARY_LEFT = ["01000100", "01000101", "01010011", "01001001", "00100000", "01000001"];
-const BINARY_RIGHT = ["01010011", "01011001", "01010011", "00101110", "01000001", "01001110"];
+// Decorative terminal log (types once on load). Generic, no claims.
+const LOG = [
+  { text: "$ whoami", tone: "prompt" },
+  { text: "desi --role system-analyst", tone: "output" },
+  { text: "$ map --process as-is", tone: "prompt" },
+  { text: "$ build --system && verify", tone: "prompt" },
+  { text: "ok: ready to ship", tone: "ok" },
+] as const;
 
 /** Inner wrapper that follows the pointer tilt by `depth` px (max 6). */
 function Tilt({
@@ -45,25 +56,26 @@ function Tilt({
 
 function HeroVisual({ className }: { className?: string }) {
   return (
-    <PointerTilt className={cn("relative w-full", className)}>
-      <div className="bg-panel border-green shadow-pixel relative isolate aspect-square w-full overflow-hidden border-2 select-none">
+    <PointerTilt className={cn("relative w-full px-4 pb-10 sm:px-6", className)}>
+      {/* The framed photo. */}
+      <div className="bg-panel border-green shadow-pixel relative isolate aspect-[4/5] w-full overflow-hidden border-2">
         {/* Title bar (decorative), like the terminal frames elsewhere. */}
         <div
           aria-hidden="true"
           className="border-green-dim text-green-dim bg-panel absolute inset-x-0 top-0 z-30 flex items-center justify-between border-b-2 px-3 py-1.5 font-mono text-[11px]"
         >
-          <span>{"> render portrait --pixel"}</span>
+          <span>{"> open portrait.jpg"}</span>
           <span>[_][o][x]</span>
         </div>
 
-        {/* L0 — pixel grid. Taller than the frame so moving down leaves no gap. */}
+        {/* L0 — pixel grid behind the photo's light wall, seen through the tint. */}
         <ParallaxLayer
           speed={0.15}
           layer="L0"
           className="absolute inset-x-0 -top-32 bottom-0 -z-10"
         >
           <Tilt depth={2} className="size-full">
-            <svg aria-hidden="true" className="text-green-dim/50 size-full">
+            <svg aria-hidden="true" className="text-green-dim/60 size-full">
               <defs>
                 <pattern id="hero-grid" width="16" height="16" patternUnits="userSpaceOnUse">
                   <path d="M16 0H0V16" fill="none" stroke="currentColor" strokeWidth="1" />
@@ -74,54 +86,66 @@ function HeroVisual({ className }: { className?: string }) {
           </Tilt>
         </ParallaxLayer>
 
-        {/* L1 — binary columns and the process diagram, behind the portrait. */}
-        <ParallaxLayer speed={0.35} layer="L1" className="absolute inset-0 -z-[5]">
+        {/* The photo: content, so it never moves. Slightly see-through and
+            colour-tinted so the grid and theme read through the light wall. */}
+        <Image
+          src={photo}
+          alt="Portrait of Desi Armanda Sari"
+          priority
+          fetchPriority="high"
+          sizes="(min-width: 1200px) 440px, (min-width: 1024px) 38vw, 90vw"
+          className="hero-photo absolute inset-0 size-full object-cover object-[50%_30%]"
+        />
+        <div aria-hidden="true" className="hero-photo-tint absolute inset-0" />
+
+        {/* L1 — binary columns and CRT scanlines over the photo edges. */}
+        <ParallaxLayer
+          speed={0.35}
+          layer="L1"
+          className="pointer-events-none absolute inset-0 z-10"
+        >
           <Tilt depth={4} className="size-full">
             <div aria-hidden="true" className="relative size-full font-mono">
-              {/* Diagram in the band between the title bar and the head. */}
-              <pre className="text-green absolute inset-x-0 top-11 text-center text-[9px] leading-tight sm:text-[10px]">
+              <div className="text-green absolute top-[42%] right-3 flex flex-col items-end gap-1 text-[10px] leading-4">
+                {BINARY.map((line, i) => (
+                  <span key={i}>{line}</span>
+                ))}
+              </div>
+            </div>
+          </Tilt>
+        </ParallaxLayer>
+        <div aria-hidden="true" className="hero-photo-scanlines absolute inset-0 z-20" />
+      </div>
+
+      {/* L3 — near layer, outside the frame's clip so it overlaps the edges. */}
+      <ParallaxLayer speed={1.15} layer="L3" className="pointer-events-none absolute inset-0 z-40">
+        <Tilt depth={6} className="size-full">
+          <div className="relative size-full">
+            {/* The process diagram on its own panel (contrast), over the top-right edge. */}
+            <div
+              aria-hidden="true"
+              className="bg-panel border-green-dim absolute top-12 right-0 border-2 font-mono"
+            >
+              <div className="border-green-dim text-green-dim border-b-2 px-2 py-0.5 text-[10px]">
+                process.map
+              </div>
+              <pre className="text-green px-2 py-1.5 text-[8px] leading-tight sm:text-[9px]">
                 {DIAGRAM}
               </pre>
-              {/* Binary columns below the corner sprites, beside the shoulders. */}
-              <div className="text-green-dim absolute top-[34%] left-3 flex flex-col gap-1 text-[10px] leading-4 opacity-80">
-                {BINARY_LEFT.map((line, i) => (
-                  <span key={`l${i}`}>{line}</span>
-                ))}
-              </div>
-              <div className="text-green-dim absolute top-[34%] right-3 flex flex-col items-end gap-1 text-[10px] leading-4 opacity-80">
-                {BINARY_RIGHT.map((line, i) => (
-                  <span key={`r${i}`}>{line}</span>
-                ))}
-              </div>
             </div>
-          </Tilt>
-        </ParallaxLayer>
-
-        {/* L2 — the portrait: content, so it never moves. */}
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex justify-center">
-          <PixelPortrait className="w-[78%]" />
-        </div>
-
-        {/* L3 — pixel sprites around the edges (never over the face). */}
-        <ParallaxLayer speed={1.15} layer="L3" className="absolute inset-0 z-20">
-          <Tilt depth={6} className="size-full">
-            <div aria-hidden="true" className="relative size-full">
-              <div className="text-green absolute top-12 left-4">
-                <PixelIcon name="cursor" size={24} />
-              </div>
-              <div className="text-amber absolute bottom-6 left-4">
-                <PixelIcon name="floppy" size={32} />
-              </div>
-              <div className="text-green absolute top-12 right-4 hidden sm:block">
-                <PixelIcon name="gear" size={24} />
-              </div>
-              <div className="text-green absolute right-4 bottom-6">
-                <PixelIcon name="arrow" size={24} />
-              </div>
+            <TypeLog lines={LOG} className="absolute bottom-0 left-0 w-[min(17rem,78%)]" />
+            <div aria-hidden="true" className="text-amber absolute top-10 left-0">
+              <PixelIcon name="floppy" size={32} />
             </div>
-          </Tilt>
-        </ParallaxLayer>
-      </div>
+            <div aria-hidden="true" className="text-green absolute top-1/3 right-0">
+              <PixelIcon name="gear" size={24} />
+            </div>
+            <div aria-hidden="true" className="text-green absolute right-2 bottom-16">
+              <PixelIcon name="arrow" size={24} />
+            </div>
+          </div>
+        </Tilt>
+      </ParallaxLayer>
     </PointerTilt>
   );
 }
