@@ -99,7 +99,7 @@ function Contact({ profile, settings }: ContactProps) {
         </div>
 
         <TerminalFrame title="contact.sh" thick className="lg:col-span-7">
-          <ContactForm />
+          <ContactForm fallbackEmail={links.find((l) => l.icon === "email")?.url ?? null} />
         </TerminalFrame>
       </Reveal>
     </Section>

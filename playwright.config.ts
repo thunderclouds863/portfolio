@@ -36,7 +36,13 @@ export default defineConfig({
       reuseExistingServer: false,
       timeout: 240_000,
       // Build the dev-only /styleguide route into the test build.
-      env: { ENABLE_STYLEGUIDE: "1" },
+      env: {
+        ENABLE_STYLEGUIDE: "1",
+        // Contact form: dummy Turnstile token accepted, Resend simulated (lib/test-mode.ts).
+        CONTACT_TEST_MODE: "1",
+        // Cloudflare test sitekey (always passes); the browser script is faked in tests.
+        NEXT_PUBLIC_TURNSTILE_SITE_KEY: "1x00000000000000000000AA",
+      },
     },
     {
       command: `npx next dev -p ${DEV_PORT}`,

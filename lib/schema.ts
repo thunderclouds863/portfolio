@@ -232,20 +232,28 @@ export const RecommendationSchema = z.object({
 
 // ── Contact message (transient, never persisted — PRD 8.5, FR-CF-01) ───────
 
-export const ContactMessageSchema = z.object({
+/** The fields a visitor fills in. Shared by the client form and the Server Action (FR-CF-02). */
+export const ContactFieldsSchema = z.object({
   name: z
     .string()
     .trim()
-    .min(2, "Name must be 2–80 characters")
-    .max(80, "Name must be 2–80 characters"),
-  email: z.email({ error: "Enter a valid email address" }),
-  type: InquiryType,
+    .min(2, "Name must be 2 to 80 characters.")
+    .max(80, "Name must be 2 to 80 characters."),
+  email: z.email({ error: "Enter a valid email address." }),
+  type: InquiryType.or(z.literal("")).refine((v) => v !== "", "Choose an inquiry type."),
   message: z
     .string()
     .trim()
-    .min(20, "Message must be 20–2000 characters")
-    .max(2000, "Message must be 20–2000 characters"),
-  consent: z.literal(true, { error: "Please accept the privacy notice" }),
+    .min(20, "Message must be 20 to 2000 characters.")
+    .max(2000, "Message must be 20 to 2000 characters."),
+  consent: z.literal(true, { error: "Please agree so the message can be answered." }),
+});
+
+export type ContactFields = z.infer<typeof ContactFieldsSchema>;
+export type ContactField = keyof ContactFields;
+
+/** Full transient message (PRD 8.5): fields + bot-protection data. Never persisted. */
+export const ContactMessageSchema = ContactFieldsSchema.extend({
   turnstileToken: z.string(),
   honeypot: z.string(),
   renderedAt: z.number().int(),
