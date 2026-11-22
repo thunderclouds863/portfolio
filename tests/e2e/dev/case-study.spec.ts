@@ -48,8 +48,12 @@ test.describe("case-study layout (1280px)", () => {
     await expect(snapshot).toContainText(
       "HR's overtime recap time went from about 4 hours to about 5 minutes.",
     );
+    // Published: sections that only hold TODO(content) are hidden until filled.
+    const empty = ["Solution design", "Verification"];
     for (const name of TEMPLATE_HEADINGS) {
-      await expect(page.getByRole("heading", { level: 2, name, exact: true })).toBeVisible();
+      const heading = page.getByRole("heading", { level: 2, name, exact: true });
+      if (empty.includes(name)) await expect(heading).toHaveCount(0);
+      else await expect(heading).toBeVisible();
     }
     await expect(page.getByRole("link", { name: "< back to projects" })).toHaveAttribute(
       "href",
@@ -119,16 +123,16 @@ test("/projects lists every draft project and the filter hides non-matching ones
   await expect(items).toHaveCount(SLUGS.length);
   await expect(items.filter({ visible: true })).toHaveCount(SLUGS.length);
   const filters = page.getByRole("navigation", { name: "Filter projects by capability" });
-  // Only FPTK (published) has capabilities so far: analysis, development, data.
+  // Only the published projects have capabilities so far:
+  // FPTK (analysis, development, data) and Overtime (process, development).
   await filters.getByRole("link", { name: /Analysis/ }).click();
   await expect(page).toHaveURL(/capability=analysis/);
   await expect(items.filter({ visible: true })).toHaveCount(1);
   await expect(items.filter({ visible: true })).toContainText("FPTK & Sourcing Database");
-  // A capability no project has yet leaves nothing visible, with a status message.
   await filters.getByRole("link", { name: /Process/ }).click();
   await expect(page).toHaveURL(/capability=process/);
-  await expect(items.filter({ visible: true })).toHaveCount(0);
-  await expect(page.getByRole("status")).toHaveText("No projects in this category yet.");
+  await expect(items.filter({ visible: true })).toHaveCount(1);
+  await expect(items.filter({ visible: true })).toContainText("Overtime Management System");
 });
 
 // PRD 12: project card -> detail -> back, at desktop and phone widths.
