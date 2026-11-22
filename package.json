@@ -16,8 +16,7 @@
     "test:e2e": "playwright test",
     "content:check": "vitest run tests/content",
     "links:check": "node scripts/check-links.mjs",
-    "deploy:check": "node scripts/post-deploy-check.mjs",
-    "cv:pdf": "node scripts/generate-cv-pdf.mjs"
+    "deploy:check": "node scripts/post-deploy-check.mjs"
   },
   "dependencies": {
     "@keystatic/core": "0.6.10",
