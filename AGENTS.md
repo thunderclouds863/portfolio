@@ -2,6 +2,8 @@
 
 ## Source of truth
 - Product requirements: docs/PRD.md. Diagrams: docs/uml/.
+- docs/PRD.md and docs/intake/ are local-only (git-ignored; the repo is public). If they are
+  missing (fresh clone, cloud session, CI), stop and ask Desi for them; do not work from memory.
 - If a request conflicts with the PRD, stop and ask. Do not silently diverge.
 
 ## Role

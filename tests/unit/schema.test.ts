@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   ContactMessageSchema,
+  ContactMetaSchema,
   ExperienceSchema,
   ProjectSchema,
   RecommendationSchema,
@@ -205,11 +206,13 @@ describe("ContactMessageSchema (FR-CF-01)", () => {
     consent: true,
     turnstileToken: "token",
     honeypot: "",
-    renderedAt: 1_700_000_000_000,
+    elapsedMs: "4200", // FormData sends strings
   };
 
   it("accepts a valid message", () => {
-    expect(ContactMessageSchema.safeParse(valid).success).toBe(true);
+    const result = ContactMessageSchema.safeParse(valid);
+    expect(result.success).toBe(true);
+    expect(result.data?.elapsedMs).toBe(4200);
   });
 
   it.each([
@@ -220,6 +223,31 @@ describe("ContactMessageSchema (FR-CF-01)", () => {
     ["type", { type: "spam" }],
   ])("rejects invalid %s", (field, patch) => {
     expect(issuePaths(ContactMessageSchema.safeParse({ ...valid, ...patch }))).toContain(field);
+  });
+});
+
+describe("ContactMetaSchema (FR-CF-03)", () => {
+  it("reads FormData values", () => {
+    expect(
+      ContactMetaSchema.parse({ honeypot: "", elapsedMs: "3500", turnstileToken: "abc" }),
+    ).toEqual({ honeypot: "", elapsedMs: 3500, turnstileToken: "abc" });
+  });
+
+  it("never throws: missing or malformed values fail the matching check", () => {
+    // FormData.get returns null for a missing field, or a File for a file input.
+    const file = new Blob(["x"]);
+    expect(
+      ContactMetaSchema.parse({ honeypot: null, elapsedMs: null, turnstileToken: null }),
+    ).toEqual({
+      honeypot: "",
+      elapsedMs: 0,
+      turnstileToken: "",
+    });
+    const odd = ContactMetaSchema.parse({ honeypot: file, elapsedMs: "abc", turnstileToken: file });
+    expect(odd.elapsedMs).toBe(-1); // treated as "too fast"
+    expect(odd.turnstileToken).toBe(""); // treated as "no token"
+    expect(ContactMetaSchema.parse({ elapsedMs: "-5" }).elapsedMs).toBe(-1);
+    expect(ContactMetaSchema.parse({ turnstileToken: "x".repeat(2049) }).turnstileToken).toBe("");
   });
 });
 

@@ -65,9 +65,14 @@ function CaseStudySnapshot({ project }: { project: ProjectView }) {
               {project.outcomes.map((o) => (
                 <li key={o.statement}>
                   <Val value={o.statement} what="outcome" />
+                  {/* PRD 14: a number without evidence must not read as a proven fact. */}
                   {o.verified && isFilled(o.evidence) ? (
                     <span className="text-meta text-muted block">evidence: {o.evidence}</span>
-                  ) : null}
+                  ) : (
+                    <span className="text-meta text-muted block" data-outcome-unverified="">
+                      self-reported
+                    </span>
+                  )}
                 </li>
               ))}
             </ul>
