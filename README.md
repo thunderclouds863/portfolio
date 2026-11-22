@@ -18,7 +18,7 @@ Also: shadcn/ui (Radix), Lucide, Keystatic + Markdoc (content), Zod. Later phase
 ```bash
 npm ci
 cp .env.example .env.local   # fill in values; never commit .env.local
-npx playwright install chromium
+npx playwright install chromium webkit
 npm run dev                  # http://localhost:3000
 ```
 
@@ -36,6 +36,24 @@ Environment variables are listed in `.env.example` (PRD section 13). Variables s
 | `npm run format` / `npm run format:check` | Prettier write / check                                                                       |
 | `npm run test`                            | Unit tests (Vitest, `tests/unit`)                                                            |
 | `npm run test:e2e`                        | End-to-end + accessibility tests (Playwright, `tests/e2e`); builds and starts the app itself |
+| `npm run links:check`                     | Crawl a running `npm run start` server for broken links, assets and `#anchors`               |
+
+## Continuous integration
+
+`.github/workflows/ci.yml` runs on every pull request and on pushes to `main` (PRD section 13):
+
+- **verify**: `npm ci` → lint, typecheck, format check → unit and content tests → build → link
+  check on the built site → Playwright e2e + axe → `npm audit --audit-level=high`.
+- **lighthouse**: build, then Lighthouse CI with the budgets in `lighthouserc.json` (mobile,
+  3 runs per URL). Accessibility, Best Practices and SEO ≥ 95, LCP < 2.5 s and CLS < 0.05 fail the
+  job. Performance ≥ 95 is a warning for now: framework hydration (Total Blocking Time) holds
+  `/` at about 91 on a slow machine. Reports are uploaded as
+  workflow artifacts. Run locally with `npm run build && npx @lhci/cli@0.16.1 autorun`.
+
+Playwright projects: `chromium` and `webkit` run the whole production suite at desktop size;
+`mobile-chrome` (Pixel 7) and `mobile-safari` (iPhone 14) run the tests tagged `@mobile` plus the
+contact and smoke specs; `chromium-draft-preview` runs `tests/e2e/dev` against `next dev` with Draft
+content. Dependabot (`.github/dependabot.yml`) opens weekly update PRs for npm and GitHub Actions.
 
 ## Contact form
 

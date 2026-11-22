@@ -104,10 +104,11 @@ test.describe("home sections (1280px)", () => {
   });
 });
 
-test.describe("mobile (375px)", () => {
+test.describe("mobile (375px)", { tag: "@mobile" }, () => {
   test.use({ viewport: { width: 375, height: 812 } });
 
   test("mobile menu links reach each section and focus its heading", async ({ page }) => {
+    test.slow(); // seven open/navigate/close round trips; WebKit mobile is slow
     await page.goto("/");
     for (const s of SECTIONS) {
       await page.locator('button[aria-label="Open menu"]').click();

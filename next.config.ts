@@ -1,6 +1,10 @@
 import type { NextConfig } from "next";
 
 const isDev = process.env.NODE_ENV === "development";
+// Safari/WebKit applies upgrade-insecure-requests to http://localhost too, which
+// rewrites every asset to https://localhost and breaks a local production build
+// (and the WebKit e2e run). Send it only when the site itself is served over HTTPS.
+const isHttpsSite = (process.env.NEXT_PUBLIC_SITE_URL ?? "").startsWith("https://");
 
 // PRD section 10. 'unsafe-inline' scripts are accepted because nonces force
 // dynamic rendering. 'unsafe-eval' is added in development only (React dev
@@ -28,7 +32,7 @@ function buildCsp({ admin = false } = {}) {
     "base-uri 'self'",
     "form-action 'self'",
     "object-src 'none'",
-    ...(isDev ? [] : ["upgrade-insecure-requests"]),
+    ...(!isDev && isHttpsSite ? ["upgrade-insecure-requests"] : []),
   ].join("; ");
 }
 

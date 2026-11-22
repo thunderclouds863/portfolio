@@ -5,7 +5,7 @@ import { revealAll } from "./helpers";
 
 // Phase 5 — secondary routes on the production build (Published content only).
 
-test.describe("404", () => {
+test.describe("404", { tag: "@mobile" }, () => {
   test("unknown URL returns HTTP 404 with the GAME OVER page", async ({ page }) => {
     const response = await page.goto("/this-page-does-not-exist");
     expect(response?.status()).toBe(404);
@@ -39,8 +39,12 @@ test.describe("/projects", () => {
       "true",
     );
 
-    await filters.getByRole("link", { name: /Process/ }).click();
-    await expect(page).toHaveURL(/\/projects\?capability=process$/);
+    // A click that lands while the page is still hydrating (slow WebKit runs) can
+    // be dropped by the router; click again until the URL changes.
+    await expect(async () => {
+      await filters.getByRole("link", { name: /Process/ }).click();
+      await expect(page).toHaveURL(/\/projects\?capability=process$/, { timeout: 2000 });
+    }).toPass();
     await expect(filters.getByRole("link", { name: /Process/ })).toHaveAttribute(
       "aria-current",
       "true",
@@ -79,7 +83,29 @@ test.describe("/cv", () => {
     }
   });
 
-  test("print preview is clean: white page, dark text, no chrome or effects", async ({ page }) => {
+  // PRD 12 / FR-CV-02. Until the CV PDF is published the page shows a MISSING
+  // marker instead of a link; once it is, the link must download a real PDF
+  // under the agreed file name. Either way there is never a broken link.
+  test("CV download link serves the PDF (or shows MISSING until it exists)", async ({
+    page,
+    request,
+  }) => {
+    await page.goto("/cv");
+    const link = page.getByRole("link", { name: "[ Download PDF ]" });
+    if ((await link.count()) === 0) {
+      await expect(page.getByText(/MISSING: CV PDF/)).toBeVisible();
+      return;
+    }
+    await expect(link).toHaveAttribute("download", "desi-armanda-sari-cv.pdf");
+    const res = await request.get((await link.getAttribute("href"))!);
+    expect(res.status()).toBe(200);
+    expect(res.headers()["content-type"]).toContain("application/pdf");
+  });
+
+  test("print preview is clean: white page, dark text, no chrome or effects", async ({
+    page,
+    browserName,
+  }) => {
     await page.goto("/cv");
     await page.emulateMedia({ media: "print" });
     await expect(page.locator("body")).toHaveCSS("background-color", "rgb(255, 255, 255)");
@@ -96,7 +122,8 @@ test.describe("/cv", () => {
         .filter((c) => c !== "rgb(5, 5, 5)"),
     );
     expect(offColours).toEqual([]);
-    // A real PDF renders (A4).
+    // A real PDF renders (A4). page.pdf() exists in headless Chromium only.
+    if (browserName !== "chromium") return;
     const pdf = await page.pdf({ format: "A4", printBackground: true });
     expect(pdf.byteLength).toBeGreaterThan(1000);
     await test.info().attach("cv-print.pdf", { body: pdf, contentType: "application/pdf" });
@@ -133,15 +160,19 @@ test.describe("lightbox (styleguide demo)", () => {
 });
 
 for (const path of ["/projects", "/cv", "/privacy", "/this-page-does-not-exist"]) {
-  test(`${path} has no serious or critical axe violations`, async ({ page }) => {
-    await page.goto(path);
-    await revealAll(page);
-    const results = await new AxeBuilder({ page }).analyze();
-    const serious = results.violations.filter(
-      (v) => v.impact === "serious" || v.impact === "critical",
-    );
-    expect(serious).toEqual([]);
-  });
+  test(
+    `${path} has no serious or critical axe violations`,
+    { tag: "@mobile" },
+    async ({ page }) => {
+      await page.goto(path);
+      await revealAll(page);
+      const results = await new AxeBuilder({ page }).analyze();
+      const serious = results.violations.filter(
+        (v) => v.impact === "serious" || v.impact === "critical",
+      );
+      expect(serious).toEqual([]);
+    },
+  );
 }
 
 for (const width of [320, 1280]) {

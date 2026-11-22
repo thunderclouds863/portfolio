@@ -14,7 +14,8 @@
     "format:check": "prettier --check .",
     "test": "vitest run",
     "test:e2e": "playwright test",
-    "content:check": "vitest run tests/content"
+    "content:check": "vitest run tests/content",
+    "links:check": "node scripts/check-links.mjs"
   },
   "dependencies": {
     "@keystatic/core": "0.6.10",
