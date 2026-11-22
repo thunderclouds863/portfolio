@@ -50,7 +50,7 @@ export default async function ProjectsPage() {
         <Reveal as="ul" stagger data-project-list="" className="flex flex-col gap-10">
           {projects.map((project, i) => (
             <li key={project.slug} data-caps={values[i]}>
-              <ProjectCard project={project} headingLevel="h2" />
+              <ProjectCard project={project} headingLevel="h2" lcp={i === 0} />
             </li>
           ))}
         </Reveal>
