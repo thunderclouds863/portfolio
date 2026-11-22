@@ -1,4 +1,4 @@
-status: draft
+status: published
 name: Desi Armanda Sari
 headline: System Analyst who builds what the business actually needs.
 subheadline: System Analyst · Business Process Improvement · Data Analysis & Reporting
@@ -48,3 +48,4 @@ publications:
     venue: E-Journal Undip
     date: "2025-06-24"
     url: https://ejournal3.undip.ac.id/index.php/ieoj/article/view/51957/33938
+cvPdf: /cv/desi-armanda-sari-cv.pdf
