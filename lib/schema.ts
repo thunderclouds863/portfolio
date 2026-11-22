@@ -279,12 +279,23 @@ export const ContactFieldsSchema = z.object({
 export type ContactFields = z.infer<typeof ContactFieldsSchema>;
 export type ContactField = keyof ContactFields;
 
-/** Full transient message (PRD 8.5): fields + bot-protection data. Never persisted. */
-export const ContactMessageSchema = ContactFieldsSchema.extend({
-  turnstileToken: z.string(),
-  honeypot: z.string(),
-  renderedAt: z.number().int(),
+/**
+ * Bot-protection data the form posts next to the fields (FR-CF-03). Read on the
+ * server only. Never throws: anything malformed falls back to the value that
+ * fails the matching check (no token, "too fast"), so a bot gets no error detail.
+ */
+export const ContactMetaSchema = z.object({
+  honeypot: z.string().catch(""),
+  // Milliseconds between the form appearing and the submit. Reported by the
+  // browser, so a bot can fake it: a UX guard against instant autofill submits,
+  // not a security boundary (Turnstile is).
+  elapsedMs: z.coerce.number().finite().nonnegative().catch(-1),
+  // Cloudflare documents a 2048-character maximum for Turnstile tokens.
+  turnstileToken: z.string().max(2048).catch(""),
 });
+
+/** Full transient message (PRD 8.5): fields + bot-protection data. Never persisted. */
+export const ContactMessageSchema = ContactFieldsSchema.extend(ContactMetaSchema.shape);
 
 // ── Types ───────────────────────────────────────────────────────────────────
 
@@ -296,7 +307,6 @@ export type Project = z.infer<typeof ProjectSchema>;
 export type Outcome = z.infer<typeof OutcomeSchema>;
 export type Skill = z.infer<typeof SkillSchema>;
 export type Recommendation = z.infer<typeof RecommendationSchema>;
-export type ContactMessage = z.infer<typeof ContactMessageSchema>;
 
 // ── Collection-level checks ─────────────────────────────────────────────────
 

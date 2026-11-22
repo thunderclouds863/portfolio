@@ -31,7 +31,11 @@ function TestimonialCard({ item, large = false, className }: TestimonialCardProp
       )}
     >
       <blockquote
-        className={cn("flex flex-col gap-3", large ? "text-lg text-white" : "text-muted")}
+        className={cn(
+          "flex flex-col gap-3",
+          // The lead quote spans the full row; keep its lines readable (PRD 6: max 68ch).
+          large ? "max-w-[68ch] text-lg text-white" : "text-muted",
+        )}
       >
         {paragraphs.map((p, i) => (
           <p key={i}>

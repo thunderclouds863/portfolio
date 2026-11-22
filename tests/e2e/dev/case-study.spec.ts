@@ -167,3 +167,16 @@ test("a featured card on the home page opens its case study", async ({ page }) =
   await page.goBack();
   await expect(page).toHaveURL(/\/#projects$|\/$/);
 });
+
+// PRD 14: numbers without evidence are labelled, never shown as proven facts.
+test("outcomes show evidence when verified and 'self-reported' otherwise", async ({ page }) => {
+  await page.goto("/projects/overtime-management-system");
+  const verified = page.getByRole("region", { name: "Project snapshot" });
+  await expect(verified.getByText(/^evidence: /)).toBeVisible();
+  await expect(verified.locator("[data-outcome-unverified]")).toHaveCount(0);
+
+  await page.goto("/projects/fptk-sourcing-database");
+  const unverified = page.getByRole("region", { name: "Project snapshot" });
+  await expect(unverified.locator("[data-outcome-unverified]")).toHaveText("self-reported");
+  await expect(unverified.getByText(/^evidence: /)).toHaveCount(0);
+});
