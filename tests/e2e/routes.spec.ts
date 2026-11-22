@@ -137,6 +137,8 @@ test.describe("/privacy", () => {
     for (const item of ["Your name", "Your email address", "Your message"]) {
       await expect(page.getByText(item, { exact: true })).toBeVisible();
     }
+    // The server forwards the visitor's IP to Turnstile (app/actions/contact.ts).
+    await expect(page.getByText(/Your IP address and browser signals/)).toBeVisible();
     for (const processor of ["Vercel", "Resend", "Cloudflare Turnstile"]) {
       await expect(page.locator("strong", { hasText: processor })).toBeVisible();
     }

@@ -55,6 +55,9 @@ export default async function PrivacyPage() {
           <li>The type of inquiry you choose</li>
           <li>Your message</li>
           <li>Your agreement to this notice (the consent checkbox)</li>
+          <li>
+            Your IP address and browser signals, which Cloudflare Turnstile uses for the bot check
+          </li>
         </ul>
       </Part>
 

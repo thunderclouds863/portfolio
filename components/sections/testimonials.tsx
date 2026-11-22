@@ -10,8 +10,10 @@ import { Section } from "./section";
 
 const MAX_ON_HOME = 6; // FR-TST-01
 
-// FR-TST-01: up to 6 items, asymmetric (one large quote, smaller ones beside it),
-// newest first, link to /testimonials. Hidden entirely when there is nothing to show.
+// FR-TST-01: up to 6 items, asymmetric, newest first, link to /testimonials.
+// Hidden entirely when there is nothing to show. Composition: a full-width lead
+// quote with the rest in two columns beneath it, so it does not repeat the
+// Capabilities layout (one large block beside two stacked ones; PRD 14).
 // The "Write a testimonial" button (site submissions, source B) arrives with the
 // Supabase + LinkedIn sign-in setup.
 function Testimonials({ items, number }: { items: RecommendationView[]; number: string }) {
@@ -26,7 +28,7 @@ function Testimonials({ items, number }: { items: RecommendationView[]; number: 
             key={item.slug}
             item={item}
             large={index === 0}
-            className={cn(index === 0 ? "lg:col-span-7 lg:row-span-2" : "lg:col-span-5")}
+            className={cn(index === 0 ? "lg:col-span-12" : "lg:col-span-6")}
           />
         ))}
       </Reveal>

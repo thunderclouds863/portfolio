@@ -1,7 +1,9 @@
 # Desi Armanda Sari — Portfolio
 
 Personal portfolio for Desi Armanda Sari (System Analyst · Business Process Improvement · System Development).
-Requirements: [`docs/PRD.md`](docs/PRD.md). Diagrams: [`docs/uml/`](docs/uml). Agent rules: [`AGENTS.md`](AGENTS.md).
+Requirements: `docs/PRD.md`, kept on the owner's machine only (it holds a personal content
+inventory, so it is git-ignored in this public repository). Diagrams: [`docs/uml/`](docs/uml).
+Agent rules: [`AGENTS.md`](AGENTS.md).
 
 ## Stack
 

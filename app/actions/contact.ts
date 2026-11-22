@@ -5,6 +5,7 @@ import { headers } from "next/headers";
 import { HONEYPOT_FIELD, MIN_FILL_MS, readContactFields, type ContactState } from "@/lib/contact";
 import { validateContactFields } from "@/lib/contact-validation";
 import { sendContactEmail } from "@/lib/email";
+import { ContactMetaSchema } from "@/lib/schema";
 import { verifyTurnstile } from "@/lib/turnstile";
 
 /**
@@ -20,13 +21,18 @@ import { verifyTurnstile } from "@/lib/turnstile";
  * The message is never stored and never logged (PRD 10).
  */
 export async function sendContact(form: FormData): Promise<ContactState> {
-  const honeypot = form.get(HONEYPOT_FIELD);
-  if (typeof honeypot === "string" && honeypot.trim() !== "") {
+  // Shared Zod schemas for everything the form posts (AGENTS.md): the
+  // bot-protection data here, the visitor's fields below.
+  const meta = ContactMetaSchema.parse({
+    honeypot: form.get(HONEYPOT_FIELD),
+    elapsedMs: form.get("elapsedMs"),
+    turnstileToken: form.get("turnstileToken"),
+  });
+  if (meta.honeypot.trim() !== "") {
     return { status: "success" };
   }
 
-  const elapsed = Number(form.get("elapsedMs"));
-  if (!Number.isFinite(elapsed) || elapsed < MIN_FILL_MS) {
+  if (meta.elapsedMs < MIN_FILL_MS) {
     return { status: "too_fast" };
   }
 
@@ -35,8 +41,7 @@ export async function sendContact(form: FormData): Promise<ContactState> {
 
   const requestHeaders = await headers();
   const remoteIp = requestHeaders.get("x-forwarded-for")?.split(",")[0]?.trim() || null;
-  const token = form.get("turnstileToken");
-  const verification = await verifyTurnstile(typeof token === "string" ? token : null, remoteIp);
+  const verification = await verifyTurnstile(meta.turnstileToken || null, remoteIp);
   if (!verification.ok) return { status: "verification_failed" };
 
   const { name, email, type, message } = validation.data;
