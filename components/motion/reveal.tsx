@@ -48,7 +48,12 @@ function Reveal({ as: Comp = "div", stagger = false, className, children, ...res
         el.dataset.reveal = "shown";
         observer.disconnect();
       },
-      { rootMargin: "0px 0px -10% 0px" },
+      // The top margin stretches the root far above the viewport, so an element
+      // that a fast scroll (fling, End key, anchor jump) carries from below the
+      // viewport straight to above it still counts as intersecting and is shown.
+      // Without it, "not intersecting" -> "not intersecting" fires no callback
+      // and the element would stay hidden for good.
+      { rootMargin: "100000px 0px -10% 0px" },
     );
     observer.observe(el);
     return () => observer.disconnect();
