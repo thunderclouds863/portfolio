@@ -5,6 +5,7 @@ import {
   collectImageSources,
   collectText,
   extractHeadings,
+  pruneTodoSections,
   slugify,
   validateMarkdoc,
 } from "@/lib/markdoc";
@@ -73,5 +74,54 @@ describe("headings and text", () => {
       parse(`{% Figure src="/a.png" alt="a" /%}\n\n{% Diagram src="/b.svg" alt="b" /%}`),
     );
     expect(sources).toEqual(["/a.png", "/b.svg"]);
+  });
+});
+
+describe("pruneTodoSections (published case studies: hide empty sections)", () => {
+  const source = [
+    "## Context",
+    "",
+    "Real context paragraph.",
+    "",
+    "## Verification",
+    "",
+    "TODO(content): how it was tested",
+    "",
+    "## Build",
+    "",
+    "TODO(content): screenshots",
+    "",
+    "Built with Python.",
+    "",
+    "### Details",
+    "",
+    "TODO(content): details",
+    "",
+    "## Reflection",
+    "",
+    "- TODO(content): a list item stays",
+  ].join("\n");
+
+  it("removes TODO paragraphs and headings left empty, keeps the rest", () => {
+    const pruned = pruneTodoSections(parse(source));
+    const headings = extractHeadings(pruned).map((h) => h.title);
+    expect(headings).toEqual(["Context", "Build", "Reflection"]);
+    const text = collectText(pruned).join(" ");
+    expect(text).toContain("Real context paragraph.");
+    expect(text).toContain("Built with Python.");
+    expect(text).not.toContain("how it was tested");
+    expect(text).not.toContain("screenshots");
+  });
+
+  it("keeps a TODO that is not a whole paragraph, so the content gate still fails", () => {
+    const pruned = pruneTodoSections(parse(source));
+    expect(collectText(pruned).some((t) => t.includes("TODO(content): a list item stays"))).toBe(
+      true,
+    );
+  });
+
+  it("leaves a document without TODOs unchanged", () => {
+    const clean = parse("## A\n\nOne.\n\n## B\n\nTwo.");
+    expect(extractHeadings(pruneTodoSections(clean)).map((h) => h.title)).toEqual(["A", "B"]);
   });
 });

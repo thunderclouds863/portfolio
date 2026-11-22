@@ -32,9 +32,15 @@ function CaseStudySnapshot({ project }: { project: ProjectView }) {
             <span className="text-yellow">{scopeLabel[project.contribution]}</span>
           )}
         </Row>
-        <Row label="team size">
-          {project.teamSize ? project.teamSize : <Missing what="team size (IN-05)" />}
-        </Row>
+        {/* Team size is optional: a Published project without one skips the row
+            ("hide until filled"); drafts show the gap. */}
+        {project.teamSize ? (
+          <Row label="team size">{project.teamSize}</Row>
+        ) : project.isDraft ? (
+          <Row label="team size">
+            <Missing what="team size (IN-05)" />
+          </Row>
+        ) : null}
         <Row label="period">
           <Val value={project.period} what="period (IN-05)" />
         </Row>

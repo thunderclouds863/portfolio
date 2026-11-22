@@ -3,7 +3,7 @@ import type { Entry } from "@keystatic/core/reader";
 import type keystaticConfig from "@/keystatic.config";
 
 import { checkBody, isPublished, parsePublished, reader } from "./content";
-import { collectText, extractHeadings, type TocHeading } from "./markdoc";
+import { collectText, extractHeadings, pruneTodoSections, type TocHeading } from "./markdoc";
 import {
   EducationSchema,
   ExperienceSchema,
@@ -115,7 +115,9 @@ export async function loadCaseStudy(
   if (!project) return null;
   const entry = await reader.collections.projects.read(slug);
   if (!entry) return null;
-  const { node } = await entry.body();
+  const { node: raw } = await entry.body();
+  // Published: empty TODO sections are hidden (drafts keep their MISSING markers).
+  const node = project.isDraft ? raw : pruneTodoSections(raw);
   if (!project.isDraft) checkBody(node, `content/projects/${slug} (body)`);
   const neighbour = (p: ProjectView | undefined) => (p ? { slug: p.slug, title: p.title } : null);
   return {
