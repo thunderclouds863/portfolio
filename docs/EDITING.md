@@ -53,6 +53,21 @@ Screenshots will be added once the site is deployed with GitHub storage (Phase 9
 - **Recommendation:** paste the LinkedIn text word for word (you may only shorten it with `[…]`),
   and tick **Permission to republish confirmed** only after the recommender agreed.
 
+## Update the CV PDF
+
+`public/cv/desi-armanda-sari-cv.pdf` is generated from the `/cv` page, so it is a copy, not
+live. After any change that shows on `/cv` (profile, experience, education, skills, languages,
+certifications, publications, published projects), regenerate it and commit it with the change:
+
+```bash
+npm run build && npm run start   # terminal 1: production build with Published content only
+npm run cv:pdf                   # terminal 2: writes public/cv/desi-armanda-sari-cv.pdf
+```
+
+Sections that still show a `[ MISSING ]` marker (for example "Selected projects" before any
+project is published) are left out, and the script refuses to write a PDF that would contain
+MISSING/TODO text or a phone number.
+
 ## Images
 
 - Use PNG, JPG/WebP or SVG. Keep thumbnails under 120 KB and other images under 500 KB.
