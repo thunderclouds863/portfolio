@@ -16,11 +16,18 @@ type ProjectCardProps = {
   /** Zig-zag: put the thumbnail on the right on desktop. */
   flip?: boolean;
   headingLevel?: "h3" | "h2";
+  /** First card above the fold: its thumbnail is the LCP image, so fetch it early and high. */
+  lcp?: boolean;
 };
 
 // FR-PRJ-01/02: title, one-line problem, role, tags, thumbnail; the whole card is
 // a link (stretched link on the title). Hover and keyboard focus look the same.
-function ProjectCard({ project, flip = false, headingLevel: H = "h3" }: ProjectCardProps) {
+function ProjectCard({
+  project,
+  flip = false,
+  headingLevel: H = "h3",
+  lcp = false,
+}: ProjectCardProps) {
   const tags = [
     projectTypeLabel[project.type] ?? project.type,
     ...project.capabilities.map((c) => capabilityLabel[c] ?? c),
@@ -47,6 +54,7 @@ function ProjectCard({ project, flip = false, headingLevel: H = "h3" }: ProjectC
             src={project.thumbnail}
             alt={isFilled(project.thumbnailAlt) ? project.thumbnailAlt : ""}
             fill
+            {...(lcp ? { loading: "eager" as const, fetchPriority: "high" as const } : {})}
             sizes="(min-width: 1200px) 480px, (min-width: 768px) 40vw, 100vw"
             className="object-cover [image-rendering:pixelated]"
           />
