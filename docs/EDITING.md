@@ -68,6 +68,18 @@ Sections that still show a `[ MISSING ]` marker (for example "Selected projects"
 project is published) are left out, and the script refuses to write a PDF that would contain
 MISSING/TODO text or a phone number.
 
+## Change the hero portrait
+
+The hero shows a pixel-art version of your photo, drawn as SVG (so the page keeps its fast
+first paint and no photo file is published). The original photo stays on your computer only:
+`assets/portrait/source/` is git-ignored.
+
+1. Save the new photo as `assets/portrait/source/desi.jpg` (square, plain light background
+   works best: the background is removed automatically).
+2. Run `npm run portrait`. It writes `components/sections/portrait-pixels.ts`.
+   Optional: `npm run portrait -- --size 64 --colors 18` (more pixels or colours = more detail).
+3. Check the hero with `npm run dev`, then commit `portrait-pixels.ts` (never the photo).
+
 ## Images
 
 - Use PNG, JPG/WebP or SVG. Keep thumbnails under 120 KB and other images under 500 KB.

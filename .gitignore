@@ -66,3 +66,6 @@ next-env.d.ts
 # and case-study sentences awaiting confirmation.
 /docs/PRD.md
 /docs/intake/
+
+# Original portrait photo: local only (only the pixel-art version is published)
+/assets/portrait/source/
