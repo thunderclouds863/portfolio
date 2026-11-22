@@ -7,7 +7,7 @@ import type { z } from "zod";
 
 import keystaticConfig from "@/keystatic.config";
 
-import { collectImageSources, collectText, validateMarkdoc } from "./markdoc";
+import { collectImageSources, collectText, pruneTodoSections, validateMarkdoc } from "./markdoc";
 import {
   EducationSchema,
   ExperienceSchema,
@@ -113,7 +113,8 @@ export async function getProject(slug: string): Promise<(Project & { body: Node 
   const { status: _status, body, ...data } = entry;
   const where = `content/projects/${slug}`;
   const project = parsePublished(ProjectSchema, { slug, ...data }, where);
-  const { node } = await body();
+  // Same as the page: empty TODO sections are hidden, so they are not checked.
+  const node = pruneTodoSections((await body()).node);
   checkBody(node, `${where} (body)`);
   return { ...project, body: node };
 }

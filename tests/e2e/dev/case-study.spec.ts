@@ -118,12 +118,15 @@ test("/projects lists every draft project and the filter hides non-matching ones
   const items = page.locator("[data-project-list] > li");
   await expect(items).toHaveCount(SLUGS.length);
   await expect(items.filter({ visible: true })).toHaveCount(SLUGS.length);
-  // No draft has capabilities yet, so a capability filter leaves nothing visible.
-  await page
-    .getByRole("navigation", { name: "Filter projects by capability" })
-    .getByRole("link", { name: /Analysis/ })
-    .click();
+  const filters = page.getByRole("navigation", { name: "Filter projects by capability" });
+  // Only FPTK (published) has capabilities so far: analysis, development, data.
+  await filters.getByRole("link", { name: /Analysis/ }).click();
   await expect(page).toHaveURL(/capability=analysis/);
+  await expect(items.filter({ visible: true })).toHaveCount(1);
+  await expect(items.filter({ visible: true })).toContainText("FPTK & Sourcing Database");
+  // A capability no project has yet leaves nothing visible, with a status message.
+  await filters.getByRole("link", { name: /Process/ }).click();
+  await expect(page).toHaveURL(/capability=process/);
   await expect(items.filter({ visible: true })).toHaveCount(0);
   await expect(page.getByRole("status")).toHaveText("No projects in this category yet.");
 });

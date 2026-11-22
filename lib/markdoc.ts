@@ -48,6 +48,38 @@ function inlineText(node: Node): string {
   return parts.join("").trim();
 }
 
+/**
+ * Published case studies: drop the parts that are still empty instead of showing
+ * placeholders (owner decision: "hide until filled"). Removes top-level paragraphs
+ * that are entirely a TODO(content) note, then any heading whose section is left
+ * with nothing in it. A TODO anywhere else (a list item, inside a sentence) is
+ * kept, so the content gate still rejects it.
+ */
+export function pruneTodoSections(doc: Node): Node {
+  const children = doc.children;
+  const removed = children.map((child) => child.type === "paragraph" && hasTodo(inlineText(child)));
+  const level = (child: Node) =>
+    child.type === "heading" ? Number(child.attributes.level ?? 2) : Infinity;
+  // From the end, so a sub-heading is decided before the heading above it.
+  for (let i = children.length - 1; i >= 0; i -= 1) {
+    const heading = children[i]!;
+    if (heading.type !== "heading") continue;
+    let empty = true;
+    for (let j = i + 1; j < children.length && level(children[j]!) > level(heading); j += 1) {
+      if (!removed[j]) {
+        empty = false;
+        break;
+      }
+    }
+    if (empty) removed[i] = true;
+  }
+  return new Markdoc.Ast.Node(
+    "document",
+    doc.attributes,
+    children.filter((_, i) => !removed[i]),
+  );
+}
+
 export const markdocConfig: Config = {
   nodes: {
     // Draft preview only: a TODO(content) paragraph renders as a MISSING marker.
