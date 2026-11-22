@@ -34,7 +34,7 @@ function Hero({ profile, settings }: HeroProps) {
             <Val value={profile?.subheadline} what="sub-headline (IN-01)" />
           </p>
 
-          {showChip ? <StatusChip className="self-start">Open to work</StatusChip> : null}
+          {showChip ? <StatusChip className="self-start">Open to collaboration</StatusChip> : null}
 
           {availability ? (
             <ul

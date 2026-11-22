@@ -14,6 +14,12 @@ export function formatYearMonth(value: string | null | undefined): string | null
   return `${MONTHS[Number(match[2]) - 1]} ${match[1]}`;
 }
 
+/** "2025-06" → "Jun 2025", "2021" → "2021". Null for anything else. */
+export function formatYearOrMonth(value: string | null | undefined): string | null {
+  if (value && /^\d{4}$/.test(value)) return value;
+  return formatYearMonth(value);
+}
+
 /** "2025-06-24" → "Jun 2025". */
 export function formatIsoDate(value: string | null | undefined): string | null {
   return value ? formatYearMonth(value.slice(0, 7)) : null;

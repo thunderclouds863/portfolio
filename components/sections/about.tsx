@@ -2,7 +2,7 @@ import { Missing } from "@/components/content/missing";
 import { DraftBadge, Val, isFilled } from "@/components/content/val";
 import { MarkdocContent } from "@/components/markdoc/markdoc-content";
 import { TerminalFrame } from "@/components/ui/terminal-frame";
-import { formatYearMonth } from "@/lib/format";
+import { formatYearOrMonth } from "@/lib/format";
 import { nodeFromJson } from "@/lib/markdoc";
 import type { EducationView, ProfileView } from "@/lib/views";
 import { Reveal } from "@/components/motion/reveal";
@@ -23,8 +23,8 @@ function Fact({ label, children }: { label: string; children: React.ReactNode })
 // FR-ABT-01: two short paragraphs + facts panel in a terminal frame.
 function About({ profile, education }: AboutProps) {
   const range =
-    education && formatYearMonth(education.start) && formatYearMonth(education.end)
-      ? `${formatYearMonth(education.start)} – ${formatYearMonth(education.end)}`
+    education && formatYearOrMonth(education.start) && formatYearOrMonth(education.end)
+      ? `${formatYearOrMonth(education.start)} – ${formatYearOrMonth(education.end)}`
       : null;
 
   return (
@@ -49,7 +49,7 @@ function About({ profile, education }: AboutProps) {
                   {education.degree} {education.major}, {education.institution}
                   <span className="text-meta text-muted block">
                     {range ?? <Missing what="study dates" />}
-                    {isFilled(education.gpa) ? ` · GPA ${education.gpa}` : null}
+                    {isFilled(education.gpa) ? ` · grade ${education.gpa}` : null}
                   </span>
                 </>
               ) : (
@@ -60,7 +60,7 @@ function About({ profile, education }: AboutProps) {
               <Val value={profile?.location} what="location (IN-10)" />
             </Fact>
             {profile && profile.preferredLocations.length > 0 ? (
-              <Fact label="open to work in">{profile.preferredLocations.join(" / ")}</Fact>
+              <Fact label="available in">{profile.preferredLocations.join(" / ")}</Fact>
             ) : null}
             {education && education.focusAreas.length > 0 ? (
               <Fact label="focus areas">{education.focusAreas.join(", ")}</Fact>

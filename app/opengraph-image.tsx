@@ -74,7 +74,7 @@ export default async function OpengraphImage() {
                   backgroundColor: YELLOW,
                 }}
               />
-              <div style={{ display: "flex" }}>OPEN TO WORK</div>
+              <div style={{ display: "flex" }}>OPEN TO COLLABORATION</div>
             </>
           ) : (
             " "

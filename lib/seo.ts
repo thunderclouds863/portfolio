@@ -104,7 +104,7 @@ export function personJsonLd(data: HomeData): Record<string, unknown> | null {
     .filter((url): url is string => !!url && /^https?:\/\//.test(url));
   const alumniOf = data.education
     .filter((e) => usable(e.institution))
-    .map((e) => ({ "@type": "CollegeOrUniversity", name: e.institution }));
+    .map((e) => ({ "@type": "EducationalOrganization", name: e.institution }));
   return {
     "@context": "https://schema.org",
     "@type": "Person",

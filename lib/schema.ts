@@ -35,6 +35,12 @@ export const optionalText = (field: string) =>
 export const yearMonth = (field: string) =>
   requiredText(field).pipe(z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/, `${field} must be YYYY-MM`));
 
+/** YYYY-MM, or YYYY when only the year is known (education). */
+export const yearOrMonth = (field: string) =>
+  requiredText(field).pipe(
+    z.string().regex(/^\d{4}(-(0[1-9]|1[0-2]))?$/, `${field} must be YYYY-MM or YYYY`),
+  );
+
 const isoDate = (field: string) =>
   requiredText(field).pipe(z.string().regex(/^\d{4}-\d{2}-\d{2}$/, `${field} must be YYYY-MM-DD`));
 
@@ -176,10 +182,8 @@ export const ExperienceSchema = z.object({
         .nullable(),
     ),
   // Contribution scope is stated per bullet (AGENTS.md: always state scope).
-  highlights: z
-    .array(z.object({ text: requiredText("highlight"), scope: ContributionScope }))
-    .min(2, "2–4 highlights (FR-EXP-01)")
-    .max(4, "2–4 highlights (FR-EXP-01)"),
+  // Any number of highlights: owner override of FR-EXP-01's 2–4 (decision 0002, #5).
+  highlights: z.array(z.object({ text: requiredText("highlight"), scope: ContributionScope })),
   tags: z.array(requiredText("tag")),
 });
 
@@ -188,11 +192,19 @@ export const EducationSchema = z.object({
   institution: requiredText("institution"),
   degree: requiredText("degree"),
   major: requiredText("major"),
-  start: yearMonth("start"),
-  end: yearMonth("end"),
-  gpa: optionalText("GPA"),
+  start: yearOrMonth("start"),
+  end: yearOrMonth("end"),
+  gpa: optionalText("grade"),
   focusAreas: z.array(requiredText("focus area")),
   thesis: optionalText("thesis"),
+  // Competitions and awards from this period (owner request: decision 0002, #6).
+  achievements: z.array(
+    z.object({
+      title: requiredText("achievement title"),
+      issuer: requiredText("achievement issuer"),
+      date: yearMonth("achievement month"),
+    }),
+  ),
 });
 
 // ── Projects ────────────────────────────────────────────────────────────────

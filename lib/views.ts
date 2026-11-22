@@ -66,7 +66,11 @@ export function isDraftPreview(): boolean {
 
 const YEAR_MONTH = /^\d{4}-(0[1-9]|1[0-2])$/;
 const sortableMonth = (value: string | null | undefined, fallback: string) =>
-  value && YEAR_MONTH.test(value) ? value : fallback;
+  value && YEAR_MONTH.test(value)
+    ? value
+    : value && /^\d{4}$/.test(value)
+      ? `${value}-12`
+      : fallback;
 
 async function visibleCollection<E extends { status: string }, V>(
   list: Promise<readonly { slug: string; entry: E }[]>,
