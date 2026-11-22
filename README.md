@@ -37,6 +37,12 @@ Environment variables are listed in `.env.example` (PRD section 13). Variables s
 | `npm run test`                            | Unit tests (Vitest, `tests/unit`)                                                            |
 | `npm run test:e2e`                        | End-to-end + accessibility tests (Playwright, `tests/e2e`); builds and starts the app itself |
 
+## Generated files
+
+`scripts/generate-routes.mjs` writes `lib/generated/project-slugs.json` (published case-study slugs,
+git-ignored) before `dev`, `build` and `typecheck`. `proxy.ts` uses it so unknown
+`/projects/<slug>` URLs return HTTP 404.
+
 ## Editing content
 
 Content is managed with Keystatic (PRD section 18): run `npm run dev` and open

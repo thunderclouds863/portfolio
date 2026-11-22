@@ -347,7 +347,9 @@ body:has([data-active-filter="data"]) [data-project-list] > li:not([data-caps~="
   body {
     background: var(--color-white) !important;
   }
-  body,
+  body {
+    color: var(--color-bg) !important;
+  }
   body * {
     color: var(--color-bg) !important;
     background: transparent !important;

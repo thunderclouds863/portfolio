@@ -7,6 +7,7 @@ import {
   RecommendationSchema,
   SkillSchema,
   findDuplicateSlugs,
+  todoMessage,
 } from "@/lib/schema";
 
 // Fixture values are synthetic test data, not site content.
@@ -209,5 +210,15 @@ describe("ContactMessageSchema (FR-CF-01)", () => {
     ["type", { type: "spam" }],
   ])("rejects invalid %s", (field, patch) => {
     expect(issuePaths(ContactMessageSchema.safeParse({ ...valid, ...patch }))).toContain(field);
+  });
+});
+
+describe("todoMessage", () => {
+  it("strips the TODO(content) prefix", () => {
+    expect(todoMessage("TODO(content): start month YYYY-MM (IN-02)")).toBe(
+      "start month YYYY-MM (IN-02)",
+    );
+    expect(todoMessage("TODO: something")).toBe("something");
+    expect(todoMessage("TODO(content):")).toBe("content needed");
   });
 });
