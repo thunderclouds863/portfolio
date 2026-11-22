@@ -282,5 +282,5 @@ export function hasTodo(text: string): boolean {
 
 /** "TODO(content): x (IN-02)" → "x (IN-02)". */
 export function todoMessage(text: string): string {
-  return text.replace(/^.*?TODO((content))?:?s*/i, "").trim() || "content needed";
+  return text.replace(/^.*?TODO(\(content\))?:?\s*/i, "").trim() || "content needed";
 }

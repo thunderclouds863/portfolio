@@ -55,3 +55,6 @@ next-env.d.ts
 
 # local review screenshots
 /screenshots/
+
+# generated at dev/build/typecheck time (scripts/generate-routes.mjs)
+/lib/generated/
