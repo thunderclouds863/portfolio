@@ -49,7 +49,7 @@ const ORBIT_D = [
 ].join(" ");
 
 const buttonClass =
-  "bg-panel border-green text-green shadow-pixel hover:border-amber hover:text-amber fixed right-5 bottom-5 z-[210] inline-flex size-14 items-center justify-center border-2 md:hidden";
+  "bg-panel border-green text-green shadow-pixel hover:border-amber hover:text-amber fixed right-[calc(1.25rem+env(safe-area-inset-right))] bottom-[calc(1.25rem+env(safe-area-inset-bottom))] z-[210] inline-flex size-14 items-center justify-center border-2 md:hidden";
 
 /**
  * Mobile navigation (owner override 4, docs/decisions/0002): a square pixel
@@ -131,7 +131,7 @@ function MobileMenu() {
           {/* Decorative orbit line along the arc. */}
           <svg
             aria-hidden="true"
-            className="orbit-path text-green-dim pointer-events-none fixed right-5 bottom-5"
+            className="orbit-path text-green-dim pointer-events-none fixed right-[calc(1.25rem+env(safe-area-inset-right))] bottom-[calc(1.25rem+env(safe-area-inset-bottom))]"
             width={SVG_W}
             height={SVG_H}
           >
@@ -155,7 +155,11 @@ function MobileMenu() {
                 } as CSSProperties;
                 const current = !!item.id && activeId === item.id;
                 return (
-                  <li key={item.key} className="orbit-item fixed right-5 bottom-5" style={style}>
+                  <li
+                    key={item.key}
+                    className="orbit-item fixed right-[calc(1.25rem+env(safe-area-inset-right))] bottom-[calc(1.25rem+env(safe-area-inset-bottom))]"
+                    style={style}
+                  >
                     <a
                       href={item.href}
                       onClick={

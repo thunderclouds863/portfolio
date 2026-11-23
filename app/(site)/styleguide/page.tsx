@@ -155,7 +155,7 @@ export default function StyleguidePage() {
           <Tag>Tag</Tag>
           <Tag>Example</Tag>
           <Tag>Label</Tag>
-          <StatusChip>Open to collaboration</StatusChip>
+          <StatusChip>Open to Opportunities &amp; Collaboration</StatusChip>
         </div>
       </Block>
 

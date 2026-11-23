@@ -116,9 +116,9 @@ export default config({
         availability: fields.object(
           {
             openToWork: fields.checkbox({
-              label: "Open to collaboration",
+              label: "Open to Opportunities & Collaboration",
               description:
-                'Shows the "Open to collaboration" chip in the hero and on the share image.',
+                'Shows the "Open to Opportunities & Collaboration" chip in the hero and on the share image.',
               defaultValue: false,
             }),
             workModes: fields.multiselect({

@@ -54,8 +54,8 @@ function ProjectCard({
             src={project.thumbnail}
             alt={isFilled(project.thumbnailAlt) ? project.thumbnailAlt : ""}
             fill
-            {...(lcp ? { loading: "eager" as const, fetchPriority: "high" as const } : {})}
-            sizes="(min-width: 1200px) 480px, (min-width: 768px) 40vw, 100vw"
+            {...(lcp ? { preload: true, fetchPriority: "high" as const } : {})}
+            sizes="(min-width: 1200px) 480px, (min-width: 768px) 40vw, calc(100vw - 2rem)"
             className="object-cover [image-rendering:pixelated]"
           />
         ) : (
