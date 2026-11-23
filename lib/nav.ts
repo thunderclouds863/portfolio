@@ -5,6 +5,7 @@ export const sectionNav: readonly NavItem[] = [
   { id: "about", href: "/#about", label: "./about" },
   { id: "capabilities", href: "/#capabilities", label: "./skills" },
   { id: "experience", href: "/#experience", label: "./experience" },
+  { id: "education", href: "/#education", label: "./education" },
   { id: "projects", href: "/#projects", label: "./projects" },
   { id: "approach", href: "/#approach", label: "./approach" },
   { id: "stack", href: "/#stack", label: "./stack" },

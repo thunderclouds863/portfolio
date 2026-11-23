@@ -34,35 +34,45 @@ function Hero({ profile, settings }: HeroProps) {
             <Val value={profile?.subheadline} what="sub-headline (IN-01)" />
           </p>
 
-          {showChip ? <StatusChip className="self-start">Open to work</StatusChip> : null}
+          {showChip ? (
+            <StatusChip className="self-start">
+              Open to Opportunities &amp; Collaboration
+            </StatusChip>
+          ) : null}
 
           {availability ? (
-            <ul
-              aria-label="Location and availability"
-              className="text-meta text-muted flex flex-col gap-1"
-            >
-              {profile.preferredLocations.length > 0 ? (
-                <li>
-                  <span className="text-green-dim">loc: </span>
-                  {profile.preferredLocations.join(" / ")}
-                  {workModes.length > 0 ? ` · ${joinOr(workModes)}` : null}
-                </li>
-              ) : null}
-              {isFilled(availability.availableFrom) ? (
-                <li>
-                  <span className="text-green-dim">start: </span>
-                  {availability.availableFrom}
-                </li>
-              ) : null}
-              {availability.freelance ? (
-                <li>
-                  <span className="text-green-dim">freelance: </span>
-                  {availability.freelanceServices.length > 0
-                    ? availability.freelanceServices.join(", ")
-                    : "open"}
-                </li>
-              ) : null}
-            </ul>
+            <>
+              <p className="text-muted max-w-[60ch] text-sm">
+                Open to full-time employment, freelance opportunities, and project collaborations
+                across business, technology, and digital transformation.
+              </p>
+              <ul
+                aria-label="Location and availability"
+                className="text-meta text-muted flex flex-col gap-1"
+              >
+                {profile.preferredLocations.length > 0 ? (
+                  <li>
+                    <span className="text-green-dim">loc: </span>
+                    {profile.preferredLocations.join(" / ")}
+                    {workModes.length > 0 ? ` · ${joinOr(workModes)}` : null}
+                  </li>
+                ) : null}
+                {isFilled(availability.availableFrom) ? (
+                  <li>
+                    <span className="text-green-dim">start: </span>
+                    {availability.availableFrom}
+                  </li>
+                ) : null}
+                {availability.freelance ? (
+                  <li>
+                    <span className="text-green-dim">freelance: </span>
+                    {availability.freelanceServices.length > 0
+                      ? availability.freelanceServices.join(", ")
+                      : "open"}
+                  </li>
+                ) : null}
+              </ul>
+            </>
           ) : (
             <Missing what="location and availability (IN-01)" />
           )}

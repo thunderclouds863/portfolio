@@ -91,7 +91,7 @@ function HeroVisual({ className }: { className?: string }) {
         <Image
           src={photo}
           alt="Portrait of Desi Armanda Sari"
-          priority
+          preload
           fetchPriority="high"
           sizes="(min-width: 1200px) 440px, (min-width: 1024px) 38vw, 90vw"
           className="hero-photo absolute inset-0 size-full object-cover object-[50%_30%]"

@@ -1,3 +1,4 @@
+import { ExternalLink } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -15,11 +16,18 @@ type ProjectCardProps = {
   /** Zig-zag: put the thumbnail on the right on desktop. */
   flip?: boolean;
   headingLevel?: "h3" | "h2";
+  /** First card above the fold: its thumbnail is the LCP image, so fetch it early and high. */
+  lcp?: boolean;
 };
 
 // FR-PRJ-01/02: title, one-line problem, role, tags, thumbnail; the whole card is
 // a link (stretched link on the title). Hover and keyboard focus look the same.
-function ProjectCard({ project, flip = false, headingLevel: H = "h3" }: ProjectCardProps) {
+function ProjectCard({
+  project,
+  flip = false,
+  headingLevel: H = "h3",
+  lcp = false,
+}: ProjectCardProps) {
   const tags = [
     projectTypeLabel[project.type] ?? project.type,
     ...project.capabilities.map((c) => capabilityLabel[c] ?? c),
@@ -46,13 +54,15 @@ function ProjectCard({ project, flip = false, headingLevel: H = "h3" }: ProjectC
             src={project.thumbnail}
             alt={isFilled(project.thumbnailAlt) ? project.thumbnailAlt : ""}
             fill
-            sizes="(min-width: 1200px) 480px, (min-width: 768px) 40vw, 100vw"
+            {...(lcp ? { preload: true, fetchPriority: "high" as const } : {})}
+            sizes="(min-width: 1200px) 480px, (min-width: 768px) 40vw, calc(100vw - 2rem)"
             className="object-cover [image-rendering:pixelated]"
           />
         ) : (
           <div className="bg-bg flex size-full flex-col items-center justify-center gap-3 p-4">
             <PixelIcon name="floppy" size={48} className="text-green-dim" />
-            <Missing what="thumbnail (IN-05)" />
+            {/* Thumbnails are optional: a published card shows only the icon. */}
+            {project.isDraft ? <Missing what="thumbnail (IN-05)" /> : null}
           </div>
         )}
         {/* FR-PRJ-02: scanline sweep on hover/focus (transform + opacity, 200ms). */}
@@ -95,9 +105,34 @@ function ProjectCard({ project, flip = false, headingLevel: H = "h3" }: ProjectC
             <span className="text-yellow">{scopeLabel[project.contribution]}</span>
           )}
         </p>
+
+        {project.demoUrl ? (
+          // Sits above the card's stretched link so it opens the demo, not the case study.
+          <DemoLink href={project.demoUrl} title={project.title} className="relative z-10" />
+        ) : null}
       </div>
     </article>
   );
 }
 
-export { ProjectCard };
+/** "[ live demo ]" link to the running app, in a new tab. */
+function DemoLink({ href, title, className }: { href: string; title: string; className?: string }) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      data-demo-link=""
+      className={cn(
+        "text-amber hover:text-yellow inline-flex min-h-11 items-center gap-2 self-start font-mono text-sm underline-offset-4 hover:underline",
+        className,
+      )}
+    >
+      [ live demo
+      <ExternalLink aria-hidden="true" className="size-4" /> ]
+      <span className="sr-only"> of {title} (opens in a new tab)</span>
+    </a>
+  );
+}
+
+export { DemoLink, ProjectCard };

@@ -115,7 +115,12 @@ export default config({
         }),
         availability: fields.object(
           {
-            openToWork: fields.checkbox({ label: "Open to work", defaultValue: false }),
+            openToWork: fields.checkbox({
+              label: "Open to Opportunities & Collaboration",
+              description:
+                'Shows the "Open to Opportunities & Collaboration" chip in the hero and on the share image.',
+              defaultValue: false,
+            }),
             workModes: fields.multiselect({
               label: "Work modes",
               options: [
@@ -294,8 +299,15 @@ export default config({
           }),
           { label: "Outcomes", itemLabel: (p) => p.fields.statement.value },
         ),
-        thumbnail: projectImage("Thumbnail"),
-        thumbnailAlt: fields.text({ label: "Thumbnail alt text" }),
+        thumbnail: projectImage("Thumbnail (optional)"),
+        thumbnailAlt: fields.text({
+          label: "Thumbnail alt text",
+          description: "Required when there is a thumbnail",
+        }),
+        demoUrl: fields.url({
+          label: "Live demo link (optional)",
+          description: "https://… — shown as a [ live demo ] button on the card and case study",
+        }),
         gallery: fields.array(
           fields.object({
             image: projectImage("Image"),
@@ -331,7 +343,7 @@ export default config({
             text: fields.text({ label: "Highlight", multiline: true }),
             scope: contributionScope,
           }),
-          { label: "Highlights (2–4)", itemLabel: (p) => p.fields.text.value },
+          { label: "Highlights", itemLabel: (p) => p.fields.text.value },
         ),
         tags: fields.array(fields.text({ label: "Tag" }), {
           label: "Tags",
@@ -351,14 +363,25 @@ export default config({
         institution: fields.text({ label: "Institution" }),
         degree: fields.text({ label: "Degree" }),
         major: fields.text({ label: "Major" }),
-        start: yearMonth("Start month"),
-        end: yearMonth("End month"),
-        gpa: fields.text({ label: "GPA (optional)" }),
+        start: yearMonth("Start", "Format YYYY-MM, or YYYY if you only know the year"),
+        end: yearMonth("End", "Format YYYY-MM, or YYYY if you only know the year"),
+        gpa: fields.text({ label: "Grade (optional)", description: "e.g. 3.60/4.00 or 90.39/100" }),
         focusAreas: fields.array(fields.text({ label: "Focus area" }), {
           label: "Focus areas",
           itemLabel: (p) => p.value,
         }),
         thesis: fields.text({ label: "Thesis title (optional)", multiline: true }),
+        achievements: fields.array(
+          fields.object({
+            title: fields.text({
+              label: "Title",
+              description: "e.g. 2nd place, Informatics Science Competition",
+            }),
+            issuer: fields.text({ label: "Issued by" }),
+            date: yearMonth("Month"),
+          }),
+          { label: "Achievements (competitions, awards)", itemLabel: (p) => p.fields.title.value },
+        ),
       },
     }),
 

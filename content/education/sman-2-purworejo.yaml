@@ -1,0 +1,20 @@
+entry: SMA Negeri 2 Purworejo
+status: published
+institution: SMA Negeri 2 Purworejo
+degree: High school
+major: Mathematics and Natural Sciences (MIPA)
+start: "2018"
+end: "2021"
+gpa: 90.39/100
+focusAreas: []
+thesis: ""
+achievements:
+  - title: 2nd place, Informatics Science Competition
+    issuer: Central Java Provincial Education Office, Region VIII branch
+    date: "2020-05"
+  - title: 2nd place, Computer Course Training and Mentoring
+    issuer: Lembaga Pendampingan dan Pembinaan Olimpiade Sains (LPPO)
+    date: "2020-02"
+  - title: 2nd place, Computer Course Training and Mentoring
+    issuer: Lembaga Pendampingan dan Pembinaan Olimpiade Sains (LPPO)
+    date: "2019-02"

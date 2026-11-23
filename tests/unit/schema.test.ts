@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  EducationSchema,
   ContactMessageSchema,
   ContactMetaSchema,
   ExperienceSchema,
@@ -98,9 +99,20 @@ describe("ProjectSchema", () => {
     expect(issuePaths(result)).toContain("gallery.0.alt");
   });
 
-  it("rejects a missing thumbnail", () => {
-    const result = ProjectSchema.safeParse({ ...validProject, thumbnail: null });
-    expect(issuePaths(result)).toContain("thumbnail");
+  it("accepts no thumbnail, but a thumbnail needs alt text", () => {
+    expect(
+      ProjectSchema.safeParse({ ...validProject, thumbnail: null, thumbnailAlt: "" }).success,
+    ).toBe(true);
+    const result = ProjectSchema.safeParse({ ...validProject, thumbnailAlt: "" });
+    expect(issuePaths(result)).toContain("thumbnailAlt");
+  });
+
+  it("accepts an https demo link and rejects anything else", () => {
+    expect(
+      ProjectSchema.safeParse({ ...validProject, demoUrl: "https://demo.example.com" }).success,
+    ).toBe(true);
+    const result = ProjectSchema.safeParse({ ...validProject, demoUrl: "javascript:alert(1)" });
+    expect(issuePaths(result)).toContain("demoUrl");
   });
 });
 
@@ -156,10 +168,47 @@ describe("ExperienceSchema", () => {
     expect(issuePaths(result)).toContain("highlights.1.scope");
   });
 
-  it("requires 2–4 highlights", () => {
-    expect(ExperienceSchema.safeParse({ ...valid, highlights: bullets(1) }).success).toBe(false);
-    expect(ExperienceSchema.safeParse({ ...valid, highlights: bullets(4) }).success).toBe(true);
-    expect(ExperienceSchema.safeParse({ ...valid, highlights: bullets(5) }).success).toBe(false);
+  it("accepts any number of highlights (no 2–4 limit, decision 0002 #5)", () => {
+    for (const n of [0, 1, 4, 7]) {
+      expect(ExperienceSchema.safeParse({ ...valid, highlights: bullets(n) }).success).toBe(true);
+    }
+  });
+});
+
+describe("EducationSchema", () => {
+  const valid = {
+    slug: "school",
+    institution: "Example school",
+    degree: "High school",
+    major: "Science",
+    start: "2018",
+    end: "2021-06",
+    gpa: "",
+    focusAreas: [],
+    thesis: "",
+    achievements: [{ title: "2nd place", issuer: "Example issuer", date: "2020-05" }],
+  };
+
+  it("accepts a year-only or YYYY-MM period and optional grade/thesis", () => {
+    const result = EducationSchema.safeParse(valid);
+    expect(result.success).toBe(true);
+    expect(result.data?.gpa).toBeNull();
+  });
+
+  it("rejects other date formats", () => {
+    expect(issuePaths(EducationSchema.safeParse({ ...valid, start: "2018/19" }))).toContain(
+      "start",
+    );
+  });
+
+  it("needs a title, issuer and YYYY-MM month for every achievement", () => {
+    const result = EducationSchema.safeParse({
+      ...valid,
+      achievements: [{ title: "", issuer: "Example issuer", date: "2020" }],
+    });
+    expect(issuePaths(result)).toEqual(
+      expect.arrayContaining(["achievements.0.title", "achievements.0.date"]),
+    );
   });
 });
 

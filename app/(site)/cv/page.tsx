@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import {
   formatIsoDate,
   formatYearMonth,
+  formatYearOrMonth,
   isYearMonth,
   joinOr,
   levelLabel,
@@ -125,8 +126,11 @@ export default async function CvPage() {
         </div>
         {availability ? (
           <p className="text-meta text-muted">
-            {availability.openToWork && profile.preferredLocations.length > 0
-              ? `Open to ${workModes.length > 0 ? `${joinOr(workModes)} ` : ""}roles in ${joinOr(profile.preferredLocations)}. `
+            {availability.openToWork
+              ? "Open to full-time employment, freelance opportunities, and project collaborations across business, technology, and digital transformation. "
+              : null}
+            {profile.preferredLocations.length > 0
+              ? `Locations: ${joinOr(profile.preferredLocations)}${workModes.length > 0 ? ` (${joinOr(workModes)})` : ""}. `
               : null}
             {isFilled(availability.availableFrom) ? `Start: ${availability.availableFrom}.` : null}
             {availability.freelance && availability.freelanceServices.length > 0
@@ -190,8 +194,9 @@ export default async function CvPage() {
                   <DraftBadge show={ed.isDraft} className="print:hidden" />
                 </h3>
                 <p className="text-meta text-muted">
-                  {range(ed.start, ed.end, false)}
-                  {isFilled(ed.gpa) ? ` · GPA ${ed.gpa}` : null}
+                  {formatYearOrMonth(ed.start) ?? <Missing what="start" />} {"–"}{" "}
+                  {formatYearOrMonth(ed.end) ?? <Missing what="end" />}
+                  {isFilled(ed.gpa) ? ` · grade ${ed.gpa}` : null}
                 </p>
                 {isFilled(ed.thesis) ? (
                   <p>
@@ -199,6 +204,16 @@ export default async function CvPage() {
                   </p>
                 ) : null}
                 {ed.focusAreas.length > 0 ? <p>Focus areas: {ed.focusAreas.join(", ")}</p> : null}
+                {ed.achievements.length > 0 ? (
+                  <ul className="flex list-[square] flex-col gap-1 pl-5">
+                    {ed.achievements.map((a) => (
+                      <li key={`${a.date}-${a.title}`}>
+                        {a.title}, {a.issuer}
+                        <span className="text-meta text-muted"> ({formatYearMonth(a.date)})</span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
               </li>
             ))}
           </ol>

@@ -35,6 +35,12 @@ export const optionalText = (field: string) =>
 export const yearMonth = (field: string) =>
   requiredText(field).pipe(z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/, `${field} must be YYYY-MM`));
 
+/** YYYY-MM, or YYYY when only the year is known (education). */
+export const yearOrMonth = (field: string) =>
+  requiredText(field).pipe(
+    z.string().regex(/^\d{4}(-(0[1-9]|1[0-2]))?$/, `${field} must be YYYY-MM or YYYY`),
+  );
+
 const isoDate = (field: string) =>
   requiredText(field).pipe(z.string().regex(/^\d{4}-\d{2}-\d{2}$/, `${field} must be YYYY-MM-DD`));
 
@@ -176,10 +182,8 @@ export const ExperienceSchema = z.object({
         .nullable(),
     ),
   // Contribution scope is stated per bullet (AGENTS.md: always state scope).
-  highlights: z
-    .array(z.object({ text: requiredText("highlight"), scope: ContributionScope }))
-    .min(2, "2–4 highlights (FR-EXP-01)")
-    .max(4, "2–4 highlights (FR-EXP-01)"),
+  // Any number of highlights: owner override of FR-EXP-01's 2–4 (decision 0002, #5).
+  highlights: z.array(z.object({ text: requiredText("highlight"), scope: ContributionScope })),
   tags: z.array(requiredText("tag")),
 });
 
@@ -188,11 +192,19 @@ export const EducationSchema = z.object({
   institution: requiredText("institution"),
   degree: requiredText("degree"),
   major: requiredText("major"),
-  start: yearMonth("start"),
-  end: yearMonth("end"),
-  gpa: optionalText("GPA"),
+  start: yearOrMonth("start"),
+  end: yearOrMonth("end"),
+  gpa: optionalText("grade"),
   focusAreas: z.array(requiredText("focus area")),
   thesis: optionalText("thesis"),
+  // Competitions and awards from this period (owner request: decision 0002, #6).
+  achievements: z.array(
+    z.object({
+      title: requiredText("achievement title"),
+      issuer: requiredText("achievement issuer"),
+      date: yearMonth("achievement month"),
+    }),
+  ),
 });
 
 // ── Projects ────────────────────────────────────────────────────────────────
@@ -214,25 +226,39 @@ export const GalleryImageSchema = z.object({
   caption: optionalText("caption"),
 });
 
-export const ProjectSchema = z.object({
-  slug: z.string().min(1),
-  title: requiredText("title"),
-  summary: requiredText("summary"),
-  problem: requiredText("problem"),
-  type: ProjectType,
-  capabilities: z.array(Capability).min(1, "at least one capability"),
-  role: requiredText("role"),
-  contribution: ContributionScope,
-  teamSize: z.number().int().positive().nullable(),
-  period: requiredText("period"),
-  stack: z.array(requiredText("stack item")),
-  outcomes: z.array(OutcomeSchema),
-  featured: z.boolean(),
-  order: z.number().int(),
-  thumbnail: publicPath("thumbnail"),
-  thumbnailAlt: requiredText("thumbnail alt text"),
-  gallery: z.array(GalleryImageSchema),
-});
+export const ProjectSchema = z
+  .object({
+    slug: z.string().min(1),
+    title: requiredText("title"),
+    summary: requiredText("summary"),
+    problem: requiredText("problem"),
+    type: ProjectType,
+    capabilities: z.array(Capability).min(1, "at least one capability"),
+    role: requiredText("role"),
+    contribution: ContributionScope,
+    teamSize: z.number().int().positive().nullable(),
+    period: requiredText("period"),
+    stack: z.array(requiredText("stack item")),
+    outcomes: z.array(OutcomeSchema),
+    featured: z.boolean(),
+    order: z.number().int(),
+    // Optional (owner request): a project may be published before it has a screenshot.
+    thumbnail: optionalText("thumbnail").refine(
+      (s) => s === null || s.startsWith("/"),
+      "thumbnail must be a site-relative path",
+    ),
+    thumbnailAlt: optionalText("thumbnail alt text"),
+    // Link to the running demo app (opens in a new tab).
+    demoUrl: optionalText("demo URL").refine(
+      (s) => s === null || /^https:\/\/\S+$/.test(s),
+      "demo URL must start with https://",
+    ),
+    gallery: z.array(GalleryImageSchema),
+  })
+  .refine((p) => p.thumbnail === null || p.thumbnailAlt !== null, {
+    message: "a thumbnail needs alt text",
+    path: ["thumbnailAlt"],
+  });
 
 // ── Skills / Recommendations ────────────────────────────────────────────────
 

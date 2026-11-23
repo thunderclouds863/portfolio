@@ -22,6 +22,8 @@ const CHECK_EXTERNAL = !args.includes("--no-external");
 const SKIP_PATHS = [/^\/keystatic/, /^\/api\//, /^\/admin/];
 /** Hosts known to reject bots: a non-2xx answer there is a warning only. */
 const BOT_HOSTILE = [/(^|\.)linkedin\.com$/];
+// Free-tier demo apps sleep when idle and answer 503 or time out until they wake up.
+const SLEEPING_DEMOS = [/\.onrender\.com$/, /\.streamlit\.app$/];
 
 const TIMEOUT_MS = 15_000;
 const UA = "Mozilla/5.0 (compatible; portfolio-link-check/1.0)";
@@ -185,6 +187,8 @@ async function checkExternal() {
       const host = new URL(href).hostname;
       if (BOT_HOSTILE.some((re) => re.test(host)))
         warnings.push(`${line} (host blocks automated checks)`);
+      else if (SLEEPING_DEMOS.some((re) => re.test(host)))
+        warnings.push(`${line} (demo app may be asleep)`);
       else failures.push(line);
     }),
   );

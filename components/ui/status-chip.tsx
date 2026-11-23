@@ -2,7 +2,7 @@ import type { ComponentProps } from "react";
 
 import { cn } from "@/lib/utils";
 
-// "■ OPEN TO WORK" — yellow text, blinking square (static under reduced motion).
+// "■ OPEN TO OPPORTUNITIES & COLLABORATION" — yellow text, blinking square (static under reduced motion).
 function StatusChip({ className, children, ...props }: ComponentProps<"p">) {
   return (
     <p
