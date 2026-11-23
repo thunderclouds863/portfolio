@@ -14,7 +14,7 @@ function buildCsp({ admin = false } = {}) {
   // avatars) and loads its own UI font (Inter) from Google Fonts. Admin routes only.
   const extra = admin
     ? {
-        connect: " https://api.github.com https://github.com",
+        connect: " https://api.github.com https://github.com https://raw.githubusercontent.com",
         img: " https://avatars.githubusercontent.com",
         style: " https://fonts.googleapis.com",
         font: " https://fonts.gstatic.com",
@@ -30,7 +30,8 @@ function buildCsp({ admin = false } = {}) {
     "frame-src https://challenges.cloudflare.com",
     "frame-ancestors 'none'",
     "base-uri 'self'",
-    "form-action 'self'",
+    // PRD 18.6: Keystatic's GitHub App setup form posts to github.com (admin only).
+    `form-action 'self'${admin ? " https://github.com" : ""}`,
     "object-src 'none'",
     ...(!isDev && isHttpsSite ? ["upgrade-insecure-requests"] : []),
   ].join("; ");
@@ -53,6 +54,8 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  // Dev only: allow HMR and dev resources when the site is opened at 127.0.0.1.
+  allowedDevOrigins: ["127.0.0.1"],
   cacheComponents: true,
   partialPrefetching: true,
   // PRD section 11: modern image formats for next/image.
