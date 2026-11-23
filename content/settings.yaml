@@ -1,32 +1,44 @@
 status: draft
 seoTitle: Desi Armanda Sari
-seoDescription: "TODO(content): meta description from the confirmed headline, max 160 characters (IN-01)"
-ogText: "TODO(content): text for the social preview image (IN-01)"
-contactResponseTime: "TODO(content): how quickly you reply to messages"
+seoDescription: "Industrial Engineering graduate focused on system analysis, business process improvement, data-driven decision-making, and digital solutions."
+ogText: "System Analyst · Business Process Improvement · Data Analysis & Reporting"
+contactResponseTime: "Within 1–2 business days"
 showStatusChip: true
 capabilities:
   - key: system_analysis
     title: System Analyst
-    summary: "TODO(content): what you do as a System Analyst, in one or two sentences"
-    activities: []
+    summary: "I translate business needs into structured system requirements, process logic, and practical solutions. My approach combines analytical thinking, stakeholder understanding, and technical awareness to bridge business operations with technology."
+    activities:
+      - "Analyze business requirements and identify system gaps."
+      - "Translate operational needs into functional requirements."
+      - "Map workflows, business rules, and system interactions."
+      - "Validate system functionality through testing and user feedback."
   - key: process_improvement
     title: Business Process Improvement
-    summary: "TODO(content): what you do in business process improvement, in one or two sentences"
-    activities: []
+    summary: "I identify operational inefficiencies through process analysis, workload evaluation, and data-driven problem solving. I focus on designing improvements that make processes more effective, measurable, and sustainable."
+    activities:
+      - "Analyze existing workflows and identify process bottlenecks."
+      - "Evaluate operational performance through KPI and workload analysis."
+      - "Conduct root cause analysis and develop improvement proposals."
+      - "Design process improvements supported by data and automation."
   - key: system_development
     title: System Development
-    summary: "TODO(content): what you do in system development, in one or two sentences"
-    activities: []
+    summary: "I develop digital solutions that address practical business problems, from application architecture and database design to implementation and performance testing. I leverage technology and automation to simplify workflows and improve operational efficiency."
+    activities:
+      - "Develop web-based applications and internal business tools."
+      - "Design database structures and application workflows."
+      - "Integrate automation into repetitive operational processes."
+      - "Conduct functional, integration, and performance testing."
 approach:
   - title: Understand
-    description: "TODO(content): how you do this step"
+    description: "Understand the business context, stakeholder expectations, and actual problems before defining a solution."
   - title: Map as-is
-    description: "TODO(content): how you do this step"
+    description: "Document existing workflows, system interactions, and operational constraints to establish the current state."
   - title: Analyze
-    description: "TODO(content): how you do this step"
+    description: "Identify gaps, bottlenecks, root causes, and opportunities through structured analysis and available data."
   - title: Design to-be
-    description: "TODO(content): how you do this step"
+    description: "Develop an improved process or system design that addresses the identified problems while considering feasibility and business needs."
   - title: Build
-    description: "TODO(content): how you do this step"
+    description: "Translate the proposed solution into practical implementation through process changes, system development, or automation."
   - title: Verify
-    description: "TODO(content): how you do this step"
+    description: "Validate the outcome against defined requirements and performance indicators, then identify opportunities for further improvement."
