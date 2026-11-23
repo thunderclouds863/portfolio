@@ -15,11 +15,17 @@ const PEOPLE = [
 test("home shows the recommendations after Projects, verbatim, without dates", async ({ page }) => {
   await page.goto("/");
   const ids = await page.locator("main > section[id]").evaluateAll((els) => els.map((e) => e.id));
-  expect(ids.slice(4, 7)).toEqual(["projects", "testimonials", "approach"]);
+  expect(ids.slice(3, 8)).toEqual([
+    "experience",
+    "education",
+    "projects",
+    "testimonials",
+    "approach",
+  ]);
   // Section numbers shift when Testimonials is present.
-  await expect(page.locator("#testimonials h2")).toContainText("05 //");
-  await expect(page.locator("#approach h2")).toContainText("06 //");
-  await expect(page.locator("#contact h2")).toContainText("08 //");
+  await expect(page.locator("#testimonials h2")).toContainText("06 //");
+  await expect(page.locator("#approach h2")).toContainText("07 //");
+  await expect(page.locator("#contact h2")).toContainText("09 //");
 
   const section = page.locator("#testimonials");
   const cards = section.locator("figure");

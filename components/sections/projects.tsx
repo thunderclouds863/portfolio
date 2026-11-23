@@ -10,9 +10,9 @@ import { Reveal } from "@/components/motion/reveal";
 import { Section } from "./section";
 
 // FR-PRJ-01: three featured case studies in a zig-zag layout + link to /projects.
-function Projects({ projects }: { projects: ProjectView[] }) {
+function Projects({ projects, number }: { projects: ProjectView[]; number: string }) {
   return (
-    <Section id="projects" number="04" title="Projects">
+    <Section id="projects" number={number} title="Projects">
       {projects.length === 0 ? (
         <Missing what="three featured projects (IN-05)" />
       ) : (

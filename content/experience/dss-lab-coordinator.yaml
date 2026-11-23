@@ -1,5 +1,5 @@
 entry: DSS Lab Coordinator
-status: draft
+status: published
 organization: Decision Support System Laboratory, Diponegoro University
 role: Coordinator of Skill & Development Division
 start: "2024-07"
@@ -7,6 +7,4 @@ end: "2025-06"
 highlights:
   - text: Led assistant trainers as lead mentor for ExtendSim (80+ participants), Python programming logic (120+) and IoT (50+) training.
     scope: owner
-  - text: "TODO(content): second highlight for the Coordinator role, in your own words (FR-EXP-01: 2–4 highlights)"
-    scope: unset
 tags: []

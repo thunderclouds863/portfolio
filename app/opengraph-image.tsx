@@ -61,20 +61,20 @@ export default async function OpengraphImage() {
         {/* The square is drawn, not typed: Press Start 2P has no "■" glyph, and a
             missing glyph makes the renderer fetch a fallback font at runtime. */}
         <div
-          style={{ display: "flex", alignItems: "center", gap: 16, color: YELLOW, fontSize: 22 }}
+          style={{ display: "flex", alignItems: "center", gap: 16, color: YELLOW, fontSize: 18 }}
         >
           {openToWork ? (
             <>
               <div
                 style={{
                   display: "flex",
-                  width: 18,
-                  height: 18,
-                  marginRight: 18,
+                  width: 16,
+                  height: 16,
+                  marginRight: 16,
                   backgroundColor: YELLOW,
                 }}
               />
-              <div style={{ display: "flex" }}>OPEN TO WORK</div>
+              <div style={{ display: "flex" }}>OPEN TO OPPORTUNITIES &amp; COLLABORATION</div>
             </>
           ) : (
             " "

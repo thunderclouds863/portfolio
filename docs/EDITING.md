@@ -46,8 +46,11 @@ Screenshots will be added once the site is deployed with GitHub storage (Phase 9
 
 ## Add experience, a skill or a recommendation
 
-- **Experience:** dates as `YYYY-MM`; leave **End month** empty for a current role; 2–4 highlights;
-  set the contribution scope.
+- **Experience:** dates as `YYYY-MM`; leave **End month** empty for a current role; as many
+  highlights as you like; set the contribution scope on each.
+- **Education:** dates as `YYYY-MM`, or just `YYYY` when you only know the year. Degree, grade,
+  thesis and focus areas are optional. Add competitions and awards under **Achievements** (title,
+  issuer, month); they appear in the Education section and on `/cv`.
 - **Skill:** choose a group and an honest level (Daily use / Project use / Learning) and link the
   projects where you used it.
 - **Recommendation:** paste the LinkedIn text word for word (you may only shorten it with `[…]`),

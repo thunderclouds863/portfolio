@@ -22,7 +22,7 @@ test("home has a JSON-LD Person built from the profile", async ({ page }) => {
     name: "Desi Armanda Sari",
     jobTitle: "System Analyst",
     address: { addressLocality: "West Jakarta, Indonesia" },
-    alumniOf: [{ name: "Diponegoro University" }],
+    alumniOf: [{ name: "Universitas Diponegoro" }, { name: "SMA Negeri 2 Purworejo" }],
   });
   expect(person!.sameAs).toEqual([
     "https://www.linkedin.com/in/desi-armanda-sari/",
@@ -31,9 +31,20 @@ test("home has a JSON-LD Person built from the profile", async ({ page }) => {
 });
 
 test("draft case studies are noindex and carry no CreativeWork yet", async ({ page }) => {
-  await page.goto("/projects/fptk-sourcing-database");
+  await page.goto("/projects/hospital-erp-prototype");
   await expect(page.locator('meta[name="robots"]').first()).toHaveAttribute("content", /noindex/);
   expect(await jsonLd(page)).toEqual([]);
+});
+
+test("a published case study is indexable and has a CreativeWork", async ({ page }) => {
+  await page.goto("/projects/fptk-sourcing-database");
+  await expect(page.locator('meta[name="robots"]')).toHaveCount(0);
+  const [work] = await jsonLd(page);
+  expect(work).toMatchObject({
+    "@type": "CreativeWork",
+    name: "FPTK & Sourcing Database",
+    author: { "@type": "Person", name: "Desi Armanda Sari" },
+  });
 });
 
 test("a case study has no serious or critical axe violations", async ({ page }) => {

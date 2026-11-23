@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 
 import { Missing } from "@/components/content/missing";
-import { Reveal } from "@/components/motion/reveal";
 import { FilterChips } from "@/components/projects/filter-chips";
 import { ProjectFilter } from "@/components/projects/project-filter";
 import { ProjectCard } from "@/components/ui/project-card";
@@ -47,13 +46,13 @@ export default async function ProjectsPage() {
       {projects.length === 0 ? (
         <Missing what="published projects (IN-05)" />
       ) : (
-        <Reveal as="ul" stagger data-project-list="" className="flex flex-col gap-10">
+        <ul data-project-list="" className="flex flex-col gap-10">
           {projects.map((project, i) => (
             <li key={project.slug} data-caps={values[i]}>
-              <ProjectCard project={project} headingLevel="h2" />
+              <ProjectCard project={project} headingLevel="h2" lcp={i === 0} />
             </li>
           ))}
-        </Reveal>
+        </ul>
       )}
     </div>
   );

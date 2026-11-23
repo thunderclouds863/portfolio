@@ -12,6 +12,13 @@ const SLUGS = [
   "thermal-comfort-monitoring",
   "survey-report-automation",
   "recruitment-data-compiler",
+  "inventory-system-django",
+  "e-commerce-1",
+  "e-commerce-2",
+  "equipment-loan-system",
+  "library-system",
+  "donation-distribution-system",
+  "hmti-letter-generator",
 ];
 const TEMPLATE_HEADINGS = [
   "Context",
@@ -48,8 +55,12 @@ test.describe("case-study layout (1280px)", () => {
     await expect(snapshot).toContainText(
       "HR's overtime recap time went from about 4 hours to about 5 minutes.",
     );
+    // Published: sections that only hold TODO(content) are hidden until filled.
+    const empty = ["Solution design", "Verification"];
     for (const name of TEMPLATE_HEADINGS) {
-      await expect(page.getByRole("heading", { level: 2, name, exact: true })).toBeVisible();
+      const heading = page.getByRole("heading", { level: 2, name, exact: true });
+      if (empty.includes(name)) await expect(heading).toHaveCount(0);
+      else await expect(heading).toBeVisible();
     }
     await expect(page.getByRole("link", { name: "< back to projects" })).toHaveAttribute(
       "href",
@@ -118,14 +129,17 @@ test("/projects lists every draft project and the filter hides non-matching ones
   const items = page.locator("[data-project-list] > li");
   await expect(items).toHaveCount(SLUGS.length);
   await expect(items.filter({ visible: true })).toHaveCount(SLUGS.length);
-  // No draft has capabilities yet, so a capability filter leaves nothing visible.
-  await page
-    .getByRole("navigation", { name: "Filter projects by capability" })
-    .getByRole("link", { name: /Analysis/ })
-    .click();
+  const filters = page.getByRole("navigation", { name: "Filter projects by capability" });
+  // Only the published projects have capabilities so far:
+  // FPTK (analysis, development, data) and Overtime (process, development).
+  await filters.getByRole("link", { name: /Analysis/ }).click();
   await expect(page).toHaveURL(/capability=analysis/);
-  await expect(items.filter({ visible: true })).toHaveCount(0);
-  await expect(page.getByRole("status")).toHaveText("No projects in this category yet.");
+  await expect(items.filter({ visible: true })).toHaveCount(1);
+  await expect(items.filter({ visible: true })).toContainText("FPTK & Sourcing Database");
+  await filters.getByRole("link", { name: /Process/ }).click();
+  await expect(page).toHaveURL(/capability=process/);
+  await expect(items.filter({ visible: true })).toHaveCount(1);
+  await expect(items.filter({ visible: true })).toContainText("Overtime Management System");
 });
 
 // PRD 12: project card -> detail -> back, at desktop and phone widths.
@@ -137,7 +151,7 @@ for (const viewport of [
     await page.setViewportSize(viewport);
     await page.goto("/projects");
     const card = page.locator("[data-project-list] > li").filter({ hasText: "Sales Academy LMS" });
-    await card.getByRole("link", { name: "Sales Academy LMS" }).click();
+    await card.getByRole("link", { name: "Sales Academy LMS", exact: true }).click();
     await expect(page).toHaveURL(/\/projects\/sales-academy-lms$/);
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("Sales Academy LMS");
 
@@ -184,4 +198,35 @@ test("outcomes show evidence when verified and 'self-reported' otherwise", async
   const unverified = page.getByRole("region", { name: "Project snapshot" });
   await expect(unverified.locator("[data-outcome-unverified]")).toHaveText("self-reported");
   await expect(unverified.getByText(/^evidence: /)).toHaveCount(0);
+});
+
+// Owner request: every project with a running demo links to it directly.
+test("demo links open the running app in a new tab, from the card and the case study", async ({
+  page,
+}) => {
+  await page.goto("/projects");
+  const card = page.locator("#project-fptk-sourcing-database");
+  const demo = card.locator("[data-demo-link]");
+  await expect(demo).toHaveAttribute("href", "https://fptkdemo-desi.streamlit.app");
+  await expect(demo).toHaveAttribute("target", "_blank");
+  await expect(demo).toHaveAccessibleName(
+    /live demo.*of FPTK & Sourcing Database.*opens in a new tab/,
+  );
+  // The demo link sits above the card's stretched link, so a click reaches it.
+  const box = (await demo.boundingBox())!;
+  const hit = await page.evaluate(
+    ({ x, y }) => document.elementFromPoint(x, y)?.closest("a")?.getAttribute("href"),
+    { x: box.x + box.width / 2, y: box.y + box.height / 2 },
+  );
+  expect(hit).toBe("https://fptkdemo-desi.streamlit.app");
+
+  await page.goto("/projects/fptk-sourcing-database");
+  const snapshot = page.getByRole("region", { name: "Project snapshot" });
+  await expect(snapshot.locator("[data-demo-link]")).toHaveAttribute(
+    "href",
+    "https://fptkdemo-desi.streamlit.app",
+  );
+  // A project without a demo shows no demo row.
+  await page.goto("/projects/survey-report-automation");
+  await expect(page.locator("[data-demo-link]")).toHaveCount(0);
 });

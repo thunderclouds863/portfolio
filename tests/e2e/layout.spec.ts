@@ -7,6 +7,7 @@ const SECTION_LABELS = [
   "./about",
   "./skills",
   "./experience",
+  "./education",
   "./projects",
   "./approach",
   "./stack",
@@ -270,7 +271,7 @@ test.describe("mobile orbit menu", { tag: "@mobile" }, () => {
       expect(viewport.height - (box.y + box.height)).toBeLessThan(40); // bottom corner
       await button.click();
       const links = page.getByRole("dialog", { name: "Menu" }).getByRole("link");
-      await expect(links).toHaveCount(8); // 7 sections + CV
+      await expect(links).toHaveCount(9); // 8 sections + CV
       // Wait until the launch animations have finished (slower in WebKit).
       // (Only the orbit items: the blinking cursors animate forever.)
       await page.waitForFunction(() =>

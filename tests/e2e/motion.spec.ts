@@ -142,7 +142,10 @@ test.describe("full motion, desktop 1280px", () => {
   // The target is NOT met yet (open decision); this guard catches further growth.
   // Phase 6: 181.1 KB — the working contact form adds ~4.6 KB (Zod loads only on submit,
   // Turnstile only near the form). Guard raised from 180 to 185 KB accordingly.
-  test("first-load JS on / does not grow past the 185 KB regression guard", async ({ page }) => {
+  // Content publish: 188.1 KB — the first project thumbnail on the home page loads
+  // the next/image client runtime (~3 KB over), which PRD 11 requires for images.
+  // Guard raised from 185 to 190 KB. The 150 KB target is still an open item.
+  test("first-load JS on / does not grow past the 190 KB regression guard", async ({ page }) => {
     await page.goto("/", { waitUntil: "networkidle" });
     const js = await page.evaluate(() =>
       performance
@@ -171,7 +174,7 @@ test.describe("full motion, desktop 1280px", () => {
     console.log(
       `first-load JS: ${js.count} files, ${kb(js.encoded)} compressed, ${kb(js.decoded)} uncompressed`,
     );
-    expect(js.encoded).toBeLessThanOrEqual(185 * 1024);
+    expect(js.encoded).toBeLessThanOrEqual(190 * 1024);
   });
 });
 

@@ -1,11 +1,4 @@
-import {
-  BriefcaseBusinessIcon,
-  FolderGit2Icon,
-  GlobeIcon,
-  MailIcon,
-  MessageCircleIcon,
-} from "lucide-react";
-
+import { FallbackLinkIcon, linkIcons } from "@/components/content/link-icons";
 import { Missing } from "@/components/content/missing";
 import { DraftBadge, Val } from "@/components/content/val";
 import { TerminalFrame } from "@/components/ui/terminal-frame";
@@ -15,14 +8,6 @@ import { Reveal } from "@/components/motion/reveal";
 
 import { ContactForm } from "./contact-form";
 import { Section } from "./section";
-
-const linkIcons = {
-  email: MailIcon,
-  linkedin: BriefcaseBusinessIcon,
-  github: FolderGit2Icon,
-  whatsapp: MessageCircleIcon,
-  website: GlobeIcon,
-} as const;
 
 type ContactProps = { profile: ProfileView | null; settings: SettingsView | null; number?: string };
 
@@ -45,10 +30,16 @@ function Contact({ profile, settings, number = "07" }: ContactProps) {
             <h3 className="text-label text-green">Availability</h3>
             {availability ? (
               <ul className="flex flex-col gap-1">
-                {availability.openToWork && profile.preferredLocations.length > 0 ? (
+                {availability.openToWork ? (
                   <li>
-                    Open to {workModes.length > 0 ? `${joinOr(workModes)} ` : ""}roles in{" "}
-                    {joinOr(profile.preferredLocations)}.
+                    Open to full-time employment, freelance opportunities, and project
+                    collaborations across business, technology, and digital transformation.
+                  </li>
+                ) : null}
+                {profile.preferredLocations.length > 0 ? (
+                  <li className="text-meta text-muted">
+                    locations: {joinOr(profile.preferredLocations)}
+                    {workModes.length > 0 ? ` (${joinOr(workModes)})` : ""}
                   </li>
                 ) : null}
                 {availability.freelance && availability.freelanceServices.length > 0 ? (
@@ -75,7 +66,7 @@ function Contact({ profile, settings, number = "07" }: ContactProps) {
             {links.length > 0 ? (
               <ul className="flex flex-col gap-2">
                 {links.map((link) => {
-                  const Icon = linkIcons[link.icon] ?? GlobeIcon;
+                  const Icon = linkIcons[link.icon] ?? FallbackLinkIcon;
                   const external = !link.url.startsWith("mailto:");
                   return (
                     <li key={link.url}>

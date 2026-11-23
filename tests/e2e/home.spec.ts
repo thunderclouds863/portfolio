@@ -1,13 +1,15 @@
 import { expect, test, type Page } from "@playwright/test";
 
 // Phase 3 — home sections. Runs against a production build, where only Published
-// content renders, so these tests check structure, not copy. Testimonials is a
+// content renders, so these tests check structure, not copy (except the education
+// test, which checks the owner-override layout). Testimonials is a
 // conditional section (FR-TST-01: shown only when something is published).
 
 const SECTIONS = [
   { id: "about", label: "./about" },
   { id: "capabilities", label: "./skills" },
   { id: "experience", label: "./experience" },
+  { id: "education", label: "./education" },
   { id: "projects", label: "./projects" },
   { id: "approach", label: "./approach" },
   { id: "stack", label: "./stack" },
@@ -90,6 +92,32 @@ test.describe("home sections (1280px)", () => {
     );
     const visual = hero.locator('[aria-hidden="true"] pre');
     await expect(visual).toContainText("| INPUT |--->| PROCESS |--->| OUTPUT |");
+  });
+
+  // Decision 0002 #6/#7: education has its own section; availability covers full-time, freelance & collaboration.
+  test("education is its own section with an awards log, not part of the timeline", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    const education = page.locator("#education");
+    const schools = education.locator("[data-education-list] > li");
+    await expect(schools).toHaveCount(2);
+    await expect(schools.first()).toContainText("Universitas Diponegoro");
+    await expect(schools.first()).toContainText("Industrial Engineering");
+    await expect(schools.last()).toContainText("SMA Negeri 2 Purworejo");
+    await expect(schools.last()).toContainText("Mathematics and Natural Sciences (MIPA)");
+    await expect(schools.last()).toContainText("2018 – 2021");
+    const awards = page.getByRole("complementary", { name: "Competitions & awards" });
+    await expect(awards.locator("li")).toHaveCount(3);
+    // The degree is no longer a timeline entry (the DSS Lab roles still name the university).
+    await expect(page.locator("#experience")).not.toContainText("S.T. Industrial Engineering");
+    await expect(page.locator("#top")).toContainText("Open to Opportunities & Collaboration");
+    await expect(page.locator("#top")).toContainText(
+      "Open to full-time employment, freelance opportunities, and project collaborations",
+    );
+    await expect(page.locator("#contact")).toContainText(
+      "Open to full-time employment, freelance opportunities, and project collaborations",
+    );
   });
 
   test("contact form has the FR-CF-01 fields", async ({ page }) => {
