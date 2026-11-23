@@ -50,13 +50,17 @@ confirmed by the owner; this note records them so later work does not "fix" them
 
 - **PRD:** section 4, education is part of the Experience timeline.
 - **Decision (2026-11-23):** education has its own home section after Experience (`#education`,
-  nav "./education"), so the degree no longer sits in the work timeline. Each education entry can
-  list achievements (title, issuer, month), shown in an "awards.log" panel and on `/cv`. Years
-  without a known month are allowed for education dates.
+  nav "./education"), so the degree no longer sits in the work timeline. Both **S.T. Industrial
+  Engineering — Universitas Diponegoro** and **High school, Mathematics and Natural Sciences (MIPA)
+  — SMA Negeri 2 Purworejo** are shown. Each education entry can list achievements (title, issuer,
+  month), shown in an "awards.log" panel and on `/cv`. Years without a known month are allowed for
+  education dates. A disputed 2019 competition entry remains on HOLD until verified by the owner.
 
-## 7. Status chip: "Open to collaboration"
+## 7. Availability positioning: "Open to Opportunities & Collaboration"
 
 - **PRD:** FR-HERO status chip "■ OPEN TO WORK".
-- **Decision (2026-11-23):** the chip and the share image say "Open to collaboration", because
-  Desi takes on projects as well as formal roles. The Profile field keeps its key `openToWork`
-  (label "Open to collaboration" in the CMS).
+- **Decision (2026-11-23):** the chip and share image say **"Open to Opportunities & Collaboration"**,
+  with supporting copy across Hero, About, Contact, and CV communicating openness to full-time
+  employment, freelance opportunities, and project collaborations across business, technology, and
+  digital transformation. The Profile field keeps its key `openToWork` (label "Open to Opportunities
+  & Collaboration" in the CMS).

@@ -30,10 +30,16 @@ function Contact({ profile, settings, number = "07" }: ContactProps) {
             <h3 className="text-label text-green">Availability</h3>
             {availability ? (
               <ul className="flex flex-col gap-1">
-                {availability.openToWork && profile.preferredLocations.length > 0 ? (
+                {availability.openToWork ? (
                   <li>
-                    Open to {workModes.length > 0 ? `${joinOr(workModes)} ` : ""}roles in{" "}
-                    {joinOr(profile.preferredLocations)}.
+                    Open to full-time employment, freelance opportunities, and project
+                    collaborations across business, technology, and digital transformation.
+                  </li>
+                ) : null}
+                {profile.preferredLocations.length > 0 ? (
+                  <li className="text-meta text-muted">
+                    locations: {joinOr(profile.preferredLocations)}
+                    {workModes.length > 0 ? ` (${joinOr(workModes)})` : ""}
                   </li>
                 ) : null}
                 {availability.freelance && availability.freelanceServices.length > 0 ? (

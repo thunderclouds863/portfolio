@@ -126,8 +126,11 @@ export default async function CvPage() {
         </div>
         {availability ? (
           <p className="text-meta text-muted">
-            {availability.openToWork && profile.preferredLocations.length > 0
-              ? `Open to ${workModes.length > 0 ? `${joinOr(workModes)} ` : ""}roles in ${joinOr(profile.preferredLocations)}. `
+            {availability.openToWork
+              ? "Open to full-time employment, freelance opportunities, and project collaborations across business, technology, and digital transformation. "
+              : null}
+            {profile.preferredLocations.length > 0
+              ? `Locations: ${joinOr(profile.preferredLocations)}${workModes.length > 0 ? ` (${joinOr(workModes)})` : ""}. `
               : null}
             {isFilled(availability.availableFrom) ? `Start: ${availability.availableFrom}.` : null}
             {availability.freelance && availability.freelanceServices.length > 0
