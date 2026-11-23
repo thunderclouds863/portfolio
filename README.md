@@ -47,10 +47,13 @@ Environment variables are listed in `.env.example` (PRD section 13). Variables s
 - **verify**: `npm ci` → lint, typecheck, format check → unit and content tests → build → link
   check on the built site → Playwright e2e + axe → `npm audit --audit-level=high`.
 - **lighthouse**: build, then Lighthouse CI with the budgets in `lighthouserc.json` (mobile,
-  3 runs per URL). Accessibility, Best Practices and SEO ≥ 95, LCP < 2.5 s and CLS < 0.05 fail the
-  job. Performance ≥ 95 is a warning for now: framework hydration (Total Blocking Time) holds
-  `/` at about 91 on a slow machine. Reports are uploaded as
-  workflow artifacts. Run locally with `npm run build && npx @lhci/cli@0.16.1 autorun`.
+  3 runs per URL against local `next start`). Accessibility, Best Practices and SEO ≥ 95 and
+  CLS ≤ 0.05 fail the job. Performance ≥ 95, TBT ≤ 200 ms and LCP ≤ 2.5 s are warnings on
+  localhost CI runs: framework hydration delays simulated mobile TBT and image-LCP routes (such as
+  `/projects`) on slow runners. Post-deploy Lighthouse checks against the production URL are
+  synthetic lab runs (not real-user field measurements) and are run manually per
+  `docs/DEPLOYMENT.md`, not automatically enforced by CI. Reports are uploaded as workflow
+  artifacts. Run locally with `npm run build && npx @lhci/cli@0.16.1 autorun`.
 
 Playwright projects: `chromium` and `webkit` run the whole production suite at desktop size;
 `mobile-chrome` (Pixel 7) and `mobile-safari` (iPhone 14) run the tests tagged `@mobile` plus the
