@@ -1,0 +1,11 @@
+/*
+ * @keystatic/core 0.6.10 injects a global `body { overflow: hidden }` (its editor
+ * scrolls inside its own panels). The GitHub App setup screen has no inner scroll
+ * container, so on short viewports its form, including the "Create GitHub App"
+ * button, is cut off. Restore vertical page scrolling on the setup screen only:
+ * its form is the only one that posts a GitHub App `manifest` to /settings/apps/new.
+ * Unlayered and more specific than Keystatic's `body` rule, so it wins.
+ */
+body:has(form[action$="/settings/apps/new"] input[name="manifest"]) {
+  overflow-y: auto;
+}
