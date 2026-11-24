@@ -96,14 +96,21 @@ export default config({
 
   singletons: {
     profile: singleton({
-      label: "Profile",
+      label: "Profile & Hero",
       path: "content/profile",
       format: { data: "yaml" },
       schema: {
         status,
         name: fields.text({ label: "Name" }),
-        headline: fields.text({ label: "Headline (hero H1)" }),
-        subheadline: fields.text({ label: "Sub-headline", multiline: true }),
+        headline: fields.text({
+          label: "Main headline (Hero H1)",
+          description: "Primary hero statement shown at the top of the homepage.",
+        }),
+        subheadline: fields.text({
+          label: "Professional positioning (Hero sub-headline)",
+          description: "Role positioning shown under the main headline.",
+          multiline: true,
+        }),
         about: fields.markdoc({
           label: "About",
           options: { image: false, codeBlock: false, table: false, heading: false },
@@ -116,10 +123,20 @@ export default config({
         availability: fields.object(
           {
             openToWork: fields.checkbox({
-              label: "Open to Opportunities & Collaboration",
+              label: "Show availability status",
               description:
-                'Shows the "Open to Opportunities & Collaboration" chip in the hero and on the share image.',
+                "Shows the availability chip in the hero, on the share image, and the availability summary in Hero, Contact, and CV.",
               defaultValue: false,
+            }),
+            label: fields.text({
+              label: "Availability label",
+              description:
+                'Short chip label for the hero and Open Graph image, e.g. "Open to Opportunities & Collaboration".',
+            }),
+            summary: fields.text({
+              label: "Supporting availability description",
+              description: "Reused in the Hero, Contact section, and CV page.",
+              multiline: true,
             }),
             workModes: fields.multiselect({
               label: "Work modes",
