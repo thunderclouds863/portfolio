@@ -5,9 +5,17 @@ import { StatusChip } from "@/components/ui/status-chip";
 import { joinOr, workModeLabel } from "@/lib/format";
 import type { ProfileView, SettingsView } from "@/lib/views";
 
-import { TypingLine } from "@/components/motion/typing-line";
+import { TerminalSequence, type TerminalStep } from "@/components/motion/terminal-sequence";
 
 import { HeroVisual } from "./hero-visual";
+
+const HERO_TERMINAL_STEPS: readonly TerminalStep[] = [
+  { command: "> analyze --process=as-is", output: "Mapping current workflow..." },
+  { command: "> identify --bottleneck", output: "Detecting operational inefficiencies..." },
+  { command: "> design --to-be", output: "Optimizing business process..." },
+  { command: "> build --solution", output: "Developing the required system..." },
+  { command: "> verify --improvement", output: "Validating implementation results..." },
+];
 
 type HeroProps = { profile: ProfileView | null; settings: SettingsView | null };
 
@@ -22,7 +30,7 @@ function Hero({ profile, settings }: HeroProps) {
     <section id="top" aria-labelledby="hero-title" className="relative">
       <div className="mx-auto grid max-w-[1200px] items-center gap-10 px-4 py-16 md:px-6 md:py-24 lg:grid-cols-12 lg:gap-12">
         <div className="flex flex-col gap-6 lg:col-span-7">
-          <TypingLine text="> analyze --process=as-is" />
+          <TerminalSequence steps={HERO_TERMINAL_STEPS} />
 
           <DraftBadge show={!!profile?.isDraft} className="self-start" />
 
