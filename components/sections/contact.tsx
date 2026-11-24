@@ -1,8 +1,9 @@
 import { FallbackLinkIcon, linkIcons } from "@/components/content/link-icons";
 import { Missing } from "@/components/content/missing";
-import { DraftBadge, Val } from "@/components/content/val";
+import { DraftBadge, Val, isFilled } from "@/components/content/val";
 import { TerminalFrame } from "@/components/ui/terminal-frame";
 import { joinOr, workModeLabel } from "@/lib/format";
+import { DEFAULT_AVAILABILITY_SUMMARY } from "@/lib/schema";
 import type { ProfileView, SettingsView } from "@/lib/views";
 import { Reveal } from "@/components/motion/reveal";
 
@@ -32,8 +33,9 @@ function Contact({ profile, settings, number = "07" }: ContactProps) {
               <ul className="flex flex-col gap-1">
                 {availability.openToWork ? (
                   <li>
-                    Open to full-time employment, freelance opportunities, and project
-                    collaborations across business, technology, and digital transformation.
+                    {isFilled(availability.summary)
+                      ? availability.summary
+                      : DEFAULT_AVAILABILITY_SUMMARY}
                   </li>
                 ) : null}
                 {profile.preferredLocations.length > 0 ? (
