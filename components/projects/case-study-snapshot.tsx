@@ -23,16 +23,20 @@ function CaseStudySnapshot({ project }: { project: ProjectView }) {
   return (
     <TerminalFrame as="section" title="snapshot.txt" aria-label="Project snapshot">
       <dl className="flex flex-col gap-3">
-        <Row label="role">
-          <Val value={project.role} what="your role (IN-05)" />
-        </Row>
-        <Row label="contribution">
-          {project.contribution === "unset" ? (
-            <Missing what="contribution scope (IN-05)" />
-          ) : (
-            <span className="text-yellow">{scopeLabel[project.contribution]}</span>
-          )}
-        </Row>
+        {isFilled(project.role) || project.isDraft ? (
+          <Row label="role">
+            <Val value={project.role} what="your role (IN-05)" />
+          </Row>
+        ) : null}
+        {project.contribution !== "unset" || project.isDraft ? (
+          <Row label="contribution">
+            {project.contribution === "unset" ? (
+              <Missing what="contribution scope (IN-05)" />
+            ) : (
+              <span className="text-yellow">{scopeLabel[project.contribution]}</span>
+            )}
+          </Row>
+        ) : null}
         {/* Team size is optional: a Published project without one skips the row
             ("hide until filled"); drafts show the gap. */}
         {project.teamSize ? (
@@ -42,35 +46,41 @@ function CaseStudySnapshot({ project }: { project: ProjectView }) {
             <Missing what="team size (IN-05)" />
           </Row>
         ) : null}
-        <Row label="period">
-          <Val value={project.period} what="period (IN-05)" />
-        </Row>
+        {isFilled(project.period) || project.isDraft ? (
+          <Row label="period">
+            <Val value={project.period} what="period (IN-05)" />
+          </Row>
+        ) : null}
         {project.demoUrl ? (
           <Row label="demo">
             <DemoLink href={project.demoUrl} title={project.title} />
           </Row>
         ) : null}
         <Row label="type">{projectTypeLabel[project.type] ?? project.type}</Row>
-        <Row label="capabilities">
-          {project.capabilities.length > 0 ? (
-            project.capabilities.map((c) => capabilityLabel[c] ?? c).join(", ")
-          ) : (
-            <Missing what="capabilities (IN-05)" />
-          )}
-        </Row>
-        <Row label="stack">
-          {project.stack.length > 0 ? (
-            <ul aria-label="Stack" className="flex flex-wrap gap-2">
-              {project.stack.map((s) => (
-                <li key={s}>
-                  <Tag>{s}</Tag>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <Missing what="stack (IN-05)" />
-          )}
-        </Row>
+        {project.capabilities.length > 0 || project.isDraft ? (
+          <Row label="capabilities">
+            {project.capabilities.length > 0 ? (
+              project.capabilities.map((c) => capabilityLabel[c] ?? c).join(", ")
+            ) : (
+              <Missing what="capabilities (IN-05)" />
+            )}
+          </Row>
+        ) : null}
+        {project.stack.length > 0 || project.isDraft ? (
+          <Row label="stack">
+            {project.stack.length > 0 ? (
+              <ul aria-label="Stack" className="flex flex-wrap gap-2">
+                {project.stack.map((s) => (
+                  <li key={s}>
+                    <Tag>{s}</Tag>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <Missing what="stack (IN-05)" />
+            )}
+          </Row>
+        ) : null}
         {project.outcomes.length > 0 ? (
           <Row label="outcomes">
             <ul className="flex flex-col gap-2">

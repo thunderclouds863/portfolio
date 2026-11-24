@@ -3,7 +3,8 @@ import type { CSSProperties, ReactNode } from "react";
 
 import { ParallaxLayer } from "@/components/motion/parallax-layer";
 import { PointerTilt } from "@/components/motion/pointer-tilt";
-import { TypeLog } from "@/components/motion/type-log";
+import { ProcessFlow } from "@/components/motion/process-flow";
+import { TypeLog, type TypeLogLine } from "@/components/motion/type-log";
 import { PixelIcon } from "@/components/pixel/pixel-icon";
 import { cn } from "@/lib/utils";
 
@@ -20,22 +21,14 @@ import photo from "../../public/images/profile/desi-armanda-sari.jpg";
 
 const BINARY = ["01000100", "01000101", "01010011", "01001001", "00100000", "01000001"];
 
-// FR-HERO-02 / Phase 3: the ASCII Input -> Process -> Output diagram. Plain ASCII:
-// box-drawing glyphs fall outside the font subset and break the alignment.
-const DIAGRAM = [
-  "+-------+    +---------+    +--------+",
-  "| INPUT |--->| PROCESS |--->| OUTPUT |",
-  "+-------+    +---------+    +--------+",
-].join("\n");
-
-// Decorative terminal log (types once on load). Generic, no claims.
-const LOG = [
+// Repeating decorative terminal log. Generic, no unverified claims.
+const LOG: readonly TypeLogLine[] = [
   { text: "$ whoami", tone: "prompt" },
   { text: "desi --role system-analyst", tone: "output" },
   { text: "$ map --process as-is", tone: "prompt" },
   { text: "$ build --system && verify", tone: "prompt" },
   { text: "ok: ready to ship", tone: "ok" },
-] as const;
+];
 
 /** Inner wrapper that follows the pointer tilt by `depth` px (max 6). */
 function Tilt({
@@ -121,18 +114,8 @@ function HeroVisual({ className }: { className?: string }) {
       <ParallaxLayer speed={1.15} layer="L3" className="pointer-events-none absolute inset-0 z-40">
         <Tilt depth={6} className="size-full">
           <div className="relative size-full">
-            {/* The process diagram on its own panel (contrast), over the top-right edge. */}
-            <div
-              aria-hidden="true"
-              className="bg-panel border-green-dim absolute top-12 right-0 border-2 font-mono"
-            >
-              <div className="border-green-dim text-green-dim border-b-2 px-2 py-0.5 text-[10px]">
-                process.map
-              </div>
-              <pre className="text-green px-2 py-1.5 text-[8px] leading-tight sm:text-[9px]">
-                {DIAGRAM}
-              </pre>
-            </div>
+            {/* Animated INPUT -> PROCESS -> OUTPUT workflow panel over the top-right edge. */}
+            <ProcessFlow className="absolute top-12 right-0" />
             <TypeLog lines={LOG} className="absolute bottom-0 left-0 w-[min(17rem,78%)]" />
             <div aria-hidden="true" className="text-amber absolute top-10 left-0">
               <PixelIcon name="floppy" size={32} />

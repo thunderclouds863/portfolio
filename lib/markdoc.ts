@@ -82,6 +82,27 @@ export function pruneTodoSections(doc: Node): Node {
 
 export const markdocConfig: Config = {
   nodes: {
+    // Reject unsafe link protocols (javascript:, data:, vbscript:) at content-gate time.
+    link: {
+      render: "a",
+      attributes: {
+        href: { type: String, required: true },
+        title: { type: String },
+      },
+      validate(node) {
+        const href = node.attributes.href;
+        if (typeof href !== "string" || !/^(https?:\/\/|mailto:|\/|#)/i.test(href.trim())) {
+          return [
+            {
+              id: "unsafe-link-protocol",
+              level: "error",
+              message: `disallowed link protocol in href '${String(href)}'`,
+            },
+          ];
+        }
+        return [];
+      },
+    },
     // Draft preview only: a TODO(content) paragraph renders as a MISSING marker.
     // Published bodies never contain TODO (the content gate rejects them).
     paragraph: {
@@ -135,9 +156,22 @@ export const markdocConfig: Config = {
 
 /** Validation errors that should block rendering/publishing. */
 export function validateMarkdoc(node: Node): ValidationError[] {
-  return Markdoc.validate(node, markdocConfig)
+  const errors = Markdoc.validate(node, markdocConfig)
     .map((e) => e.error)
     .filter((e) => e.level === "error" || e.level === "critical");
+  for (const child of node.walk()) {
+    if (child.type === "link") {
+      const href = child.attributes.href;
+      if (typeof href !== "string" || !/^(https?:\/\/|mailto:|\/|#)/i.test(href.trim())) {
+        errors.push({
+          id: "unsafe-link-protocol",
+          level: "error",
+          message: `disallowed link protocol in href '${String(href)}'`,
+        });
+      }
+    }
+  }
+  return errors;
 }
 
 export type TocHeading = { id: string; level: 2 | 3; title: string };

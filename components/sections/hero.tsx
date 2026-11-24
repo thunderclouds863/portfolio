@@ -28,7 +28,7 @@ function Hero({ profile, settings }: HeroProps) {
   const workModes = (availability?.workModes ?? []).map((m) => workModeLabel[m] ?? m);
 
   return (
-    <section id="top" aria-labelledby="hero-title" className="relative">
+    <section id="top" aria-labelledby="hero-title" className="relative overflow-x-clip">
       <div className="mx-auto grid max-w-[1200px] items-center gap-10 px-4 py-16 md:px-6 md:py-24 lg:grid-cols-12 lg:gap-12">
         <div className="flex flex-col gap-6 lg:col-span-7">
           <TerminalSequence steps={HERO_TERMINAL_STEPS} />

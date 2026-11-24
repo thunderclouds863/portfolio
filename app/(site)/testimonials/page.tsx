@@ -13,8 +13,8 @@ import { getHomeData } from "@/lib/home-data";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata({
-  title: "Testimonials",
-  description: "LinkedIn recommendations for Desi Armanda Sari, published with permission.",
+  title: "Recommendations",
+  description: "Recommendations and testimonials for Desi Armanda Sari, published with permission.",
   path: "/testimonials",
 });
 
@@ -33,8 +33,8 @@ export default async function TestimonialsPage() {
   return (
     <div className="mx-auto flex max-w-[1200px] flex-col gap-10 px-4 py-16 md:px-6 md:py-24">
       <header className="flex flex-col gap-4">
-        <p className="text-meta text-green-dim">{"> cat ./testimonials"}</p>
-        <h1 className="text-display-1 text-green glow">Testimonials</h1>
+        <p className="text-meta text-green-dim">{"> cat ./recommendations"}</p>
+        <h1 className="text-display-1 text-green glow">Recommendations</h1>
       </header>
 
       {recommendations.length === 0 ? (
