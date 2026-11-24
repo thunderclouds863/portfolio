@@ -13,18 +13,26 @@ function Nav() {
   return (
     <header className="bg-bg border-green-dim sticky top-0 z-100 h-(--nav-height) border-b-2 print:hidden">
       <div className="mx-auto flex h-full max-w-[1200px] items-center justify-between gap-4 px-4 md:px-6">
-        {/* WCAG 2.5.3 label in name: the accessible name contains the visible text
-            ("DAS" below 1024px, the full name above). */}
+        {/* WCAG 2.5.3 label in name: visible text matches the accessible name
+            ("DESI / Armanda Sari" stacked below 1024px, single-line above). */}
         <Link
           href="/"
           className="text-label text-green hover:text-amber flex min-h-11 items-center"
         >
-          <span className="lg:hidden">
-            DAS<span className="sr-only">, Desi Armanda Sari</span>
+          <span className="flex flex-col leading-none lg:hidden">
+            <span className="text-label text-green flex items-center leading-none">
+              DESI
+              <span aria-hidden="true" className="text-amber animate-blink">
+                _
+              </span>
+            </span>
+            <span className="text-muted mt-0.5 font-mono text-[10px] leading-tight tracking-normal">
+              Armanda Sari
+            </span>
           </span>
           <span className="hidden lg:inline">DESI ARMANDA SARI</span>
           <span className="sr-only">, home</span>
-          <span aria-hidden="true" className="text-amber animate-blink">
+          <span aria-hidden="true" className="text-amber animate-blink hidden lg:inline">
             _
           </span>
         </Link>
