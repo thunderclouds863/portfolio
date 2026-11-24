@@ -69,9 +69,13 @@ export default async function CaseStudyPage({ params }: PageProps<"/projects/[sl
           <DraftBadge show={project.isDraft} />
         </div>
         <h1 className="text-display-1 text-green glow max-w-[24ch]">{project.title}</h1>
-        <p className="max-w-[68ch] text-lg">
-          <Val value={project.summary} what="one-line summary (IN-05)" />
-        </p>
+        {isFilled(project.summary) ? (
+          <p className="max-w-[68ch] text-lg">{project.summary}</p>
+        ) : project.isDraft ? (
+          <p className="max-w-[68ch] text-lg">
+            <Val value={project.summary} what="one-line summary (IN-05)" />
+          </p>
+        ) : null}
       </header>
 
       <div className="grid gap-12 lg:grid-cols-12">

@@ -15,7 +15,7 @@ type SectionHeaderProps = {
 // tabIndex -1 lets the mobile menu move focus here after navigating (PRD 8.7).
 function SectionHeader({ number, title, id, className }: SectionHeaderProps) {
   return (
-    <h2 id={id} tabIndex={-1} className={cn("text-display-2 text-green", className)}>
+    <h2 id={id} tabIndex={-1} className={cn("text-display-2 text-green break-words", className)}>
       <span aria-hidden="true" className="text-green-dim mr-3">
         {`${number} //`}
       </span>
