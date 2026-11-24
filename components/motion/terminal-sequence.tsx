@@ -2,69 +2,52 @@
 
 import { type CSSProperties, useEffect, useRef, useState } from "react";
 
-export type TerminalStep = {
-  command: string;
-  output: string;
-};
-
-const MAX_MS = 1500;
-const MS_PER_CHAR = 45;
-const START_MS = 150;
-const OUT_MS = 220;
-const HOLD_MS = 1900;
+export type TerminalStep = { command: string; output: string };
 
 /**
- * Reusable terminal command->output sequence (zero extra dependencies).
+ * Reusable terminal command->output sequence.
  * Uses CSS `typing-cover` stepped transform for character-by-character typing,
  * pauses off-screen via IntersectionObserver, and renders static under reduced motion.
  */
-export function TerminalSequence({
-  steps,
-  className = "",
-}: {
-  steps: readonly TerminalStep[];
-  className?: string;
-}) {
+export function TerminalSequence({ steps }: { steps: readonly TerminalStep[] }) {
   const ref = useRef<HTMLDivElement>(null);
-  const [inView, setInView] = useState(true);
   const [idx, setIdx] = useState(0);
   const [showOut, setShowOut] = useState(false);
 
   const step = steps[idx % steps.length] ?? { command: "", output: "" };
-  const dur = Math.min(MAX_MS, Math.max(400, step.command.length * MS_PER_CHAR));
+  const dur = Math.min(1500, Math.max(400, step.command.length * 45));
 
   useEffect(() => {
     const el = ref.current;
-    if (!el || typeof IntersectionObserver === "undefined") return;
-    const io = new IntersectionObserver(([e]) => e && setInView(e.isIntersecting), {
+    if (!el || !steps.length || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let t1: ReturnType<typeof setTimeout> | undefined;
+    let t2: ReturnType<typeof setTimeout> | undefined;
+    const stop = () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
+    const start = () => {
+      stop();
+      t1 = setTimeout(() => setShowOut(true), 370 + dur);
+      if (steps.length > 1) {
+        t2 = setTimeout(() => {
+          setShowOut(false);
+          setIdx((n) => (n + 1) % steps.length);
+        }, 2270 + dur);
+      }
+    };
+    const io = new IntersectionObserver(([e]) => (e?.isIntersecting ? start() : stop()), {
       threshold: 0.1,
     });
     io.observe(el);
-    return () => io.disconnect();
-  }, []);
-
-  useEffect(() => {
-    if (!inView || steps.length === 0) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const t1 = window.setTimeout(() => setShowOut(true), START_MS + dur + OUT_MS);
-    const t2 =
-      steps.length > 1
-        ? window.setTimeout(
-            () => {
-              setShowOut(false);
-              setIdx((n) => (n + 1) % steps.length);
-            },
-            START_MS + dur + OUT_MS + HOLD_MS,
-          )
-        : undefined;
     return () => {
-      window.clearTimeout(t1);
-      if (t2 !== undefined) window.clearTimeout(t2);
+      stop();
+      io.disconnect();
     };
-  }, [idx, inView, steps.length, dur]);
+  }, [idx, steps.length, dur]);
 
   const style = {
-    "--type-steps": Math.max(1, step.command.length),
+    "--type-steps": step.command.length || 1,
     "--type-duration": `${dur}ms`,
   } as CSSProperties;
 
@@ -74,7 +57,7 @@ export function TerminalSequence({
       aria-hidden="true"
       data-terminal-sequence=""
       data-step-index={idx}
-      className={`text-meta flex min-h-12 flex-col justify-center gap-1 overflow-hidden ${className}`}
+      className="text-meta flex min-h-12 flex-col justify-center gap-1 overflow-hidden"
     >
       <p className="text-green flex items-center">
         <span
