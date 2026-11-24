@@ -10,6 +10,8 @@ preferredLocations:
   - Cikarang
 availability:
   openToWork: true
+  label: Open to Opportunities & Collaboration
+  summary: Open to full-time employment, freelance opportunities, and project collaborations across business, technology, and digital transformation.
   workModes:
     - on_site
     - hybrid

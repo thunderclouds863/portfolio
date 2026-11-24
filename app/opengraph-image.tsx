@@ -4,6 +4,7 @@ import { join } from "node:path";
 import { ImageResponse } from "next/og";
 
 import { getHomeData } from "@/lib/home-data";
+import { DEFAULT_AVAILABILITY_LABEL } from "@/lib/schema";
 import { SITE_NAME, ogLine } from "@/lib/seo";
 
 // PRD section 11: generated OG image in the retro style (name, role, green on
@@ -25,6 +26,9 @@ export default async function OpengraphImage() {
     getHomeData(),
   ]);
   const openToWork = !!data.profile?.availability.openToWork;
+  const availabilityLabel = (
+    data.profile?.availability.label?.trim() || DEFAULT_AVAILABILITY_LABEL
+  ).toUpperCase();
 
   return new ImageResponse(
     <div
@@ -74,7 +78,7 @@ export default async function OpengraphImage() {
                   backgroundColor: YELLOW,
                 }}
               />
-              <div style={{ display: "flex" }}>OPEN TO OPPORTUNITIES &amp; COLLABORATION</div>
+              <div style={{ display: "flex" }}>{availabilityLabel}</div>
             </>
           ) : (
             " "
