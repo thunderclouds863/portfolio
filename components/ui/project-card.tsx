@@ -56,7 +56,7 @@ function ProjectCard({
             fill
             {...(lcp ? { preload: true, fetchPriority: "high" as const } : {})}
             sizes="(min-width: 1200px) 480px, (min-width: 768px) 40vw, calc(100vw - 2rem)"
-            className="object-cover [image-rendering:pixelated]"
+            className="ease-pixel object-cover transition-transform duration-(--dur-base) [image-rendering:pixelated] group-hover:scale-[1.03]"
           />
         ) : (
           <div className="bg-bg flex size-full flex-col items-center justify-center gap-3 p-4">
@@ -90,21 +90,51 @@ function ProjectCard({
           </Link>
         </H>
 
-        <p className="max-w-[60ch]">
-          <span className="text-meta text-green-dim">problem: </span>
-          <Val value={project.problem} what="one-line problem (IN-05)" />
-        </p>
+        {isFilled(project.problem) ? (
+          <p className="max-w-[60ch]">
+            <span className="text-meta text-green-dim">problem: </span>
+            {project.problem}
+          </p>
+        ) : isFilled(project.summary) ? (
+          <p className="max-w-[60ch]">{project.summary}</p>
+        ) : project.isDraft ? (
+          <p className="max-w-[60ch]">
+            <span className="text-meta text-green-dim">problem: </span>
+            <Val value={project.problem} what="one-line problem (IN-05)" />
+          </p>
+        ) : null}
 
-        <p className="text-meta text-muted">
-          <span className="text-green-dim">role: </span>
-          <Val value={project.role} what="your role (IN-05)" />
-          {" · "}
-          {project.contribution === "unset" ? (
-            <Missing what="contribution scope (IN-05)" />
-          ) : (
-            <span className="text-yellow">{scopeLabel[project.contribution]}</span>
-          )}
-        </p>
+        {isFilled(project.role) || project.contribution !== "unset" || project.isDraft ? (
+          <p className="text-meta text-muted">
+            {isFilled(project.role) || project.isDraft ? (
+              <>
+                <span className="text-green-dim">role: </span>
+                <Val value={project.role} what="your role (IN-05)" />
+              </>
+            ) : null}
+            {isFilled(project.role) && project.contribution !== "unset" ? " · " : null}
+            {project.contribution === "unset" ? (
+              project.isDraft ? (
+                <Missing what="contribution scope (IN-05)" />
+              ) : null
+            ) : (
+              <span className="text-yellow">{scopeLabel[project.contribution]}</span>
+            )}
+          </p>
+        ) : null}
+
+        {project.stack.length > 0 ? (
+          <ul
+            aria-label="Technology stack"
+            className="text-meta text-muted flex flex-wrap gap-x-2 gap-y-1"
+          >
+            {project.stack.slice(0, 5).map((item) => (
+              <li key={item} className="border-green-dim/60 border px-1.5 text-xs">
+                {item}
+              </li>
+            ))}
+          </ul>
+        ) : null}
 
         {project.demoUrl ? (
           // Sits above the card's stretched link so it opens the demo, not the case study.

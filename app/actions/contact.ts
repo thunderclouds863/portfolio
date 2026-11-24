@@ -5,6 +5,7 @@ import { headers } from "next/headers";
 import { HONEYPOT_FIELD, MIN_FILL_MS, readContactFields, type ContactState } from "@/lib/contact";
 import { validateContactFields } from "@/lib/contact-validation";
 import { sendContactEmail } from "@/lib/email";
+import { checkContactRateLimit, extractClientIp } from "@/lib/rate-limit";
 import { ContactMetaSchema } from "@/lib/schema";
 import { verifyTurnstile } from "@/lib/turnstile";
 
@@ -40,7 +41,8 @@ export async function sendContact(form: FormData): Promise<ContactState> {
   if (!validation.ok) return { status: "invalid", fieldErrors: validation.fieldErrors };
 
   const requestHeaders = await headers();
-  const remoteIp = requestHeaders.get("x-forwarded-for")?.split(",")[0]?.trim() || null;
+  const remoteIp = extractClientIp(requestHeaders);
+  if (!checkContactRateLimit(remoteIp).ok) return { status: "rate_limited" };
   const verification = await verifyTurnstile(meta.turnstileToken || null, remoteIp);
   if (!verification.ok) return { status: "verification_failed" };
 

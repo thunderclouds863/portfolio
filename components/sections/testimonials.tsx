@@ -21,8 +21,8 @@ function Testimonials({ items, number }: { items: RecommendationView[]; number: 
   const shown = items.slice(0, MAX_ON_HOME);
 
   return (
-    <Section id="testimonials" number={number} title="Testimonials">
-      <Reveal stagger className="grid gap-6 lg:grid-cols-12">
+    <Section id="testimonials" number={number} title="Recommendations">
+      <Reveal stagger direction="scale" className="grid gap-6 lg:grid-cols-12">
         {shown.map((item, index) => (
           <TestimonialCard
             key={item.slug}

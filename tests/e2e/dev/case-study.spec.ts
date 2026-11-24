@@ -74,7 +74,7 @@ test.describe("case-study layout (1280px)", () => {
   });
 
   test("sticky table of contents links to every heading", async ({ page }) => {
-    await page.goto("/projects/thermal-comfort-monitoring");
+    await page.goto("/projects/hospital-erp-prototype");
     const toc = page.getByRole("navigation", { name: "On this page" });
     await expect(toc).toBeVisible();
     await expect(toc).toHaveCSS("position", "sticky");

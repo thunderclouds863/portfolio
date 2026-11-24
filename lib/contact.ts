@@ -19,6 +19,7 @@ export type ContactState =
   | { status: "idle" }
   | { status: "invalid"; fieldErrors: Partial<Record<ContactField, string>> }
   | { status: "too_fast" }
+  | { status: "rate_limited" }
   | { status: "verification_failed" }
   | { status: "delivery_failed" }
   | { status: "network_error" }

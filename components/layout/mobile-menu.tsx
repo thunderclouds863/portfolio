@@ -12,10 +12,10 @@ const DESKTOP_QUERY = "(min-width: 768px)";
 
 /** Button size, vertical step between orbit items, how far the arc bows left. */
 const BUTTON_PX = 56;
-const STEP_PX = 54;
-const BOW_PX = 56;
+const STEP_PX = 46;
+const BOW_PX = 16;
 /** Approximate chip box, for drawing the orbit line through the chips' middles. */
-const CHIP_W = 112;
+const CHIP_W = 104;
 const CHIP_H = 44;
 
 type OrbitItem = { key: string; href: string; label: string; id?: string; primary?: boolean };
@@ -82,8 +82,14 @@ function MobileMenu() {
   }, []);
 
   function onSectionLink(event: MouseEvent<HTMLAnchorElement>, id: string, href: string) {
-    const target = document.getElementById(id);
     event.preventDefault();
+    if (!href.startsWith("/#")) {
+      pendingTarget.current = null;
+      setOpen(false);
+      router.push(href);
+      return;
+    }
+    const target = document.getElementById(id);
     if (!target) {
       // Not on the home page: let the router navigate to "/#id" after closing.
       pendingTarget.current = null;
@@ -169,7 +175,7 @@ function MobileMenu() {
                       }
                       aria-current={current ? "true" : undefined}
                       className={cn(
-                        "shadow-pixel flex min-h-11 min-w-28 items-center justify-end border-2 px-3 font-mono text-sm whitespace-nowrap",
+                        "shadow-pixel flex min-h-11 min-w-24 items-center justify-end border-2 px-2 font-mono text-xs whitespace-nowrap",
                         item.primary
                           ? "bg-amber border-amber text-bg"
                           : "bg-panel border-green text-green hover:border-amber hover:text-amber aria-[current=true]:border-amber aria-[current=true]:text-amber",

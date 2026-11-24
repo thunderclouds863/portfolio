@@ -1,0 +1,64 @@
+import "server-only";
+
+import { isContactTestMode } from "./test-mode";
+
+const WINDOW_MS = 10 * 60 * 1000; // 10 minutes
+const MAX_REQUESTS = 5;
+const MAX_KEYS = 500;
+
+const buckets = new Map<string, number[]>();
+
+/**
+ * Extracts the client IP from trusted reverse-proxy headers.
+ * Prefers `x-vercel-forwarded-for` (set by Vercel Edge, not client-spoofable)
+ * over `x-real-ip` and `x-forwarded-for`.
+ */
+export function extractClientIp(requestHeaders: {
+  get(name: string): string | null;
+}): string | null {
+  const vercelIp = requestHeaders.get("x-vercel-forwarded-for")?.split(",")[0]?.trim();
+  if (vercelIp) return vercelIp;
+  const realIp = requestHeaders.get("x-real-ip")?.trim();
+  if (realIp) return realIp;
+  const forwarded = requestHeaders.get("x-forwarded-for")?.split(",")[0]?.trim();
+  return forwarded || null;
+}
+
+/**
+ * Best-effort per-instance sliding-window rate limiter for the contact Server Action.
+ * NOTE: In serverless deployments (Vercel), state is process-local per warm instance
+ * and NOT shared across concurrent instances or cold starts. Cloudflare Turnstile
+ * remains the primary distributed anti-abuse control; for strict distributed rate
+ * limiting, back this with Upstash Redis or Vercel WAF rate limiting.
+ */
+export function checkContactRateLimit(
+  ip: string | null,
+  now = Date.now(),
+): { ok: true } | { ok: false; retryAfterSec: number } {
+  if (isContactTestMode()) return { ok: true };
+  const key = ip?.trim() || "unknown";
+  const cutoff = now - WINDOW_MS;
+  const recent = (buckets.get(key) ?? []).filter((t) => t > cutoff);
+
+  if (recent.length >= MAX_REQUESTS) {
+    buckets.set(key, recent);
+    const oldest = recent[0] ?? now;
+    return { ok: false, retryAfterSec: Math.max(1, Math.ceil((oldest + WINDOW_MS - now) / 1000)) };
+  }
+
+  recent.push(now);
+  buckets.set(key, recent);
+
+  // Prevent unbounded memory growth on long-lived instances.
+  if (buckets.size > MAX_KEYS) {
+    for (const [k, times] of buckets) {
+      if (times.every((t) => t <= cutoff)) buckets.delete(k);
+    }
+  }
+  return { ok: true };
+}
+
+/** Test-only reset helper. */
+export function resetContactRateLimit() {
+  buckets.clear();
+}
