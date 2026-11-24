@@ -118,7 +118,7 @@ function TerminalSequence({ steps, className }: TerminalSequenceProps) {
       <p
         data-terminal-output=""
         className={cn(
-          "text-muted min-h-[1.25rem] truncate transition-opacity duration-200",
+          "text-muted min-h-[1.25rem] truncate transition-opacity duration-200 motion-reduce:opacity-100",
           outputVisible ? "opacity-100" : "opacity-0",
         )}
       >
