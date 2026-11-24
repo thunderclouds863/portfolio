@@ -19,6 +19,7 @@ import {
 } from "@/lib/format";
 import { getHomeData } from "@/lib/home-data";
 import { nodeFromJson } from "@/lib/markdoc";
+import { DEFAULT_AVAILABILITY_SUMMARY } from "@/lib/schema";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata({
@@ -127,7 +128,7 @@ export default async function CvPage() {
         {availability ? (
           <p className="text-meta text-muted">
             {availability.openToWork
-              ? "Open to full-time employment, freelance opportunities, and project collaborations across business, technology, and digital transformation. "
+              ? `${isFilled(availability.summary) ? availability.summary : DEFAULT_AVAILABILITY_SUMMARY} `
               : null}
             {profile.preferredLocations.length > 0
               ? `Locations: ${joinOr(profile.preferredLocations)}${workModes.length > 0 ? ` (${joinOr(workModes)})` : ""}. `

@@ -3,6 +3,7 @@ import { DraftBadge, Val, isFilled } from "@/components/content/val";
 import { Button } from "@/components/ui/button";
 import { StatusChip } from "@/components/ui/status-chip";
 import { joinOr, workModeLabel } from "@/lib/format";
+import { DEFAULT_AVAILABILITY_LABEL, DEFAULT_AVAILABILITY_SUMMARY } from "@/lib/schema";
 import type { ProfileView, SettingsView } from "@/lib/views";
 
 import { TerminalSequence, type TerminalStep } from "@/components/motion/terminal-sequence";
@@ -44,16 +45,19 @@ function Hero({ profile, settings }: HeroProps) {
 
           {showChip ? (
             <StatusChip className="self-start">
-              Open to Opportunities &amp; Collaboration
+              {isFilled(availability.label) ? availability.label : DEFAULT_AVAILABILITY_LABEL}
             </StatusChip>
           ) : null}
 
           {availability ? (
             <>
-              <p className="text-muted max-w-[60ch] text-sm">
-                Open to full-time employment, freelance opportunities, and project collaborations
-                across business, technology, and digital transformation.
-              </p>
+              {availability.openToWork ? (
+                <p className="text-muted max-w-[60ch] text-sm">
+                  {isFilled(availability.summary)
+                    ? availability.summary
+                    : DEFAULT_AVAILABILITY_SUMMARY}
+                </p>
+              ) : null}
               <ul
                 aria-label="Location and availability"
                 className="text-meta text-muted flex flex-col gap-1"
