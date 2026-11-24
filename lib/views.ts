@@ -216,7 +216,12 @@ export async function loadHomeData({ drafts }: { drafts: boolean }): Promise<Hom
       },
       (slug, { status: _s, ...data }) => ({ slug, ...data, isDraft: true }),
     )
-  ).sort((a, b) => (b.date ?? "").localeCompare(a.date ?? ""));
+  ).sort(
+    (a, b) =>
+      Number(Boolean(b.featured)) - Number(Boolean(a.featured)) ||
+      (a.order ?? 999) - (b.order ?? 999) ||
+      (b.date ?? "").localeCompare(a.date ?? ""),
+  );
 
   return {
     profile,

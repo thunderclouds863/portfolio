@@ -42,6 +42,7 @@ function ContactForm({ fallbackEmail }: ContactFormProps) {
   const formRef = useRef<HTMLFormElement>(null);
   const turnstileRef = useRef<TurnstileHandle>(null);
   const shownAt = useRef<number>(0);
+  const submittingRef = useRef(false);
   const successRef = useRef<HTMLParagraphElement>(null);
   const [state, setState] = useState<ContactState>({ status: "idle" });
   const [token, setToken] = useState<string | null>(null);
@@ -68,7 +69,8 @@ function ContactForm({ fallbackEmail }: ContactFormProps) {
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (pending) return;
+    if (pending || submittingRef.current) return;
+    submittingRef.current = true;
     const form = event.currentTarget;
     const data = new FormData(form);
 
@@ -76,6 +78,7 @@ function ContactForm({ fallbackEmail }: ContactFormProps) {
     const { validateContactFields } = await import("@/lib/contact-validation");
     const validation = validateContactFields(readContactFields(data));
     if (!validation.ok) {
+      submittingRef.current = false;
       setState({ status: "invalid", fieldErrors: validation.fieldErrors });
       focusFirstInvalid(validation.fieldErrors);
       return;
@@ -90,6 +93,8 @@ function ContactForm({ fallbackEmail }: ContactFormProps) {
         result = await sendContact(data);
       } catch {
         result = { status: "network_error" };
+      } finally {
+        submittingRef.current = false;
       }
       setState(result);
       if (result.status === "invalid") focusFirstInvalid(result.fieldErrors);
@@ -237,6 +242,8 @@ function statusMessage(status: ContactState["status"]): string {
       return "Please fix the highlighted fields.";
     case "too_fast":
       return "That was quick. Please wait a moment, then send again.";
+    case "rate_limited":
+      return "Too many messages sent recently. Please wait a few minutes and try again.";
     case "verification_failed":
       return "The security check did not pass. Please try again.";
     case "delivery_failed":

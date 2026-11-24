@@ -38,34 +38,45 @@ function Nav() {
         </Link>
 
         <nav aria-label="Main" className="hidden md:block">
-          <ul className="flex items-center gap-3 lg:gap-5">
-            {sectionNav.map((item) => (
-              <li key={item.id}>
-                <a
-                  href={item.href}
-                  data-nav-id={item.id}
-                  className="text-green hover:text-amber aria-[current=true]:text-amber aria-[current=true]:decoration-amber flex min-h-11 items-center font-mono text-xs decoration-2 underline-offset-8 aria-[current=true]:underline lg:text-sm"
-                >
-                  {/* Tablet widths drop the "./" so all section links fit beside the CV button. */}
-                  {/* One inline wrapper: inside the flex link, separate items would put a space
-                      into the accessible name ("./ about"). */}
-                  {item.label.startsWith("./") ? (
-                    <span>
-                      <span className="md:max-lg:hidden">./</span>
-                      {item.label.slice(2)}
-                    </span>
+          <ul className="flex items-center gap-2 lg:gap-3.5 xl:gap-4">
+            {sectionNav.map((item) => {
+              const linkClass =
+                "text-green hover:text-amber aria-[current=true]:text-amber aria-[current=true]:decoration-amber aria-[current=page]:text-amber aria-[current=page]:decoration-amber flex min-h-11 items-center font-mono text-[11px] decoration-2 underline-offset-8 aria-[current=true]:underline aria-[current=page]:underline lg:text-xs xl:text-sm";
+              const labelNode = item.label.startsWith("./") ? (
+                <span>
+                  <span className="md:max-lg:hidden">./</span>
+                  {item.label.slice(2)}
+                </span>
+              ) : (
+                item.label
+              );
+              return (
+                <li key={item.id}>
+                  {item.href.startsWith("/#") ? (
+                    <a href={item.href} data-nav-id={item.id} className={linkClass}>
+                      {labelNode}
+                    </a>
                   ) : (
-                    item.label
+                    <Link
+                      href={item.href}
+                      prefetch={false}
+                      data-nav-id={item.id}
+                      className={linkClass}
+                    >
+                      {labelNode}
+                    </Link>
                   )}
-                </a>
-              </li>
-            ))}
+                </li>
+              );
+            })}
           </ul>
         </nav>
 
         <div className="flex items-center gap-3">
           <Button asChild size="compact" className="hidden md:inline-flex">
-            <Link href={navCta.href}>{navCta.label}</Link>
+            <Link href={navCta.href} prefetch={false}>
+              {navCta.label}
+            </Link>
           </Button>
           <MobileMenu />
         </div>

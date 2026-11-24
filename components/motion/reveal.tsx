@@ -6,6 +6,8 @@ type RevealProps = {
   as?: ElementType;
   /** Stagger direct children 80ms apart (max 6; the rest appear together). */
   stagger?: boolean;
+  /** Entrance direction: up (default), left, right, or subtle scale. */
+  direction?: "up" | "left" | "right" | "scale";
   className?: string;
   children: ReactNode;
   [key: `aria-${string}` | `data-${string}`]: string | undefined;
@@ -20,7 +22,14 @@ type RevealProps = {
  * by IntersectionObserver — so it stays visible without JavaScript, under
  * reduced motion, and if this script fails. Works on all viewports.
  */
-function Reveal({ as: Comp = "div", stagger = false, className, children, ...rest }: RevealProps) {
+function Reveal({
+  as: Comp = "div",
+  stagger = false,
+  direction,
+  className,
+  children,
+  ...rest
+}: RevealProps) {
   const ref = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -64,6 +73,7 @@ function Reveal({ as: Comp = "div", stagger = false, className, children, ...res
       ref={ref}
       className={className}
       {...(stagger ? { "data-reveal-stagger": "" } : {})}
+      {...(direction && direction !== "up" ? { "data-reveal-dir": direction } : {})}
       {...rest}
     >
       {children}

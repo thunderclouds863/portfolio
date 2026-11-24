@@ -179,7 +179,12 @@ export async function getRecommendations(): Promise<Recommendation[]> {
         `content/recommendations/${slug}`,
       );
     })
-    .sort((a, b) => b.date.localeCompare(a.date));
+    .sort(
+      (a, b) =>
+        Number(b.featured) - Number(a.featured) ||
+        (a.order ?? 999) - (b.order ?? 999) ||
+        (b.date ?? "").localeCompare(a.date ?? ""),
+    );
 }
 
 // ── Build gate (PRD 18.4) ───────────────────────────────────────────────────
@@ -211,7 +216,17 @@ export async function validateAllContent(): Promise<string[]> {
   await attempt(getSettings);
   await attempt(getExperience);
   await attempt(getEducation);
-  await attempt(getRecommendations);
+  const recommendations = (await attempt(getRecommendations)) ?? [];
+  for (const r of recommendations) {
+    if (r.avatar && !publicFileExists(r.avatar)) {
+      problems.push(`content/recommendations/${r.slug}: avatar not found at public${r.avatar}`);
+    }
+    if (r.evidenceImage && !publicFileExists(r.evidenceImage)) {
+      problems.push(
+        `content/recommendations/${r.slug}: screenshot not found at public${r.evidenceImage}`,
+      );
+    }
+  }
 
   const projects = (await attempt(() => getProjects())) ?? [];
   for (const p of projects) {
