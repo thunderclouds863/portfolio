@@ -86,8 +86,14 @@ export const SocialLinkSchema = z.object({
   icon: SocialIcon,
 });
 
+export const DEFAULT_AVAILABILITY_LABEL = "Open to Opportunities & Collaboration";
+export const DEFAULT_AVAILABILITY_SUMMARY =
+  "Open to full-time employment, freelance opportunities, and project collaborations across business, technology, and digital transformation.";
+
 export const AvailabilitySchema = z.object({
   openToWork: z.boolean(),
+  label: optionalText("availability label"),
+  summary: optionalText("availability summary"),
   workModes: z.array(WorkMode),
   availableFrom: requiredText("availability"),
   freelance: z.boolean(),
