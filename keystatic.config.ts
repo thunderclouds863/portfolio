@@ -399,6 +399,31 @@ export default config({
           }),
           { label: "Achievements (competitions, awards)", itemLabel: (p) => p.fields.title.value },
         ),
+        intellectualProperty: fields.array(
+          fields.object({
+            title: fields.text({ label: "Program / work title" }),
+            officialTitle: fields.text({ label: "Official certificate title (optional)" }),
+            workType: fields.text({
+              label: "Registration type",
+              description: "e.g. Copyright Registration · Computer Program",
+            }),
+            registrationReference: fields.text({ label: "Registration / application reference" }),
+            recordNumber: fields.text({ label: "Copyright record number (optional)" }),
+            registrationDate: fields.text({ label: "Registration date" }),
+            firstPublication: fields.text({ label: "First publication date & place (optional)" }),
+            copyrightHolder: fields.text({ label: "Copyright holder" }),
+            creatorAttribution: fields.text({ label: "Creator attribution" }),
+            summary: fields.text({ label: "Technical summary", multiline: true }),
+            projectSlug: fields.text({ label: "Related project slug (optional)" }),
+            verificationUrl: fields.text({
+              label: "Official verification URL (optional, https:// only)",
+            }),
+          }),
+          {
+            label: "Intellectual property & copyright registrations",
+            itemLabel: (p) => p.fields.title.value,
+          },
+        ),
       },
     }),
 

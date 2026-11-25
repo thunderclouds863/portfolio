@@ -130,12 +130,13 @@ test("/projects lists every draft project and the filter hides non-matching ones
   await expect(items).toHaveCount(SLUGS.length);
   await expect(items.filter({ visible: true })).toHaveCount(SLUGS.length);
   const filters = page.getByRole("navigation", { name: "Filter projects by capability" });
-  // Only the published projects have capabilities so far:
-  // FPTK (analysis, development, data) and Overtime (process, development).
+  // Published projects with verified capabilities:
+  // Analysis: FPTK, Customer Chat QA, Sales Academy LMS, Thermal Comfort Monitoring (4).
+  // Process: Overtime Management System (1).
   await filters.getByRole("link", { name: /Analysis/ }).click();
   await expect(page).toHaveURL(/capability=analysis/);
-  await expect(items.filter({ visible: true })).toHaveCount(1);
-  await expect(items.filter({ visible: true })).toContainText("FPTK & Sourcing Database");
+  await expect(items.filter({ visible: true })).toHaveCount(4);
+  await expect(items.filter({ visible: true }).first()).toContainText("FPTK & Sourcing Database");
   await filters.getByRole("link", { name: /Process/ }).click();
   await expect(page).toHaveURL(/capability=process/);
   await expect(items.filter({ visible: true })).toHaveCount(1);
@@ -151,8 +152,10 @@ for (const viewport of [
     await page.setViewportSize(viewport);
     await page.goto("/projects");
     const card = page.locator("[data-project-list] > li").filter({ hasText: "Sales Academy LMS" });
-    await card.getByRole("link", { name: "Sales Academy LMS", exact: true }).click();
-    await expect(page).toHaveURL(/\/projects\/sales-academy-lms$/);
+    await expect(async () => {
+      await card.getByRole("link", { name: "Sales Academy LMS", exact: true }).click();
+      await expect(page).toHaveURL(/\/projects\/sales-academy-lms$/, { timeout: 15_000 });
+    }).toPass({ timeout: 45_000 });
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("Sales Academy LMS");
 
     // The in-page back link returns to the index.

@@ -31,10 +31,10 @@ export default async function Home() {
       <About profile={data.profile} education={data.education[0]} />
       <Capabilities settings={data.settings} projects={data.projects} />
       <Experience experience={data.experience} number="03" />
-      <Education education={data.education} number="04" />
+      <Education education={data.education} projects={data.projects} number="04" />
       <Projects projects={data.featuredProjects} number="05" />
       <Testimonials items={data.recommendations} number="06" />
-      <Approach settings={data.settings} number={n(6)} />
+      <Approach settings={data.settings} projects={data.projects} number={n(6)} />
       <Stack skills={data.skills} projects={data.projects} number={n(7)} />
       <Contact profile={data.profile} settings={data.settings} number={n(8)} />
     </>
