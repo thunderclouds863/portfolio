@@ -145,7 +145,7 @@ function ApproachStory({ stages }: ApproachStoryProps) {
       >
         <div
           key={`copy-${active.id}`}
-          className="animate-fade-in motion-reduce:animate-none flex flex-col gap-4 lg:col-span-7"
+          className="animate-fade-in flex flex-col gap-4 motion-reduce:animate-none lg:col-span-7"
         >
           <div className="flex flex-col gap-1.5">
             <p className="text-meta text-amber text-xs">

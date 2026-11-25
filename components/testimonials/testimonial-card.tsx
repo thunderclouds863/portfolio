@@ -131,7 +131,7 @@ function TestimonialCard({ item, large = false, className }: TestimonialCardProp
               target="_blank"
               rel="noopener noreferrer"
               data-contributor-link=""
-              className="group/author text-h3 inline-flex min-h-11 max-w-full flex-wrap items-center gap-x-2 gap-y-0.5 self-start text-white transition-colors duration-(--dur-fast) hover:text-amber focus-visible:text-amber"
+              className="group/author text-h3 hover:text-amber focus-visible:text-amber inline-flex min-h-11 max-w-full flex-wrap items-center gap-x-2 gap-y-0.5 self-start text-white transition-colors duration-(--dur-fast)"
             >
               <span className="border-green-dim group-hover/author:border-amber group-focus-visible/author:border-amber border-b border-dashed pb-0.5 transition-colors duration-(--dur-fast)">
                 {item.authorName}

@@ -110,7 +110,9 @@ test.describe("home sections (1280px)", () => {
     const awards = schools.last().locator("[data-education-awards]");
     await expect(awards).toContainText("Competitions & awards");
     await expect(awards.locator("li")).toHaveCount(3);
-    await expect(education.getByRole("complementary", { name: "Competitions & awards" })).toHaveCount(0);
+    await expect(
+      education.getByRole("complementary", { name: "Competitions & awards" }),
+    ).toHaveCount(0);
     // The degree is no longer a timeline entry (the DSS Lab roles still name the university).
     await expect(page.locator("#experience")).not.toContainText("S.T. Industrial Engineering");
     await expect(page.locator("#top")).toContainText("Open to Opportunities & Collaboration");
