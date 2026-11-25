@@ -1,3 +1,6 @@
+import fs from "node:fs";
+import path from "node:path";
+
 import { expect, test } from "@playwright/test";
 
 // Case studies against `next dev` with the Draft preview: no project is
@@ -122,6 +125,17 @@ test.describe("mobile (375px)", () => {
   });
 });
 
+function countDraftPreviewCapability(capability: string): number {
+  return SLUGS.filter((slug) => {
+    const file = path.join(process.cwd(), "content", "projects", slug, "index.mdoc");
+    const raw = fs.readFileSync(file, "utf8");
+    const frontmatter = raw.match(/^---\r?\n([\s\S]*?)\r?\n---/)?.[1] ?? "";
+    const capBlock =
+      frontmatter.match(/^capabilities:\s*\r?\n((?:[ \t]+-[ \t]+.+\r?\n?)*)/m)?.[1] ?? "";
+    return new RegExp(`^\\s*-\\s*${capability}\\s*$`, "m").test(capBlock);
+  }).length;
+}
+
 test("/projects lists every draft project and the filter hides non-matching ones", async ({
   page,
 }) => {
@@ -130,16 +144,15 @@ test("/projects lists every draft project and the filter hides non-matching ones
   await expect(items).toHaveCount(SLUGS.length);
   await expect(items.filter({ visible: true })).toHaveCount(SLUGS.length);
   const filters = page.getByRole("navigation", { name: "Filter projects by capability" });
-  // Published projects with verified capabilities:
-  // Analysis: FPTK, Customer Chat QA, Sales Academy LMS, Thermal Comfort Monitoring (4).
-  // Process: Overtime Management System (1).
+  const expectedAnalysis = countDraftPreviewCapability("system_analysis");
+  const expectedProcess = countDraftPreviewCapability("process_improvement");
   await filters.getByRole("link", { name: /Analysis/ }).click();
   await expect(page).toHaveURL(/capability=analysis/);
-  await expect(items.filter({ visible: true })).toHaveCount(4);
+  await expect(items.filter({ visible: true })).toHaveCount(expectedAnalysis);
   await expect(items.filter({ visible: true }).first()).toContainText("FPTK & Sourcing Database");
   await filters.getByRole("link", { name: /Process/ }).click();
   await expect(page).toHaveURL(/capability=process/);
-  await expect(items.filter({ visible: true })).toHaveCount(1);
+  await expect(items.filter({ visible: true })).toHaveCount(expectedProcess);
   await expect(items.filter({ visible: true })).toContainText("Overtime Management System");
 });
 
