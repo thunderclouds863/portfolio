@@ -27,8 +27,11 @@ test.describe("Phase 1 — navigation consistency & cross-route routing (1280px)
     await expect(desktopRec).toBeVisible();
     await expect(desktopRec).toHaveAttribute("href", "/testimonials");
 
-    // Verify 768px tablet still has 0px horizontal overflow with ./recommendations.
+    // Verify 768px tablet keeps prominent brand + [ CV ] with 0px overflow and uses Orbit menu.
     await page.setViewportSize({ width: 768, height: 900 });
+    await expect(
+      page.getByRole("banner").getByRole("link", { name: /Desi Armanda Sari.*home/i }),
+    ).toBeVisible();
     const { scrollWidth, innerWidth } = await page.evaluate(() => ({
       scrollWidth: document.documentElement.scrollWidth,
       innerWidth: window.innerWidth,
