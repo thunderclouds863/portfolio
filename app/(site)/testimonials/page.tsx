@@ -3,6 +3,7 @@ import { Suspense } from "react";
 
 import { Missing } from "@/components/content/missing";
 import { Reveal } from "@/components/motion/reveal";
+import { RecommendationForm } from "@/components/testimonials/recommendation-form";
 import {
   RelationshipChips,
   RelationshipFilter,
@@ -18,9 +19,9 @@ export const metadata: Metadata = pageMetadata({
   path: "/testimonials",
 });
 
-// FR-TST-02: all testimonials, filterable by relationship (state in the URL).
-// Source A only for now (LinkedIn recommendations); site submissions (source B)
-// and the "Write a testimonial" flow arrive with the Supabase + LinkedIn setup.
+// FR-TST-02 + Phase 3: published recommendations filterable by relationship (URL query),
+// plus a moderated public submission form that sends [PENDING MODERATION] emails to the
+// owner for manual review and never publishes automatically.
 export default async function TestimonialsPage() {
   const { recommendations } = await getHomeData();
   const options: RelationshipOption[] = [];
@@ -34,7 +35,9 @@ export default async function TestimonialsPage() {
     <div className="mx-auto flex max-w-[1200px] flex-col gap-10 px-4 py-16 md:px-6 md:py-24">
       <header className="flex flex-col gap-4">
         <p className="text-meta text-green-dim">{"> cat ./recommendations"}</p>
-        <h1 className="text-display-1 text-green glow">Recommendations</h1>
+        <h1 className="text-display-1 text-green glow text-[clamp(1.25rem,5.2vw,2.75rem)]">
+          Recommendations
+        </h1>
       </header>
 
       {recommendations.length === 0 ? (
@@ -57,6 +60,8 @@ export default async function TestimonialsPage() {
           </Reveal>
         </>
       )}
+
+      <RecommendationForm />
     </div>
   );
 }

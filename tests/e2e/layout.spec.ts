@@ -9,7 +9,7 @@ const SECTION_LABELS = [
   "./experience",
   "./education",
   "./projects",
-  "Recommendations",
+  "./recommendations",
   "./approach",
   "./stack",
   "./contact",

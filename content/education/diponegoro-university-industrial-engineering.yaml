@@ -14,3 +14,16 @@ focusAreas:
   - Supply Chain
 thesis: Design of Thermal Comfort Monitoring Information System with Rapid Application Development Method
 achievements: []
+intellectualProperty:
+  - title: Thermal Comfort Monitoring Computer Program
+    officialTitle: Monitoring Kenyamanan Termal
+    workType: Copyright Registration · Computer Program (Program Komputer)
+    registrationReference: EC002025076498
+    recordNumber: "000916759"
+    registrationDate: 26 June 2025
+    firstPublication: 28 April 2025, Semarang
+    copyrightHolder: Universitas Diponegoro
+    creatorAttribution: "Desi Armanda Sari (listed as Creator #6 among 8 contributors)"
+    summary: Contributed to an IoT-based thermal comfort monitoring computer program built with Arduino MKR Wi-Fi 1010 that sends temperature, humidity, air-quality, and wind-speed readings to an internet-connected web dashboard with historical data storage, time-trend graphs, and configurable notification thresholds and synchronization frequency.
+    projectSlug: thermal-comfort-monitoring
+    verificationUrl: ""

@@ -5,6 +5,7 @@ import { navCta, sectionNav } from "@/lib/nav";
 
 import { ActiveSection } from "./active-section";
 import { MobileMenu } from "./mobile-menu";
+import { NavSectionLink } from "./nav-section-link";
 
 // FR-NAV-01: sticky, height 64px, z-index 100. Desktop links from 768px;
 // below that the MobileMenu takes over (FR-NAV-04).
@@ -38,7 +39,7 @@ function Nav() {
         </Link>
 
         <nav aria-label="Main" className="hidden md:block">
-          <ul className="flex items-center gap-1.5 lg:gap-3.5 xl:gap-4">
+          <ul className="flex items-center gap-1.5 lg:gap-2.5 xl:gap-4">
             {sectionNav.map((item) => {
               const linkClass =
                 "text-green hover:text-amber aria-[current=true]:text-amber aria-[current=true]:decoration-amber aria-[current=page]:text-amber aria-[current=page]:decoration-amber flex min-h-11 items-center font-mono text-[10px] whitespace-nowrap decoration-2 underline-offset-8 aria-[current=true]:underline aria-[current=page]:underline lg:text-xs xl:text-sm";
@@ -52,20 +53,9 @@ function Nav() {
               );
               return (
                 <li key={item.id}>
-                  {item.href.startsWith("/#") ? (
-                    <a href={item.href} data-nav-id={item.id} className={linkClass}>
-                      {labelNode}
-                    </a>
-                  ) : (
-                    <Link
-                      href={item.href}
-                      prefetch={false}
-                      data-nav-id={item.id}
-                      className={linkClass}
-                    >
-                      {labelNode}
-                    </Link>
-                  )}
+                  <NavSectionLink id={item.id} href={item.href} className={linkClass}>
+                    {labelNode}
+                  </NavSectionLink>
                 </li>
               );
             })}
