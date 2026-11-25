@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import type { MouseEvent, ReactNode } from "react";
 
-import { scrollToSection } from "./active-section";
+import { scrollToSection, setPendingSectionTarget } from "./active-section";
 
 type NavSectionLinkProps = {
   id: string;
@@ -24,10 +24,26 @@ type NavSectionLinkProps = {
  */
 function NavSectionLink({ id, href, className, children }: NavSectionLinkProps) {
   const pathname = usePathname();
+  const router = useRouter();
   const isHomeSection = href.startsWith("/#");
 
   function onClick(event: MouseEvent<HTMLAnchorElement>) {
-    if (!isHomeSection || pathname !== "/") return;
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) {
+      return;
+    }
+    if (!isHomeSection) {
+      setPendingSectionTarget(null);
+      return;
+    }
+    if (pathname !== "/") {
+      // Cross-route click (e.g. /projects/[slug] -> /#about): delegate via
+      // router.push(..., { scroll: false }) so Next.js's built-in <Link> scroll
+      // handler does not reset scroll to 0 in WebKit before ActiveSection scrolls.
+      event.preventDefault();
+      setPendingSectionTarget(id);
+      router.push(href, { scroll: false });
+      return;
+    }
     if (!document.getElementById(id)) return;
     event.preventDefault();
     const nextHash = `#${id}`;
@@ -38,7 +54,14 @@ function NavSectionLink({ id, href, className, children }: NavSectionLinkProps) 
   }
 
   return (
-    <Link href={href} prefetch={false} data-nav-id={id} className={className} onClick={onClick}>
+    <Link
+      href={href}
+      prefetch={false}
+      scroll={!isHomeSection}
+      data-nav-id={id}
+      className={className}
+      onClick={onClick}
+    >
       {children}
     </Link>
   );

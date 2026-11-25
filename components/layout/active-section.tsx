@@ -3,6 +3,13 @@
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 
+let pendingTargetId: string | null = null;
+
+/** Records a cross-route section target (e.g. /projects/[slug] -> /#about) before router transition. */
+export function setPendingSectionTarget(id: string | null) {
+  pendingTargetId = id;
+}
+
 /** Marks nav links ([data-nav-id]) for the active section or route; used by MobileMenu too. */
 export function markActiveNavLinks(activeId: string | null, current: "true" | "page" = "true") {
   document.querySelectorAll<HTMLElement>("[data-nav-id]").forEach((link) => {
@@ -23,7 +30,9 @@ export function scrollToSection(
   { smooth = false }: { smooth?: boolean } = {},
 ): boolean {
   const target = document.getElementById(id);
-  if (!target) return false;
+  // Under Next.js 16 Cache Components (<Activity mode="hidden">), an unmounted
+  // route can remain in the DOM with display:none; never scroll to a hidden node.
+  if (!target || target.getClientRects().length === 0) return false;
   const header = document.querySelector<HTMLElement>("header");
   const headerHeight = header ? Math.ceil(header.getBoundingClientRect().height) : 0;
   const top = Math.max(
@@ -63,10 +72,28 @@ function ActiveSection({ ids }: { ids: readonly string[] }) {
       .filter((el): el is HTMLElement => el !== null);
     if (sections.length === 0) return;
 
+    let rafId = 0;
+    const syncToTarget = (targetId: string) => {
+      if (!targetId || !ids.includes(targetId)) return;
+      cancelAnimationFrame(rafId);
+      let attempts = 0;
+      const tryScroll = () => {
+        if (scrollToSection(targetId, { smooth: false })) return;
+        // Under Next.js 16 <Activity mode="hidden">, wait up to a few animation frames
+        // until the restored homepage DOM has non-zero layout rects.
+        if (attempts < 10) {
+          attempts += 1;
+          rafId = requestAnimationFrame(tryScroll);
+        }
+      };
+      rafId = requestAnimationFrame(tryScroll);
+    };
+
     const syncFromHash = () => {
-      const hashId = window.location.hash.replace(/^#/, "");
-      if (!hashId || !ids.includes(hashId)) return;
-      scrollToSection(hashId, { smooth: false });
+      const pending = pendingTargetId;
+      pendingTargetId = null;
+      const hashId = pending ?? window.location.hash.replace(/^#/, "");
+      syncToTarget(hashId);
     };
 
     syncFromHash();
@@ -92,6 +119,7 @@ function ActiveSection({ ids }: { ids: readonly string[] }) {
     );
     sections.forEach((section) => observer.observe(section));
     return () => {
+      cancelAnimationFrame(rafId);
       window.removeEventListener("hashchange", syncFromHash);
       window.removeEventListener("popstate", syncFromHash);
       observer.disconnect();
