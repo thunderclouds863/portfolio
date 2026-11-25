@@ -74,6 +74,7 @@ function ProjectCard({
         <H className="text-h3 text-green">
           <Link
             href={`/projects/${project.slug}`}
+            prefetch={false}
             className="group-hover:text-amber after:absolute after:inset-0 focus-visible:outline-none"
           >
             {project.title}
