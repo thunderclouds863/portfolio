@@ -130,9 +130,13 @@ function ProjectCard({
         <div className="mt-auto flex flex-wrap items-center gap-x-5 gap-y-2 pt-1">
           <span
             aria-hidden="true"
-            className="text-meta text-green group-hover:text-amber text-sm underline-offset-4 group-hover:underline"
+            className="text-meta text-green group-hover:text-amber inline-flex items-center gap-1.5 text-sm underline-offset-4 transition-colors duration-(--dur-fast) group-hover:underline"
           >
-            [ read case study {"->"} ]
+            <span>[ read case study</span>
+            <span className="inline-block transition-transform duration-(--dur-fast) group-hover:translate-x-0.5 motion-reduce:transform-none">
+              {"->"}
+            </span>
+            <span>]</span>
           </span>
           {project.demoUrl ? (
             // Sits above the card's stretched link so it opens the demo, not the case study.
