@@ -39,7 +39,12 @@ function Capabilities({ settings, projects }: CapabilitiesProps) {
       {items.length === 0 ? (
         <Missing what="three capabilities in Site settings (FR-CAP-01)" />
       ) : (
-        <Reveal as="ol" stagger data-capabilities-list="" className="border-green-dim/50 divide-green-dim/40 flex flex-col divide-y border-y">
+        <Reveal
+          as="ol"
+          stagger
+          data-capabilities-list=""
+          className="border-green-dim/50 divide-green-dim/40 flex flex-col divide-y border-y"
+        >
           {items.map((item, index) => {
             const isPrimary = index === 0;
             const evidence = projects.filter((p) => p.capabilities.includes(item.key));
@@ -75,14 +80,12 @@ function Capabilities({ settings, projects }: CapabilitiesProps) {
                   <div className="flex items-center gap-3">
                     <PixelIcon
                       name={icons[item.key] ?? "cursor"}
-                      size={isPrimary ? 28 : 24}
+                      size={isPrimary ? 32 : 24}
                       className={isPrimary ? "text-amber shrink-0" : "text-green shrink-0"}
                     />
                     <h3
                       id={`cap-${item.key}`}
-                      className={cn(
-                        isPrimary ? "text-display-2 text-white" : "text-h3 text-green",
-                      )}
+                      className={cn(isPrimary ? "text-display-2 text-white" : "text-h3 text-green")}
                     >
                       <Val value={item.title} what="capability title" />
                     </h3>

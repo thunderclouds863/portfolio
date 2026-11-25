@@ -57,11 +57,16 @@ function Education({ education, projects = [], number }: EducationProps) {
                 className={cn(
                   "border-green-dim/70 grid gap-6 border-l-2 pl-5 lg:grid-cols-12 lg:gap-10",
                   isPrimary ? "border-green" : "border-green-dim/60",
-                  index > 0 && "border-t border-t-green-dim/30 pt-8",
+                  index > 0 && "border-t-green-dim/30 border-t pt-8",
                 )}
               >
                 {/* Core academic credentials & focus areas */}
-                <div className={cn("flex flex-col gap-3", hasRightRail ? "lg:col-span-5" : "lg:col-span-12")}>
+                <div
+                  className={cn(
+                    "flex flex-col gap-3",
+                    hasRightRail ? "lg:col-span-5" : "lg:col-span-12",
+                  )}
+                >
                   <p className="text-meta text-muted text-xs">
                     <Period start={ed.start} end={ed.end} />
                     {isFilled(ed.gpa) ? ` · grade ${ed.gpa}` : null}
@@ -77,7 +82,7 @@ function Education({ education, projects = [], number }: EducationProps) {
                   {isFilled(ed.thesis) ? (
                     <p className="max-w-[56ch] text-sm">
                       <span className="text-meta text-green-dim">Thesis: </span>
-                      <cite className="not-italic text-white/95">{ed.thesis}</cite>
+                      <cite className="text-white/95 not-italic">{ed.thesis}</cite>
                     </p>
                   ) : null}
                   {ed.focusAreas.length > 0 ? (
@@ -121,14 +126,18 @@ function Education({ education, projects = [], number }: EducationProps) {
 
                               <dl className="border-green-dim/50 grid gap-x-6 gap-y-2 border-t border-dashed pt-3 text-xs sm:grid-cols-2">
                                 <div>
-                                  <dt className="text-meta text-green-dim">Registration reference</dt>
+                                  <dt className="text-meta text-green-dim">
+                                    Registration reference
+                                  </dt>
                                   <dd className="font-mono break-all text-white">
                                     {ip.registrationReference}
                                   </dd>
                                 </div>
                                 {isFilled(ip.recordNumber) ? (
                                   <div>
-                                    <dt className="text-meta text-green-dim">Copyright record no.</dt>
+                                    <dt className="text-meta text-green-dim">
+                                      Copyright record no.
+                                    </dt>
                                     <dd className="font-mono break-all text-white">
                                       {ip.recordNumber}
                                     </dd>
@@ -190,7 +199,7 @@ function Education({ education, projects = [], number }: EducationProps) {
                       >
                         <h4
                           id={`education-awards-${ed.slug}`}
-                          className="text-meta text-amber text-xs uppercase tracking-wider"
+                          className="text-meta text-amber text-xs tracking-wider uppercase"
                         >
                           Competitions &amp; awards
                         </h4>
