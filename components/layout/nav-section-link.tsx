@@ -10,6 +10,7 @@ type NavSectionLinkProps = {
   id: string;
   href: string;
   className: string;
+  ariaLabel?: string;
   children: ReactNode;
 };
 
@@ -22,7 +23,7 @@ type NavSectionLinkProps = {
  * - From any other route, delegates to Next.js App Router SPA navigation
  *   (no full-page reload), where ActiveSection invokes scrollToSection() once.
  */
-function NavSectionLink({ id, href, className, children }: NavSectionLinkProps) {
+function NavSectionLink({ id, href, className, ariaLabel, children }: NavSectionLinkProps) {
   const pathname = usePathname();
   const router = useRouter();
   const isHomeSection = href.startsWith("/#");
@@ -59,6 +60,7 @@ function NavSectionLink({ id, href, className, children }: NavSectionLinkProps) 
       prefetch={false}
       scroll={!isHomeSection}
       data-nav-id={id}
+      aria-label={ariaLabel}
       className={className}
       onClick={onClick}
     >

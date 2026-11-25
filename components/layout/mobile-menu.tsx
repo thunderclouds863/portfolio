@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 
 import { scrollToSection, setPendingSectionTarget } from "./active-section";
 
-const DESKTOP_QUERY = "(min-width: 768px)";
+const DESKTOP_QUERY = "(min-width: 1024px)";
 
 /** Button size, vertical step between orbit items, how far the arc bows left. */
 const BUTTON_PX = 56;
@@ -51,7 +51,7 @@ const ORBIT_D = [
 ].join(" ");
 
 const buttonClass =
-  "bg-panel border-green text-green shadow-pixel hover:border-amber hover:text-amber fixed right-[calc(1.25rem+env(safe-area-inset-right))] bottom-[calc(1.25rem+env(safe-area-inset-bottom))] z-[210] inline-flex size-14 items-center justify-center border-2 md:hidden";
+  "bg-panel border-green text-green shadow-pixel hover:border-amber hover:text-amber fixed right-[calc(1.25rem+env(safe-area-inset-right))] bottom-[calc(1.25rem+env(safe-area-inset-bottom))] z-[210] inline-flex size-14 items-center justify-center border-2 lg:hidden";
 
 /**
  * Mobile navigation (owner override 4, docs/decisions/0002): a square pixel
