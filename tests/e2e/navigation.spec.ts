@@ -80,6 +80,7 @@ test.describe("Phase 1 — navigation consistency & cross-route routing (1280px)
     await expect
       .poll(() => headingTop(page, "about"), { timeout: 5000 })
       .toBeGreaterThanOrEqual(stickyH);
+    await expect.poll(() => headingTop(page, "about"), { timeout: 5000 }).toBeLessThan(350);
     await expect(nav.getByRole("link", { name: "./about" })).toHaveAttribute(
       "aria-current",
       "true",
@@ -110,6 +111,7 @@ test.describe("Phase 1 — navigation consistency & cross-route routing (1280px)
     await expect
       .poll(() => headingTop(page, "about"), { timeout: 5000 })
       .toBeGreaterThanOrEqual(stickyH);
+    await expect.poll(() => headingTop(page, "about"), { timeout: 5000 }).toBeLessThan(350);
     await expect(nav.getByRole("link", { name: "./about" })).toHaveAttribute(
       "aria-current",
       "true",
@@ -223,5 +225,74 @@ test.describe("Phase 1 — navigation consistency & cross-route routing (1280px)
     await expect
       .poll(() => headingTop(page, "contact"), { timeout: 5000 })
       .toBeGreaterThanOrEqual(stickyH);
+  });
+
+  test("Phase 8.1 — client-side / -> /projects/[slug] -> ./about and / -> /testimonials -> ./about (desktop & mobile)", async ({
+    page,
+  }) => {
+    // 1. Desktop (1280px): start on /, click a featured project card (keeps / in Next.js 16 <Activity>),
+    // then return to /#about via main nav.
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto("/");
+    const stickyH = await headerHeight(page);
+    await page
+      .locator("#projects")
+      .getByRole("link", { name: "Overtime Management System" })
+      .first()
+      .click();
+    await expect(page).toHaveURL(/\/projects\/overtime-management-system$/);
+    const nav = page.getByRole("navigation", { name: "Main" });
+    await nav.getByRole("link", { name: "./about" }).click();
+    await expect(page).toHaveURL(/\/#about$/);
+    await expect
+      .poll(() => headingTop(page, "about"), { timeout: 5000 })
+      .toBeGreaterThanOrEqual(stickyH);
+    await expect.poll(() => headingTop(page, "about"), { timeout: 5000 }).toBeLessThan(350);
+    await expect(nav.getByRole("link", { name: "./about" })).toHaveAttribute(
+      "aria-current",
+      "true",
+    );
+
+    // 2. Mobile (375px): start on /, navigate to /projects/[slug] and /testimonials,
+    // then use MobileMenu to return to /#about (must NOT be fooled by hidden <Activity> DOM).
+    await page.setViewportSize({ width: 375, height: 812 });
+    await page.goto("/");
+    const mobileStickyH = await headerHeight(page);
+    await page
+      .locator("#projects")
+      .getByRole("link", { name: "Overtime Management System" })
+      .first()
+      .click();
+    await expect(page).toHaveURL(/\/projects\/overtime-management-system$/);
+
+    await page.getByRole("button", { name: "Open menu" }).click();
+    await page
+      .getByRole("navigation", { name: "Mobile" })
+      .getByRole("link", { name: "./about" })
+      .click();
+    await expect(page).toHaveURL(/\/#about$/);
+    await expect
+      .poll(() => headingTop(page, "about"), { timeout: 5000 })
+      .toBeGreaterThanOrEqual(mobileStickyH);
+    await expect.poll(() => headingTop(page, "about"), { timeout: 5000 }).toBeLessThan(350);
+
+    // Mobile: /#about -> /testimonials -> ./about
+    await page.getByRole("button", { name: "Open menu" }).click();
+    await page
+      .getByRole("navigation", { name: "Mobile" })
+      .getByRole("link", { name: "./recommendations" })
+      .click();
+    await expect(page).toHaveURL(/\/testimonials$/);
+
+    await page.getByRole("button", { name: "Open menu" }).click();
+    await page
+      .getByRole("navigation", { name: "Mobile" })
+      .getByRole("link", { name: "./about" })
+      .click();
+    await expect(page).toHaveURL(/\/#about$/);
+    await expect
+      .poll(() => headingTop(page, "about"), { timeout: 5000 })
+      .toBeGreaterThanOrEqual(mobileStickyH);
+    await expect.poll(() => headingTop(page, "about"), { timeout: 5000 }).toBeLessThan(350);
   });
 });
