@@ -1,10 +1,9 @@
 import { ExternalLink } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 
 import { Missing } from "@/components/content/missing";
 import { DraftBadge, Val, isFilled } from "@/components/content/val";
-import { PixelIcon } from "@/components/pixel/pixel-icon";
+import { ProjectVisualCover } from "@/components/projects/project-visual-cover";
 import { capabilityLabel, projectTypeLabel, scopeLabel } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import type { ProjectView } from "@/lib/views";
@@ -49,27 +48,18 @@ function ProjectCard({
           flip ? "md:order-2 md:border-l-2" : "md:border-r-2",
         )}
       >
-        {project.thumbnail ? (
-          <Image
-            src={project.thumbnail}
-            alt={isFilled(project.thumbnailAlt) ? project.thumbnailAlt : ""}
-            fill
-            {...(lcp ? { preload: true, fetchPriority: "high" as const } : {})}
-            sizes="(min-width: 1200px) 480px, (min-width: 768px) 40vw, calc(100vw - 2rem)"
-            className="object-cover [image-rendering:pixelated]"
-          />
-        ) : (
-          <div className="bg-bg flex size-full flex-col items-center justify-center gap-3 p-4">
-            <PixelIcon name="floppy" size={48} className="text-green-dim" />
-            {/* Thumbnails are optional: a published card shows only the icon. */}
-            {project.isDraft ? <Missing what="thumbnail (IN-05)" /> : null}
-          </div>
-        )}
+        <ProjectVisualCover
+          project={project}
+          lcp={lcp}
+          interactive
+          sizes="(min-width: 1200px) 480px, (min-width: 768px) 40vw, calc(100vw - 2rem)"
+          className="h-full"
+        />
         {/* FR-PRJ-02: scanline sweep on hover/focus (transform + opacity, 200ms). */}
         <span aria-hidden="true" className="card-sweep" />
       </div>
 
-      <div className="flex flex-col gap-4 p-6 md:col-span-7 md:p-8">
+      <div className="flex flex-col gap-3 p-5 md:col-span-7 md:p-6">
         <div className="flex flex-wrap items-center gap-2">
           <ul aria-label="Tags" className="flex flex-wrap gap-2">
             {tags.map((t) => (
@@ -84,32 +74,75 @@ function ProjectCard({
         <H className="text-h3 text-green">
           <Link
             href={`/projects/${project.slug}`}
+            prefetch={false}
             className="group-hover:text-amber after:absolute after:inset-0 focus-visible:outline-none"
           >
             {project.title}
           </Link>
         </H>
 
-        <p className="max-w-[60ch]">
-          <span className="text-meta text-green-dim">problem: </span>
-          <Val value={project.problem} what="one-line problem (IN-05)" />
-        </p>
-
-        <p className="text-meta text-muted">
-          <span className="text-green-dim">role: </span>
-          <Val value={project.role} what="your role (IN-05)" />
-          {" · "}
-          {project.contribution === "unset" ? (
-            <Missing what="contribution scope (IN-05)" />
-          ) : (
-            <span className="text-yellow">{scopeLabel[project.contribution]}</span>
-          )}
-        </p>
-
-        {project.demoUrl ? (
-          // Sits above the card's stretched link so it opens the demo, not the case study.
-          <DemoLink href={project.demoUrl} title={project.title} className="relative z-10" />
+        {isFilled(project.problem) ? (
+          <p className="max-w-[60ch]">
+            <span className="text-meta text-green-dim">problem: </span>
+            {project.problem}
+          </p>
+        ) : isFilled(project.summary) ? (
+          <p className="max-w-[60ch]">{project.summary}</p>
+        ) : project.isDraft ? (
+          <p className="max-w-[60ch]">
+            <span className="text-meta text-green-dim">problem: </span>
+            <Val value={project.problem} what="one-line problem (IN-05)" />
+          </p>
         ) : null}
+
+        {isFilled(project.role) || project.contribution !== "unset" || project.isDraft ? (
+          <p className="text-meta text-muted">
+            {isFilled(project.role) || project.isDraft ? (
+              <>
+                <span className="text-green-dim">role: </span>
+                <Val value={project.role} what="your role (IN-05)" />
+              </>
+            ) : null}
+            {isFilled(project.role) && project.contribution !== "unset" ? " · " : null}
+            {project.contribution === "unset" ? (
+              project.isDraft ? (
+                <Missing what="contribution scope (IN-05)" />
+              ) : null
+            ) : (
+              <span className="text-yellow">{scopeLabel[project.contribution]}</span>
+            )}
+          </p>
+        ) : null}
+
+        {project.stack.length > 0 ? (
+          <ul
+            aria-label="Technology stack"
+            className="text-meta text-muted flex flex-wrap gap-x-2 gap-y-1"
+          >
+            {project.stack.slice(0, 5).map((item) => (
+              <li key={item} className="border-green-dim/60 border px-1.5 text-xs">
+                {item}
+              </li>
+            ))}
+          </ul>
+        ) : null}
+
+        <div className="mt-auto flex flex-wrap items-center gap-x-5 gap-y-2 pt-1">
+          <span
+            aria-hidden="true"
+            className="text-meta text-green group-hover:text-amber inline-flex items-center gap-1.5 text-sm underline-offset-4 transition-colors duration-(--dur-fast) group-hover:underline"
+          >
+            <span>[ read case study</span>
+            <span className="inline-block transition-transform duration-(--dur-fast) group-hover:translate-x-0.5 motion-reduce:transform-none">
+              {"->"}
+            </span>
+            <span>]</span>
+          </span>
+          {project.demoUrl ? (
+            // Sits above the card's stretched link so it opens the demo, not the case study.
+            <DemoLink href={project.demoUrl} title={project.title} className="relative z-10" />
+          ) : null}
+        </div>
       </div>
     </article>
   );

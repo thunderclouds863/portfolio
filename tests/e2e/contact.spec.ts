@@ -28,14 +28,17 @@ async function openForm(page: Page, { freezeTime = false } = {}) {
   await page.goto("/#contact");
   const form = page.getByRole("form", { name: "Contact form" });
   await expect(form).toBeVisible();
-  // The widget loads when it comes within 400px of the viewport; on short phone
-  // viewports /#contact lands above that, so scroll to it like a visitor would.
-  // (Instant scroll: the site's smooth scrolling keeps the element "unstable".)
-  await form
-    .locator("[data-turnstile]")
-    .evaluate((el) => el.scrollIntoView({ block: "center", behavior: "instant" }));
-  // The widget loads lazily after hydration; slow WebKit runs need more than 5s.
-  await expect(form.locator("[data-fake-turnstile]")).toBeAttached({ timeout: 15_000 });
+  // The widget loads lazily via IntersectionObserver after hydration; on short
+  // Mobile Safari viewports a single pre-hydration scroll can miss the observer
+  // if layout settles afterwards, so re-scroll while polling for attachment.
+  const turnstile = form.locator("[data-turnstile]");
+  const fakeTurnstile = form.locator("[data-fake-turnstile]");
+  await expect(async () => {
+    if ((await fakeTurnstile.count()) === 0) {
+      await turnstile.evaluate((el) => el.scrollIntoView({ block: "center", behavior: "instant" }));
+    }
+    await expect(fakeTurnstile).toBeAttached({ timeout: 1500 });
+  }).toPass({ timeout: 15_000 });
   return form;
 }
 

@@ -7,6 +7,7 @@ export const sectionNav: readonly NavItem[] = [
   { id: "experience", href: "/#experience", label: "./experience" },
   { id: "education", href: "/#education", label: "./education" },
   { id: "projects", href: "/#projects", label: "./projects" },
+  { id: "testimonials", href: "/testimonials", label: "./recommendations" },
   { id: "approach", href: "/#approach", label: "./approach" },
   { id: "stack", href: "/#stack", label: "./stack" },
   { id: "contact", href: "/#contact", label: "./contact" },
@@ -16,7 +17,7 @@ export const navCta = { href: "/cv", label: "[ CV ]" } as const;
 
 export const footerNav: readonly { href: string; label: string }[] = [
   { href: "/projects", label: "Projects" },
-  { href: "/testimonials", label: "Testimonials" },
+  { href: "/testimonials", label: "Recommendations" },
   { href: "/cv", label: "CV" },
   { href: "/privacy", label: "Privacy" },
 ];

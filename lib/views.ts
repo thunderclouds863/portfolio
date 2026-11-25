@@ -106,9 +106,11 @@ export type CaseStudyView = {
   headings: TocHeading[];
   prev: { slug: string; title: string } | null;
   next: { slug: string; title: string } | null;
+  /** Up to 2 related projects sharing capabilities or type (excluding current, prev, next). */
+  related: ProjectView[];
 };
 
-/** One case study with its body, TOC headings and prev/next neighbours. Null if not visible. */
+/** One case study with its body, TOC headings, related projects and prev/next neighbours. Null if not visible. */
 export async function loadCaseStudy(
   slug: string,
   { drafts }: { drafts: boolean },
@@ -124,12 +126,27 @@ export async function loadCaseStudy(
   const node = project.isDraft ? raw : pruneTodoSections(raw);
   if (!project.isDraft) checkBody(node, `content/projects/${slug} (body)`);
   const neighbour = (p: ProjectView | undefined) => (p ? { slug: p.slug, title: p.title } : null);
+  const prev = neighbour(projects[index - 1]);
+  const next = neighbour(projects[index + 1]);
+  const excluded = new Set([slug, prev?.slug, next?.slug].filter(Boolean));
+  const capSet = new Set(project.capabilities);
+  const related = projects
+    .filter((p) => !excluded.has(p.slug))
+    .map((p) => ({
+      project: p,
+      score:
+        p.capabilities.filter((c) => capSet.has(c)).length * 2 + (p.type === project.type ? 1 : 0),
+    }))
+    .sort((a, b) => b.score - a.score || (a.project.order ?? 99) - (b.project.order ?? 99))
+    .slice(0, 2)
+    .map((x) => x.project);
   return {
     project,
     bodyAst: JSON.stringify(node),
     headings: extractHeadings(node),
-    prev: neighbour(projects[index - 1]),
-    next: neighbour(projects[index + 1]),
+    prev,
+    next,
+    related,
   };
 }
 
@@ -216,7 +233,12 @@ export async function loadHomeData({ drafts }: { drafts: boolean }): Promise<Hom
       },
       (slug, { status: _s, ...data }) => ({ slug, ...data, isDraft: true }),
     )
-  ).sort((a, b) => (b.date ?? "").localeCompare(a.date ?? ""));
+  ).sort(
+    (a, b) =>
+      Number(Boolean(b.featured)) - Number(Boolean(a.featured)) ||
+      (a.order ?? 999) - (b.order ?? 999) ||
+      (b.date ?? "").localeCompare(a.date ?? ""),
+  );
 
   return {
     profile,

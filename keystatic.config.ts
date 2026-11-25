@@ -399,6 +399,31 @@ export default config({
           }),
           { label: "Achievements (competitions, awards)", itemLabel: (p) => p.fields.title.value },
         ),
+        intellectualProperty: fields.array(
+          fields.object({
+            title: fields.text({ label: "Program / work title" }),
+            officialTitle: fields.text({ label: "Official certificate title (optional)" }),
+            workType: fields.text({
+              label: "Registration type",
+              description: "e.g. Copyright Registration · Computer Program",
+            }),
+            registrationReference: fields.text({ label: "Registration / application reference" }),
+            recordNumber: fields.text({ label: "Copyright record number (optional)" }),
+            registrationDate: fields.text({ label: "Registration date" }),
+            firstPublication: fields.text({ label: "First publication date & place (optional)" }),
+            copyrightHolder: fields.text({ label: "Copyright holder" }),
+            creatorAttribution: fields.text({ label: "Creator attribution" }),
+            summary: fields.text({ label: "Technical summary", multiline: true }),
+            projectSlug: fields.text({ label: "Related project slug (optional)" }),
+            verificationUrl: fields.text({
+              label: "Official verification URL (optional, https:// only)",
+            }),
+          }),
+          {
+            label: "Intellectual property & copyright registrations",
+            itemLabel: (p) => p.fields.title.value,
+          },
+        ),
       },
     }),
 
@@ -441,15 +466,39 @@ export default config({
     }),
 
     recommendations: collection({
-      label: "Recommendations (LinkedIn)",
+      label: "Recommendations",
       slugField: "authorName",
       path: "content/recommendations/*",
       format: { data: "yaml" },
-      columns: ["authorName", "status"],
+      columns: ["authorName", "platform", "status"],
       schema: {
-        authorName: fields.slug({ name: { label: "Author name" } }),
+        authorName: fields.slug({ name: { label: "Name" } }),
         status,
-        authorHeadline: fields.text({ label: "Author headline" }),
+        authorHeadline: fields.text({ label: "Role / position (optional)" }),
+        organization: fields.text({ label: "Organization (optional)" }),
+        platform: fields.select({
+          label: "Platform",
+          options: [
+            { label: "LinkedIn", value: "linkedin" },
+            { label: "Shopee", value: "shopee" },
+            { label: "WhatsApp", value: "whatsapp" },
+            { label: "Email", value: "email" },
+            { label: "Google", value: "google" },
+            { label: "Other", value: "other" },
+          ],
+          defaultValue: "linkedin",
+        }),
+        platformLabel: fields.text({
+          label: "Custom source description (when Platform is Other)",
+        }),
+        linkedinUrl: fields.url({
+          label: "LinkedIn profile URL (optional)",
+          description: "Links the recommender's name to their LinkedIn profile.",
+        }),
+        sourceUrl: fields.url({
+          label: "Profile / original source URL (optional)",
+          description: "Optional link to the original review or profile.",
+        }),
         relationship: fields.select({
           label: "Relationship",
           options: [
@@ -467,11 +516,36 @@ export default config({
           description: "Overrides the label above on the site, e.g. Supervisor, Former schoolmate",
         }),
         text: fields.text({
-          label: "Recommendation (verbatim)",
+          label: "Testimonial (verbatim)",
           description: "Published word for word; an excerpt may only be cut with […]",
           multiline: true,
         }),
-        date: fields.date({ label: "Date" }),
+        date: fields.date({ label: "Date (optional)" }),
+        avatar: fields.image({
+          label: "Avatar (optional)",
+          directory: "public/images/recommendations",
+          publicPath: "/images/recommendations/",
+        }),
+        avatarAlt: fields.text({ label: "Avatar alt text (optional)" }),
+        evidenceImage: fields.image({
+          label: "Screenshot / evidence (optional)",
+          description: "Original testimonial screenshot (blur private contact info before upload).",
+          directory: "public/images/recommendations/evidence",
+          publicPath: "/images/recommendations/evidence/",
+        }),
+        evidenceAlt: fields.text({
+          label: "Screenshot alt text",
+          description: "Required when a screenshot is uploaded.",
+        }),
+        featured: fields.checkbox({
+          label: "Featured",
+          description: "Highlights this testimonial first.",
+          defaultValue: false,
+        }),
+        order: fields.integer({
+          label: "Display order (optional)",
+          description: "Lower numbers appear first.",
+        }),
         permissionConfirmed: fields.checkbox({
           label: "Permission to republish confirmed",
           description: "Required to publish",

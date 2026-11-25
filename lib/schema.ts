@@ -74,6 +74,14 @@ export const Relationship = z.enum([
   "classmate",
   "other",
 ]);
+export const RecommendationPlatform = z.enum([
+  "linkedin",
+  "shopee",
+  "whatsapp",
+  "email",
+  "google",
+  "other",
+]);
 export const WorkMode = z.enum(["on_site", "hybrid", "remote"]);
 export const SocialIcon = z.enum(["email", "linkedin", "github", "whatsapp", "website"]);
 export const InquiryType = z.enum(["job", "freelance", "collaboration", "other"]);
@@ -193,6 +201,24 @@ export const ExperienceSchema = z.object({
   tags: z.array(requiredText("tag")),
 });
 
+export const IntellectualPropertySchema = z.object({
+  title: requiredText("intellectual property title"),
+  officialTitle: optionalText("official certificate title"),
+  workType: requiredText("registration type"),
+  registrationReference: requiredText("registration reference"),
+  recordNumber: optionalText("copyright record number"),
+  registrationDate: requiredText("registration date"),
+  firstPublication: optionalText("first publication"),
+  copyrightHolder: requiredText("copyright holder"),
+  creatorAttribution: requiredText("creator attribution"),
+  summary: requiredText("technical summary"),
+  projectSlug: optionalText("related project slug"),
+  verificationUrl: optionalText("verification URL").refine(
+    (s) => s === null || /^https:\/\/\S+$/.test(s),
+    "verification URL must start with https://",
+  ),
+});
+
 export const EducationSchema = z.object({
   slug: z.string().min(1),
   institution: requiredText("institution"),
@@ -211,6 +237,7 @@ export const EducationSchema = z.object({
       date: yearMonth("achievement month"),
     }),
   ),
+  intellectualProperty: z.array(IntellectualPropertySchema).default([]),
 });
 
 // ── Projects ────────────────────────────────────────────────────────────────
@@ -232,38 +259,80 @@ export const GalleryImageSchema = z.object({
   caption: optionalText("caption"),
 });
 
+const optionalHttpsUrl = (field: string) =>
+  optionalText(field).refine(
+    (s) => s === null || /^https:\/\/\S+$/.test(s),
+    `${field} must start with https://`,
+  );
+
+const optionalPublicPath = (field: string) =>
+  optionalText(field).refine(
+    (s) => s === null || s.startsWith("/"),
+    `${field} must be a site-relative path`,
+  );
+
+const optionalIsoDate = (field: string) =>
+  optionalText(field).refine(
+    (s) => s === null || /^\d{4}-\d{2}-\d{2}$/.test(s),
+    `${field} must be YYYY-MM-DD`,
+  );
+
 export const ProjectSchema = z
   .object({
     slug: z.string().min(1),
     title: requiredText("title"),
-    summary: requiredText("summary"),
-    problem: requiredText("problem"),
+    summary: optionalText("summary"),
+    problem: optionalText("problem"),
     type: ProjectType,
-    capabilities: z.array(Capability).min(1, "at least one capability"),
-    role: requiredText("role"),
-    contribution: ContributionScope,
+    capabilities: z.array(Capability),
+    role: optionalText("role"),
+    contribution: z.enum(["owner", "core_team", "supporting", "unset"]).optional(),
     teamSize: z.number().int().positive().nullable(),
-    period: requiredText("period"),
+    period: optionalText("period"),
     stack: z.array(requiredText("stack item")),
     outcomes: z.array(OutcomeSchema),
     featured: z.boolean(),
     order: z.number().int(),
     // Optional (owner request): a project may be published before it has a screenshot.
-    thumbnail: optionalText("thumbnail").refine(
-      (s) => s === null || s.startsWith("/"),
-      "thumbnail must be a site-relative path",
-    ),
+    thumbnail: optionalPublicPath("thumbnail"),
     thumbnailAlt: optionalText("thumbnail alt text"),
     // Link to the running demo app (opens in a new tab).
-    demoUrl: optionalText("demo URL").refine(
-      (s) => s === null || /^https:\/\/\S+$/.test(s),
-      "demo URL must start with https://",
-    ),
+    demoUrl: optionalHttpsUrl("demo URL"),
     gallery: z.array(GalleryImageSchema),
   })
-  .refine((p) => p.thumbnail === null || p.thumbnailAlt !== null, {
-    message: "a thumbnail needs alt text",
-    path: ["thumbnailAlt"],
+  .superRefine((p, ctx) => {
+    // Full case-study entries (without a standalone demoUrl) require complete metadata.
+    const isDemoShowcase = p.demoUrl !== null;
+    if (!isDemoShowcase) {
+      if (!p.summary)
+        ctx.addIssue({ code: "custom", path: ["summary"], message: "summary is required" });
+      if (!p.problem)
+        ctx.addIssue({ code: "custom", path: ["problem"], message: "problem is required" });
+      if (!p.role) ctx.addIssue({ code: "custom", path: ["role"], message: "role is required" });
+      if (!p.period)
+        ctx.addIssue({ code: "custom", path: ["period"], message: "period is required" });
+      if (p.capabilities.length === 0) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["capabilities"],
+          message: "at least one capability",
+        });
+      }
+      if (!p.contribution || p.contribution === "unset") {
+        ctx.addIssue({
+          code: "custom",
+          path: ["contribution"],
+          message: "contribution scope must be owner, core_team or supporting (not 'unset')",
+        });
+      }
+    }
+    if (p.thumbnail !== null && p.thumbnailAlt === null) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["thumbnailAlt"],
+        message: "a thumbnail needs alt text",
+      });
+    }
   });
 
 // ── Skills / Recommendations ────────────────────────────────────────────────
@@ -276,18 +345,38 @@ export const SkillSchema = z.object({
   evidence: z.array(z.string().min(1, "evidence must reference a project")),
 });
 
-export const RecommendationSchema = z.object({
-  slug: z.string().min(1),
-  authorName: requiredText("author name"),
-  authorHeadline: requiredText("author headline"),
-  relationship: Relationship,
-  relationshipLabel: optionalText("relationship label"),
-  text: requiredText("recommendation text"),
-  date: isoDate("date"),
-  permissionConfirmed: z.literal(true, {
-    error: "permission to republish must be confirmed before publishing",
-  }),
-});
+export const RecommendationSchema = z
+  .object({
+    slug: z.string().min(1),
+    authorName: requiredText("author name"),
+    authorHeadline: optionalText("author headline"),
+    organization: optionalText("organization"),
+    platform: RecommendationPlatform.optional().default("linkedin"),
+    platformLabel: optionalText("platform label"),
+    linkedinUrl: optionalHttpsUrl("LinkedIn URL"),
+    sourceUrl: optionalHttpsUrl("source URL"),
+    relationship: Relationship,
+    relationshipLabel: optionalText("relationship label"),
+    text: requiredText("recommendation text"),
+    date: optionalIsoDate("date"),
+    avatar: optionalPublicPath("avatar"),
+    avatarAlt: optionalText("avatar alt text"),
+    evidenceImage: optionalPublicPath("screenshot evidence"),
+    evidenceAlt: optionalText("screenshot alt text"),
+    featured: z.boolean().optional().default(false),
+    order: z
+      .number()
+      .int()
+      .nullish()
+      .transform((v) => v ?? null),
+    permissionConfirmed: z.literal(true, {
+      error: "permission to republish must be confirmed before publishing",
+    }),
+  })
+  .refine((r) => r.evidenceImage === null || r.evidenceAlt !== null, {
+    message: "a screenshot needs alt text",
+    path: ["evidenceAlt"],
+  });
 
 // ── Contact message (transient, never persisted — PRD 8.5, FR-CF-01) ───────
 

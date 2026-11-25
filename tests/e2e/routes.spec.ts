@@ -137,12 +137,16 @@ test.describe("/privacy", () => {
     for (const item of ["Your name", "Your email address", "Your message"]) {
       await expect(page.getByText(item, { exact: true })).toBeVisible();
     }
-    // The server forwards the visitor's IP to Turnstile (app/actions/contact.ts).
-    await expect(page.getByText(/Your IP address and browser signals/)).toBeVisible();
+    // Both contact and recommendation actions forward the visitor's IP to Turnstile.
+    await expect(page.getByText(/Your IP address and browser signals/)).toHaveCount(2);
     for (const processor of ["Vercel", "Resend", "Cloudflare Turnstile"]) {
       await expect(page.locator("strong", { hasText: processor })).toBeVisible();
     }
     await expect(page.getByText(/not stored in a database/)).toBeVisible();
+    await expect(
+      page.getByRole("heading", { level: 2, name: "What the recommendation form collects" }),
+    ).toBeVisible();
+    await expect(page.getByText(/never published automatically/)).toBeVisible();
   });
 });
 
