@@ -210,6 +210,39 @@ describe("EducationSchema", () => {
       expect.arrayContaining(["achievements.0.title", "achievements.0.date"]),
     );
   });
+
+  it("accepts verified intellectual property copyright entries and rejects non-https verification URLs", () => {
+    const withIp = {
+      ...valid,
+      intellectualProperty: [
+        {
+          title: "Thermal Comfort Monitoring Computer Program",
+          officialTitle: "Monitoring Kenyamanan Termal",
+          workType: "Copyright Registration · Computer Program",
+          registrationReference: "EC002025076498",
+          recordNumber: "000916759",
+          registrationDate: "26 June 2025",
+          firstPublication: "28 April 2025, Semarang",
+          copyrightHolder: "Universitas Diponegoro",
+          creatorAttribution: "Desi Armanda Sari (Creator #6 among 8 contributors)",
+          summary: "IoT thermal comfort monitoring system.",
+          projectSlug: "thermal-comfort-monitoring",
+          verificationUrl: "",
+        },
+      ],
+    };
+    expect(EducationSchema.safeParse(withIp).success).toBe(true);
+
+    const badUrl = {
+      ...valid,
+      intellectualProperty: [
+        { ...withIp.intellectualProperty[0], verificationUrl: "javascript:alert(1)" },
+      ],
+    };
+    expect(issuePaths(EducationSchema.safeParse(badUrl))).toContain(
+      "intellectualProperty.0.verificationUrl",
+    );
+  });
 });
 
 describe("SkillSchema", () => {

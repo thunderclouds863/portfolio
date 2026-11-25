@@ -1,10 +1,9 @@
 import { ExternalLink } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 
 import { Missing } from "@/components/content/missing";
 import { DraftBadge, Val, isFilled } from "@/components/content/val";
-import { PixelIcon } from "@/components/pixel/pixel-icon";
+import { ProjectVisualCover } from "@/components/projects/project-visual-cover";
 import { capabilityLabel, projectTypeLabel, scopeLabel } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import type { ProjectView } from "@/lib/views";
@@ -49,27 +48,18 @@ function ProjectCard({
           flip ? "md:order-2 md:border-l-2" : "md:border-r-2",
         )}
       >
-        {project.thumbnail ? (
-          <Image
-            src={project.thumbnail}
-            alt={isFilled(project.thumbnailAlt) ? project.thumbnailAlt : ""}
-            fill
-            {...(lcp ? { preload: true, fetchPriority: "high" as const } : {})}
-            sizes="(min-width: 1200px) 480px, (min-width: 768px) 40vw, calc(100vw - 2rem)"
-            className="ease-pixel object-cover transition-transform duration-(--dur-base) [image-rendering:pixelated] group-hover:scale-[1.03]"
-          />
-        ) : (
-          <div className="bg-bg flex size-full flex-col items-center justify-center gap-3 p-4">
-            <PixelIcon name="floppy" size={48} className="text-green-dim" />
-            {/* Thumbnails are optional: a published card shows only the icon. */}
-            {project.isDraft ? <Missing what="thumbnail (IN-05)" /> : null}
-          </div>
-        )}
+        <ProjectVisualCover
+          project={project}
+          lcp={lcp}
+          interactive
+          sizes="(min-width: 1200px) 480px, (min-width: 768px) 40vw, calc(100vw - 2rem)"
+          className="h-full"
+        />
         {/* FR-PRJ-02: scanline sweep on hover/focus (transform + opacity, 200ms). */}
         <span aria-hidden="true" className="card-sweep" />
       </div>
 
-      <div className="flex flex-col gap-4 p-6 md:col-span-7 md:p-8">
+      <div className="flex flex-col gap-3 p-5 md:col-span-7 md:p-6">
         <div className="flex flex-wrap items-center gap-2">
           <ul aria-label="Tags" className="flex flex-wrap gap-2">
             {tags.map((t) => (
@@ -84,6 +74,7 @@ function ProjectCard({
         <H className="text-h3 text-green">
           <Link
             href={`/projects/${project.slug}`}
+            prefetch={false}
             className="group-hover:text-amber after:absolute after:inset-0 focus-visible:outline-none"
           >
             {project.title}
@@ -136,10 +127,18 @@ function ProjectCard({
           </ul>
         ) : null}
 
-        {project.demoUrl ? (
-          // Sits above the card's stretched link so it opens the demo, not the case study.
-          <DemoLink href={project.demoUrl} title={project.title} className="relative z-10" />
-        ) : null}
+        <div className="mt-auto flex flex-wrap items-center gap-x-5 gap-y-2 pt-1">
+          <span
+            aria-hidden="true"
+            className="text-meta text-green group-hover:text-amber text-sm underline-offset-4 group-hover:underline"
+          >
+            [ read case study {"->"} ]
+          </span>
+          {project.demoUrl ? (
+            // Sits above the card's stretched link so it opens the demo, not the case study.
+            <DemoLink href={project.demoUrl} title={project.title} className="relative z-10" />
+          ) : null}
+        </div>
       </div>
     </article>
   );
