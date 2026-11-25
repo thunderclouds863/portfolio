@@ -33,10 +33,15 @@ export default async function ProjectsPage() {
   } as Record<FilterValue, number>;
 
   return (
-    <div className="mx-auto flex max-w-[1200px] flex-col gap-10 px-4 py-16 md:px-6 md:py-24">
+    <div className="mx-auto flex max-w-[1200px] flex-col gap-6 px-4 py-10 md:px-6 md:py-12">
       <header className="flex flex-col gap-4">
         <p className="text-meta text-green-dim">{"> ls ./projects"}</p>
         <h1 className="text-display-1 text-green glow">Projects</h1>
+        <p className="text-muted max-w-[68ch]">
+          Selected systems analysis, business process improvement, data analytics, and web
+          application case studies. Filter by capability or open any project for architecture notes
+          and live demos.
+        </p>
       </header>
 
       <Suspense fallback={<FilterChips active="all" counts={counts} />}>

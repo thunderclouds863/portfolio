@@ -94,8 +94,8 @@ test.describe("home sections (1280px)", () => {
     await expect(visual).toContainText("| INPUT |--->| PROCESS |--->| OUTPUT |");
   });
 
-  // Decision 0002 #6/#7: education has its own section; availability covers full-time, freelance & collaboration.
-  test("education is its own section with an awards log, not part of the timeline", async ({
+  // Decision 0002 #6/#7 + Phase 9 Workstream B: education integrates awards inside its school entry.
+  test("education integrates high-school awards inside the school entry, not a detached timeline or box", async ({
     page,
   }) => {
     await page.goto("/");
@@ -107,8 +107,12 @@ test.describe("home sections (1280px)", () => {
     await expect(schools.last()).toContainText("SMA Negeri 2 Purworejo");
     await expect(schools.last()).toContainText("Mathematics and Natural Sciences (MIPA)");
     await expect(schools.last()).toContainText("2018 – 2021");
-    const awards = page.getByRole("complementary", { name: "Competitions & awards" });
+    const awards = schools.last().locator("[data-education-awards]");
+    await expect(awards).toContainText("Competitions & awards");
     await expect(awards.locator("li")).toHaveCount(3);
+    await expect(
+      education.getByRole("complementary", { name: "Competitions & awards" }),
+    ).toHaveCount(0);
     // The degree is no longer a timeline entry (the DSS Lab roles still name the university).
     await expect(page.locator("#experience")).not.toContainText("S.T. Industrial Engineering");
     await expect(page.locator("#top")).toContainText("Open to Opportunities & Collaboration");

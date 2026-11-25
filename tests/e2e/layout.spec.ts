@@ -9,6 +9,7 @@ const SECTION_LABELS = [
   "./experience",
   "./education",
   "./projects",
+  "./recommendations",
   "./approach",
   "./stack",
   "./contact",
@@ -234,20 +235,34 @@ test.describe("styleguide", () => {
   test("select and dialog work from the keyboard", async ({ page }) => {
     await page.goto("/styleguide");
     const trigger = page.getByRole("combobox", { name: "Inquiry type" });
+    const option = page.getByRole("option", { name: "Collaboration" });
+    // Center the trigger before opening so Radix's popper renders inside the
+    // viewport (Radix locks body scroll while open, which otherwise traps
+    // WebKit clicks on options positioned below the fold).
+    await trigger.evaluate((el) => el.scrollIntoView({ block: "center", behavior: "instant" }));
     // Enter pressed before hydration finishes (slow WebKit runs) is lost; retry.
+    // Guard against refocusing the trigger if the listbox already opened (Radix
+    // marks the background aria-hidden while open, which would block getByRole).
     await expect(async () => {
-      await trigger.focus();
-      await page.keyboard.press("Enter");
-      await expect(page.getByRole("option", { name: "Collaboration" })).toBeVisible({
-        timeout: 2000,
-      });
+      if (!(await option.isVisible())) {
+        await trigger.focus({ timeout: 2000 });
+        await page.keyboard.press("Enter");
+      }
+      await expect(option).toBeVisible({ timeout: 2000 });
     }).toPass();
-    await page.getByRole("option", { name: "Collaboration" }).click();
+    await option.click();
+    await expect(option).toBeHidden();
     await expect(trigger).toContainText("Collaboration");
 
-    await page.getByRole("button", { name: "[ Open dialog ]" }).focus();
-    await page.keyboard.press("Enter");
-    await expect(page.getByRole("dialog", { name: "Dialog example" })).toBeVisible();
+    const openDialog = page.getByRole("button", { name: "[ Open dialog ]" });
+    const dialog = page.getByRole("dialog", { name: "Dialog example" });
+    await expect(async () => {
+      if (!(await dialog.isVisible())) {
+        await openDialog.focus({ timeout: 2000 });
+        await page.keyboard.press("Enter");
+      }
+      await expect(dialog).toBeVisible({ timeout: 2000 });
+    }).toPass();
     await page.keyboard.press("Escape");
     await expect(page.getByRole("dialog")).toBeHidden();
   });
@@ -271,7 +286,7 @@ test.describe("mobile orbit menu", { tag: "@mobile" }, () => {
       expect(viewport.height - (box.y + box.height)).toBeLessThan(40); // bottom corner
       await button.click();
       const links = page.getByRole("dialog", { name: "Menu" }).getByRole("link");
-      await expect(links).toHaveCount(9); // 8 sections + CV
+      await expect(links).toHaveCount(10); // 9 nav items + CV
       // Wait until the launch animations have finished (slower in WebKit).
       // (Only the orbit items: the blinking cursors animate forever.)
       await page.waitForFunction(() =>

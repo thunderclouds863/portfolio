@@ -25,7 +25,7 @@ function Section({ id, number, title, className, children }: SectionProps) {
       aria-labelledby={titleId}
       data-section={id}
       className={cn(
-        "border-green-dim/40 relative border-t py-[clamp(4rem,8vw,8rem)] first:border-t-0",
+        "border-green-dim/40 relative overflow-x-clip border-t py-[clamp(4rem,8vw,8rem)] first:border-t-0",
         className,
       )}
     >

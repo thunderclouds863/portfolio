@@ -305,6 +305,18 @@
   opacity: 0;
   transform: translateY(16px);
 }
+[data-reveal="hidden"][data-reveal-dir="left"]:not([data-reveal-stagger]),
+[data-reveal="hidden"][data-reveal-dir="left"][data-reveal-stagger] > * {
+  transform: translateX(-16px);
+}
+[data-reveal="hidden"][data-reveal-dir="right"]:not([data-reveal-stagger]),
+[data-reveal="hidden"][data-reveal-dir="right"][data-reveal-stagger] > * {
+  transform: translateX(16px);
+}
+[data-reveal="hidden"][data-reveal-dir="scale"]:not([data-reveal-stagger]),
+[data-reveal="hidden"][data-reveal-dir="scale"][data-reveal-stagger] > * {
+  transform: translateY(10px) scale(0.97);
+}
 /* 80ms stagger for the first 6 items; the rest appear together. */
 [data-reveal-stagger] > :nth-child(2) {
   transition-delay: 80ms;
@@ -328,9 +340,81 @@
     transform: translateX(100%);
   }
 }
+@keyframes type-cover-loop {
+  0% {
+    transform: translateX(0);
+  }
+  22%,
+  82% {
+    transform: translateX(100%);
+  }
+  92%,
+  100% {
+    transform: translateX(0);
+  }
+}
 .typing-cover {
   animation: type-cover var(--type-duration, 1200ms) steps(var(--type-steps, 24), end) 150ms
     forwards;
+}
+.typing-cover-loop {
+  animation: type-cover-loop 9s steps(var(--type-steps, 24), end) infinite;
+}
+
+/* INPUT -> PROCESS -> OUTPUT workflow animation (Workstream 2D, transform + opacity only). */
+@keyframes pf-node-active {
+  0%,
+  100% {
+    opacity: 0.65;
+    transform: translateY(0);
+  }
+  10%,
+  30% {
+    opacity: 1;
+    transform: translateY(-1px);
+  }
+  40% {
+    opacity: 0.72;
+    transform: translateY(0);
+  }
+}
+@keyframes pf-travel {
+  0%,
+  18% {
+    opacity: 0.35;
+    transform: translateX(-2px);
+  }
+  28%,
+  42% {
+    opacity: 1;
+    transform: translateX(2px);
+  }
+  52%,
+  100% {
+    opacity: 0.35;
+    transform: translateX(0);
+  }
+}
+.pf-node {
+  animation: pf-node-active 4.8s var(--ease-pixel) infinite;
+}
+.pf-node-1 {
+  animation-delay: 0s;
+}
+.pf-node-2 {
+  animation-delay: 1.5s;
+}
+.pf-node-3 {
+  animation-delay: 3s;
+}
+.pf-pulse {
+  animation: pf-travel 4.8s linear infinite;
+}
+.pf-pulse-1 {
+  animation-delay: 0.35s;
+}
+.pf-pulse-2 {
+  animation-delay: 1.85s;
 }
 
 /* Project card hover/focus: a scanline sweep over the thumbnail (FR-PRJ-02, 200ms). */
@@ -465,6 +549,11 @@ body:has([data-active-relationship="other"])
   .card-sweep,
   .typing-cover {
     display: none;
+  }
+  .pf-node,
+  .pf-pulse {
+    opacity: 1;
+    transform: none;
   }
   .tilt-layer {
     transform: none;

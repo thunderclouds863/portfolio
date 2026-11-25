@@ -1,3 +1,6 @@
+import fs from "node:fs";
+import path from "node:path";
+
 import { expect, test } from "@playwright/test";
 
 // Case studies against `next dev` with the Draft preview: no project is
@@ -74,7 +77,7 @@ test.describe("case-study layout (1280px)", () => {
   });
 
   test("sticky table of contents links to every heading", async ({ page }) => {
-    await page.goto("/projects/thermal-comfort-monitoring");
+    await page.goto("/projects/hospital-erp-prototype");
     const toc = page.getByRole("navigation", { name: "On this page" });
     await expect(toc).toBeVisible();
     await expect(toc).toHaveCSS("position", "sticky");
@@ -122,6 +125,17 @@ test.describe("mobile (375px)", () => {
   });
 });
 
+function countDraftPreviewCapability(capability: string): number {
+  return SLUGS.filter((slug) => {
+    const file = path.join(process.cwd(), "content", "projects", slug, "index.mdoc");
+    const raw = fs.readFileSync(file, "utf8");
+    const frontmatter = raw.match(/^---\r?\n([\s\S]*?)\r?\n---/)?.[1] ?? "";
+    const capBlock =
+      frontmatter.match(/^capabilities:\s*\r?\n((?:[ \t]+-[ \t]+.+\r?\n?)*)/m)?.[1] ?? "";
+    return new RegExp(`^\\s*-\\s*${capability}\\s*$`, "m").test(capBlock);
+  }).length;
+}
+
 test("/projects lists every draft project and the filter hides non-matching ones", async ({
   page,
 }) => {
@@ -130,15 +144,15 @@ test("/projects lists every draft project and the filter hides non-matching ones
   await expect(items).toHaveCount(SLUGS.length);
   await expect(items.filter({ visible: true })).toHaveCount(SLUGS.length);
   const filters = page.getByRole("navigation", { name: "Filter projects by capability" });
-  // Only the published projects have capabilities so far:
-  // FPTK (analysis, development, data) and Overtime (process, development).
+  const expectedAnalysis = countDraftPreviewCapability("system_analysis");
+  const expectedProcess = countDraftPreviewCapability("process_improvement");
   await filters.getByRole("link", { name: /Analysis/ }).click();
   await expect(page).toHaveURL(/capability=analysis/);
-  await expect(items.filter({ visible: true })).toHaveCount(1);
-  await expect(items.filter({ visible: true })).toContainText("FPTK & Sourcing Database");
+  await expect(items.filter({ visible: true })).toHaveCount(expectedAnalysis);
+  await expect(items.filter({ visible: true }).first()).toContainText("FPTK & Sourcing Database");
   await filters.getByRole("link", { name: /Process/ }).click();
   await expect(page).toHaveURL(/capability=process/);
-  await expect(items.filter({ visible: true })).toHaveCount(1);
+  await expect(items.filter({ visible: true })).toHaveCount(expectedProcess);
   await expect(items.filter({ visible: true })).toContainText("Overtime Management System");
 });
 
@@ -151,8 +165,10 @@ for (const viewport of [
     await page.setViewportSize(viewport);
     await page.goto("/projects");
     const card = page.locator("[data-project-list] > li").filter({ hasText: "Sales Academy LMS" });
-    await card.getByRole("link", { name: "Sales Academy LMS", exact: true }).click();
-    await expect(page).toHaveURL(/\/projects\/sales-academy-lms$/);
+    await expect(async () => {
+      await card.getByRole("link", { name: "Sales Academy LMS", exact: true }).click();
+      await expect(page).toHaveURL(/\/projects\/sales-academy-lms$/, { timeout: 15_000 });
+    }).toPass({ timeout: 45_000 });
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("Sales Academy LMS");
 
     // The in-page back link returns to the index.

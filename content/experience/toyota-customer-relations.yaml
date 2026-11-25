@@ -2,15 +2,28 @@ entry: Toyota Customer Relations
 status: published
 organization: PT Toyota-Astra Motor
 role: Customer Relations (System Analyst & Process Improvement)
-start: "2025-10"
-end: "2026-06"
+start: 2025-10
+end: 2026-06
 highlights:
-  - text: Automated QA of 1,000+ monthly live-chat tickets with a hybrid NLP engine (rules + TF-IDF), cutting a day-long review to under 30 minutes.
+  - text: >-
+      Automated QA of 1,000+ monthly live-chat tickets with a hybrid NLP engine
+      (rules + TF-IDF), cutting a day-long review to under 30 minutes.
     scope: owner
-  - text: Cut survey report generation for 38 branches from 1 hour to 5–10 minutes with Excel VBA.
+  - text: >-
+      Built Excel VBA automation for survey analysis that generates PDF reports
+      for 38 branches, cutting processing time from 1 hour to 5–10 minutes.
     scope: owner
-  - text: KPI gap and root-cause analysis with Toyota Business Practices, then troubleshooting guides and probing flows.
+  - text: >-
+      KPI gap and root-cause analysis with Toyota Business Practices, then
+      troubleshooting guides and probing flows.
     scope: core_team
-  - text: Joined the drafting discussions (FGD) for the Emergency Roadside Assistance SOP and created its process flowcharts.
+  - text: >-
+      Contributed to the Emergency Roadside Assistance SOP for agents by joining
+      the drafting discussions (FGD) and creating the process flowcharts.
     scope: supporting
+  - text: >-
+      Supported chatbot operations: UAT, response-flow validation, vendor
+      coordination, deliverable verification for BAST approval, and campaign
+      content review.
+    scope: core_team
 tags: []

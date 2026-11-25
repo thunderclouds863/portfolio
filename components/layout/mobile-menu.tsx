@@ -1,21 +1,23 @@
 "use client";
 
 import { MenuIcon, XIcon } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Dialog as DialogPrimitive } from "radix-ui";
 import { useEffect, useRef, useState, type CSSProperties, type MouseEvent } from "react";
 
-import { cn } from "@/lib/utils";
 import { navCta, sectionNav } from "@/lib/nav";
+import { cn } from "@/lib/utils";
 
-const DESKTOP_QUERY = "(min-width: 768px)";
+import { scrollToSection, setPendingSectionTarget } from "./active-section";
+
+const DESKTOP_QUERY = "(min-width: 1024px)";
 
 /** Button size, vertical step between orbit items, how far the arc bows left. */
 const BUTTON_PX = 56;
-const STEP_PX = 54;
-const BOW_PX = 56;
+const STEP_PX = 46;
+const BOW_PX = 16;
 /** Approximate chip box, for drawing the orbit line through the chips' middles. */
-const CHIP_W = 112;
+const CHIP_W = 104;
 const CHIP_H = 44;
 
 type OrbitItem = { key: string; href: string; label: string; id?: string; primary?: boolean };
@@ -49,7 +51,7 @@ const ORBIT_D = [
 ].join(" ");
 
 const buttonClass =
-  "bg-panel border-green text-green shadow-pixel hover:border-amber hover:text-amber fixed right-[calc(1.25rem+env(safe-area-inset-right))] bottom-[calc(1.25rem+env(safe-area-inset-bottom))] z-[210] inline-flex size-14 items-center justify-center border-2 md:hidden";
+  "bg-panel border-green text-green shadow-pixel hover:border-amber hover:text-amber fixed right-[calc(1.25rem+env(safe-area-inset-right))] bottom-[calc(1.25rem+env(safe-area-inset-bottom))] z-[210] inline-flex size-14 items-center justify-center border-2 lg:hidden";
 
 /**
  * Mobile navigation (owner override 4, docs/decisions/0002): a square pixel
@@ -62,6 +64,7 @@ function MobileMenu() {
   const [open, setOpen] = useState(false);
   // Active section when the menu opened (FR-NAV-02 indicator inside the menu).
   const [activeId, setActiveId] = useState<string | null>(null);
+  const pathname = usePathname();
   const router = useRouter();
   // Section id to focus once the menu has closed ("Navigating -> Closed: restore focus").
   const pendingTarget = useRef<string | null>(null);
@@ -82,13 +85,20 @@ function MobileMenu() {
   }, []);
 
   function onSectionLink(event: MouseEvent<HTMLAnchorElement>, id: string, href: string) {
-    const target = document.getElementById(id);
     event.preventDefault();
-    if (!target) {
-      // Not on the home page: let the router navigate to "/#id" after closing.
+    if (!href.startsWith("/#")) {
       pendingTarget.current = null;
       setOpen(false);
       router.push(href);
+      return;
+    }
+    // Check pathname (not document.getElementById): under Next.js 16 Cache Components,
+    // `/` stays mounted inside a hidden <Activity> tree when viewing detail routes.
+    if (pathname !== "/") {
+      pendingTarget.current = null;
+      setPendingSectionTarget(id);
+      setOpen(false);
+      router.push(href, { scroll: false });
       return;
     }
     // Same page: close first (releases the scroll lock), then scroll and focus.
@@ -101,10 +111,13 @@ function MobileMenu() {
     pendingTarget.current = null;
     if (!id) return; // default: Radix returns focus to the trigger
     const target = document.getElementById(id);
-    if (!target) return;
+    if (!target || target.getClientRects().length === 0) return;
     event.preventDefault();
-    window.history.pushState(null, "", `#${id}`);
-    target.scrollIntoView(); // honours CSS scroll-behavior (off under reduced motion)
+    const nextHash = `#${id}`;
+    if (window.location.hash !== nextHash) {
+      window.history.pushState(null, "", nextHash);
+    }
+    scrollToSection(id, { smooth: true });
     const heading = target.matches("h1, h2") ? target : target.querySelector<HTMLElement>("h2");
     const focusable = heading ?? target;
     if (!focusable.hasAttribute("tabindex")) focusable.setAttribute("tabindex", "-1");
@@ -169,7 +182,7 @@ function MobileMenu() {
                       }
                       aria-current={current ? "true" : undefined}
                       className={cn(
-                        "shadow-pixel flex min-h-11 min-w-28 items-center justify-end border-2 px-3 font-mono text-sm whitespace-nowrap",
+                        "shadow-pixel flex min-h-11 min-w-24 items-center justify-end border-2 px-2 font-mono text-xs whitespace-nowrap",
                         item.primary
                           ? "bg-amber border-amber text-bg"
                           : "bg-panel border-green text-green hover:border-amber hover:text-amber aria-[current=true]:border-amber aria-[current=true]:text-amber",
