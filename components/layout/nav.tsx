@@ -19,7 +19,7 @@ const GROUP_SPLIT_ID = "projects";
 function Nav() {
   return (
     <header className="bg-bg border-green-dim sticky top-0 z-100 h-(--nav-height) border-b-2 print:hidden">
-      <div className="mx-auto flex h-full max-w-[1200px] items-center justify-between gap-2 px-4 min-[375px]:gap-4 lg:gap-3.5 lg:px-6 xl:gap-4">
+      <div className="mx-auto flex h-full max-w-[1200px] items-center justify-between gap-2 px-3 min-[390px]:px-4 sm:gap-4 lg:gap-3.5 lg:px-6 xl:gap-4">
         {/* Prominent, unshrunk owner identity anchor across all viewports (WCAG 2.5.3). */}
         <Link
           href="/"
