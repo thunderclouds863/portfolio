@@ -54,10 +54,36 @@ test.describe("Phase 6 / 7C — Approach CMS-driven interactive visual storytell
     expect(errors).toEqual([]);
   });
 
+  test("triggers viewport entrance reveal on scroll and updates progress rail across stages", async ({
+    page,
+  }) => {
+    await page.goto("/");
+    const story = page.locator("#approach [data-approach-story]");
+    await expect(story).toHaveAttribute("data-approach-revealed", "pending");
+
+    await story.scrollIntoViewIfNeeded();
+    await expect(story).toHaveAttribute("data-approach-revealed", "revealed");
+
+    const rail = story.locator("[data-approach-rail]");
+    await expect
+      .poll(async () => rail.evaluate((el) => getComputedStyle(el).transform))
+      .toContain("matrix(1, 0, 0, 1");
+
+    const progress = story.locator("[data-story-progress]");
+    await story.getByRole("tab").nth(2).click();
+    await expect
+      .poll(async () => progress.evaluate((el) => getComputedStyle(el).transform))
+      .not.toBe("matrix(0, 0, 0, 1, 0, 0)");
+  });
+
   test("works cleanly under prefers-reduced-motion: reduce", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.goto("/#approach");
     const section = page.locator("#approach");
+    await expect(section.locator("[data-approach-story]")).toHaveAttribute(
+      "data-approach-revealed",
+      "reduced",
+    );
     await section.getByRole("tab").nth(1).click();
     await expect(section.locator('[data-approach-visual="map-as-is"]')).toBeVisible();
     await expect(section.getByRole("tabpanel")).toContainText("Map as-is");

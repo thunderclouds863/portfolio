@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRef, useState, type KeyboardEvent } from "react";
+import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 
 import type { ApproachVisualKind, ResolvedApproachStage } from "@/lib/approach-story";
 import { cn } from "@/lib/utils";
@@ -10,18 +10,66 @@ type ApproachStoryProps = {
   stages: readonly ResolvedApproachStage[];
 };
 
+type RevealState = "idle" | "pending" | "revealed" | "reduced";
+
 /**
- * Interactive CMS-driven visual storytelling experience (Phase 6 / 7C / 9 Workstream D).
- * Renders a connected horizontal process path on desktop (lg+) with progressive node
- * activation, smooth CSS transform/opacity transitions, inline monochrome SVG diagrams,
- * and a touch-friendly stepped rail on mobile/tablet — zero scroll hijacking.
+ * Interactive CMS-driven visual storytelling experience (Phase 6 / 7C / 9 / 10).
+ * Renders a connected horizontal process path on desktop (lg+) with:
+ * - Viewport-triggered entrance (connector rail draw + staggered 6-stage reveal + panel entry),
+ * - Progressive node activation and smooth CSS transform/opacity transitions on stage change,
+ * - Inline monochrome SVG diagrams and a touch-friendly stepped rail on mobile/tablet,
+ * - Full prefers-reduced-motion and JS-disabled safety (SSR-visible by default).
  */
 function ApproachStory({ stages }: ApproachStoryProps) {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [revealState, setRevealState] = useState<RevealState>("idle");
+  const containerRef = useRef<HTMLDivElement>(null);
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      el.dataset.approachRevealed = "reduced";
+      return;
+    }
+
+    // Match Reveal's progressive pattern: content is SSR-visible; prime animation
+    // only when the section is still below the viewport, then reveal once on entry.
+    let first = true;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry) return;
+        if (first) {
+          first = false;
+          if (!entry.isIntersecting && entry.boundingClientRect.top >= 0) {
+            setRevealState("pending");
+            return;
+          }
+          // Already in view (e.g. direct /#approach load): play entrance once.
+          setRevealState("pending");
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => setRevealState("revealed"));
+          });
+          observer.disconnect();
+          return;
+        }
+        if (entry.isIntersecting || entry.boundingClientRect.top < 0) {
+          setRevealState("revealed");
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.15 },
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   const active = stages[activeIndex] ?? stages[0];
   if (!active) return null;
 
+  const isPending = revealState === "pending";
   const progressScale = stages.length > 1 ? activeIndex / (stages.length - 1) : 1;
   const totalLabel = String(stages.length).padStart(2, "0");
 
@@ -48,13 +96,22 @@ function ApproachStory({ stages }: ApproachStoryProps) {
   }
 
   return (
-    <div data-approach-story="" className="flex flex-col gap-6">
+    <div
+      ref={containerRef}
+      data-approach-story=""
+      data-approach-revealed={revealState}
+      className="flex flex-col gap-6"
+    >
       {/* Connected node pipeline (desktop lg+) & clean interactive rail (mobile/tablet) */}
       <div className="relative">
         {/* Continuous process track connecting stage 01 through the final node on desktop */}
         <div
           aria-hidden="true"
-          className="bg-green-dim/35 pointer-events-none absolute top-3.5 right-[8.333%] left-[8.333%] hidden h-0.5 lg:block"
+          data-approach-rail=""
+          style={{
+            transform: isPending ? "scaleX(0)" : "scaleX(1)",
+          }}
+          className="bg-green-dim/35 pointer-events-none absolute top-3.5 right-[8.333%] left-[8.333%] hidden h-0.5 origin-left transition-transform duration-500 ease-out motion-reduce:transition-none lg:block"
         >
           <div
             data-story-progress=""
@@ -72,6 +129,7 @@ function ApproachStory({ stages }: ApproachStoryProps) {
             const isSelected = index === activeIndex;
             const isCompleted = index < activeIndex;
             const stateLabel = isSelected ? "active" : isCompleted ? "completed" : "upcoming";
+            const staggerDelayMs = revealState === "revealed" ? index * 70 : 0;
             return (
               <button
                 key={stage.id}
@@ -88,8 +146,12 @@ function ApproachStory({ stages }: ApproachStoryProps) {
                 data-stage-state={stateLabel}
                 onClick={() => selectStage(index)}
                 onKeyDown={(e) => onTabKeyDown(e, index)}
+                style={{
+                  transitionDelay: `${staggerDelayMs}ms`,
+                }}
                 className={cn(
-                  "group/step flex min-h-11 flex-col items-start gap-1.5 border-2 px-3 py-2.5 text-left transition-colors duration-(--dur-fast) motion-reduce:transition-none lg:items-center lg:border-0 lg:bg-transparent lg:px-2 lg:pt-0 lg:pb-2 lg:text-center",
+                  "group/step flex min-h-11 cursor-pointer flex-col items-start gap-1.5 border-2 px-3 py-2.5 text-left transition-[opacity,transform,color,border-color] duration-300 ease-out motion-reduce:transition-none lg:items-center lg:border-0 lg:bg-transparent lg:px-2 lg:pt-0 lg:pb-2 lg:text-center",
+                  isPending ? "translate-y-2.5 opacity-0" : "translate-y-0 opacity-100",
                   isSelected
                     ? "bg-panel border-amber text-amber"
                     : isCompleted
@@ -101,7 +163,7 @@ function ApproachStory({ stages }: ApproachStoryProps) {
                 <span
                   aria-hidden="true"
                   className={cn(
-                    "hidden size-7 items-center justify-center border-2 font-mono text-[10px] transition-colors duration-(--dur-fast) motion-reduce:transition-none lg:flex",
+                    "hidden size-7 items-center justify-center border-2 font-mono text-[10px] transition-[color,border-color,transform] duration-(--dur-fast) group-hover/step:-translate-y-0.5 motion-reduce:transform-none motion-reduce:transition-none lg:flex",
                     isSelected
                       ? "bg-amber border-amber text-bg font-bold"
                       : isCompleted
@@ -141,7 +203,13 @@ function ApproachStory({ stages }: ApproachStoryProps) {
         id={`approach-panel-${active.id}`}
         aria-labelledby={`approach-tab-${active.id}`}
         data-active-stage={active.id}
-        className="bg-panel border-green-dim shadow-pixel grid gap-6 border-2 p-5 md:p-7 lg:grid-cols-12 lg:items-center lg:gap-8"
+        style={{
+          transitionDelay: revealState === "revealed" ? "160ms" : "0ms",
+        }}
+        className={cn(
+          "bg-panel border-green-dim shadow-pixel grid gap-6 border-2 p-5 transition-[opacity,transform] duration-400 ease-out motion-reduce:transition-none md:p-7 lg:grid-cols-12 lg:items-center lg:gap-8",
+          isPending ? "translate-y-3 opacity-0" : "translate-y-0 opacity-100",
+        )}
       >
         <div
           key={`copy-${active.id}`}
