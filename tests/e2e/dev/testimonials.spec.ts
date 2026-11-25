@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 
+import { revealAll } from "../helpers";
+
 // Testimonials source A (LinkedIn recommendations) and the per-bullet experience
 // scope, against `next dev` with the Draft preview (nothing is published yet).
 
@@ -43,6 +45,8 @@ test("home shows the recommendations after Projects, verbatim, without dates", a
   await expect(section).not.toContainText(/2025|2026|November|July/);
   // Asymmetric: a full-width lead quote above the others, which share a row
   // (not the Capabilities shape of one large block beside two stacked ones).
+  // Wait for staggered Reveal scale transitions to settle before measuring rects.
+  await revealAll(page);
   const boxes = await cards.evaluateAll((els) =>
     els.map((e) => {
       const r = e.getBoundingClientRect();
