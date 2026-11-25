@@ -11,10 +11,10 @@ type ApproachStoryProps = {
 };
 
 /**
- * Interactive CMS-driven visual storytelling experience (Phase 6 / 7C).
- * Lightweight client leaf: pure React state + CSS transform/opacity transitions
- * + monochrome inline SVG system diagrams. Respects prefers-reduced-motion and
- * exposes full WAI-ARIA tablist keyboard navigation.
+ * Interactive CMS-driven visual storytelling experience (Phase 6 / 7C / 9 Workstream D).
+ * Renders a connected horizontal process path on desktop (lg+) with progressive node
+ * activation, smooth CSS transform/opacity transitions, inline monochrome SVG diagrams,
+ * and a touch-friendly stepped rail on mobile/tablet — zero scroll hijacking.
  */
 function ApproachStory({ stages }: ApproachStoryProps) {
   const [activeIndex, setActiveIndex] = useState(0);
@@ -49,23 +49,24 @@ function ApproachStory({ stages }: ApproachStoryProps) {
 
   return (
     <div data-approach-story="" className="flex flex-col gap-6">
-      {/* CMS-driven progression bar & interactive tablist */}
+      {/* Connected node pipeline (desktop lg+) & clean interactive rail (mobile/tablet) */}
       <div className="relative">
+        {/* Continuous process track connecting stage 01 through the final node on desktop */}
         <div
           aria-hidden="true"
-          className="bg-green-dim/30 absolute top-5 right-6 left-6 hidden h-0.5 lg:block"
+          className="bg-green-dim/35 pointer-events-none absolute top-3.5 right-[8.333%] left-[8.333%] hidden h-0.5 lg:block"
         >
           <div
             data-story-progress=""
             style={{ transform: `scaleX(${progressScale.toFixed(3)})` }}
-            className="bg-amber h-full origin-left transition-transform duration-300 motion-reduce:transition-none"
+            className="bg-amber h-full origin-left transition-transform duration-300 ease-out motion-reduce:transition-none"
           />
         </div>
 
         <div
           role="tablist"
           aria-label="Problem-solving approach stages"
-          className="relative grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6 lg:gap-3"
+          className="relative grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6 lg:gap-0"
         >
           {stages.map((stage, index) => {
             const isSelected = index === activeIndex;
@@ -88,19 +89,44 @@ function ApproachStory({ stages }: ApproachStoryProps) {
                 onClick={() => selectStage(index)}
                 onKeyDown={(e) => onTabKeyDown(e, index)}
                 className={cn(
-                  "flex min-h-11 flex-col items-start gap-1 border-2 px-3 py-2.5 text-left transition-colors motion-reduce:transition-none",
+                  "group/step flex min-h-11 flex-col items-start gap-1.5 border-2 px-3 py-2.5 text-left transition-colors duration-(--dur-fast) motion-reduce:transition-none lg:items-center lg:border-0 lg:bg-transparent lg:px-2 lg:pt-0 lg:pb-2 lg:text-center",
                   isSelected
                     ? "bg-panel border-amber text-amber"
                     : isCompleted
                       ? "bg-bg border-green text-green hover:border-amber"
-                      : "bg-bg border-green-dim/70 text-muted hover:border-green hover:text-white",
+                      : "bg-bg border-green-dim/60 text-muted hover:border-green hover:text-white",
                 )}
               >
-                <span className="font-mono text-[10px] tracking-wider uppercase">
+                {/* Node marker centered on desktop connector track */}
+                <span
+                  aria-hidden="true"
+                  className={cn(
+                    "hidden size-7 items-center justify-center border-2 font-mono text-[10px] transition-colors duration-(--dur-fast) motion-reduce:transition-none lg:flex",
+                    isSelected
+                      ? "bg-amber border-amber text-bg font-bold"
+                      : isCompleted
+                        ? "bg-panel border-green text-green group-hover/step:border-amber"
+                        : "bg-bg border-green-dim text-muted group-hover/step:border-green group-hover/step:text-white",
+                  )}
+                >
+                  {stage.number}
+                </span>
+
+                <span className="font-mono text-[10px] tracking-wider uppercase lg:hidden">
                   {stage.number}
                   {isCompleted ? " · OK" : isSelected ? " · ACTIVE" : ""}
                 </span>
-                <span className="text-meta text-xs font-medium text-current sm:text-sm">
+
+                <span
+                  className={cn(
+                    "text-meta text-xs font-medium transition-colors duration-(--dur-fast) sm:text-sm",
+                    isSelected
+                      ? "text-amber"
+                      : isCompleted
+                        ? "text-green group-hover/step:text-amber"
+                        : "text-muted group-hover/step:text-white",
+                  )}
+                >
                   {stage.title}
                 </span>
               </button>
@@ -117,7 +143,10 @@ function ApproachStory({ stages }: ApproachStoryProps) {
         data-active-stage={active.id}
         className="bg-panel border-green-dim shadow-pixel grid gap-6 border-2 p-5 md:p-7 lg:grid-cols-12 lg:items-center lg:gap-8"
       >
-        <div className="flex flex-col gap-4 lg:col-span-7">
+        <div
+          key={`copy-${active.id}`}
+          className="animate-fade-in motion-reduce:animate-none flex flex-col gap-4 lg:col-span-7"
+        >
           <div className="flex flex-col gap-1.5">
             <p className="text-meta text-amber text-xs">
               STAGE {active.number} / {totalLabel}
@@ -136,7 +165,7 @@ function ApproachStory({ stages }: ApproachStoryProps) {
                 <Link
                   key={p.slug}
                   href={`/projects/${p.slug}`}
-                  className="text-meta text-green hover:text-amber underline underline-offset-4"
+                  className="text-meta text-green hover:text-amber underline underline-offset-4 transition-colors duration-(--dur-fast)"
                 >
                   {p.title}
                 </Link>
@@ -149,7 +178,7 @@ function ApproachStory({ stages }: ApproachStoryProps) {
               type="button"
               disabled={activeIndex === 0}
               onClick={() => selectStage(activeIndex - 1)}
-              className="border-green-dim text-meta text-green hover:border-amber hover:text-amber disabled:text-muted min-h-11 border-2 px-3 py-1.5 text-xs disabled:cursor-not-allowed disabled:opacity-50"
+              className="border-green-dim text-meta text-green hover:border-amber hover:text-amber disabled:text-muted min-h-11 border-2 px-3 py-1.5 text-xs transition-colors duration-(--dur-fast) disabled:cursor-not-allowed disabled:opacity-50"
             >
               {"[ < previous ]"}
             </button>
@@ -157,7 +186,7 @@ function ApproachStory({ stages }: ApproachStoryProps) {
               type="button"
               disabled={activeIndex === stages.length - 1}
               onClick={() => selectStage(activeIndex + 1)}
-              className="border-green-dim text-meta text-green hover:border-amber hover:text-amber disabled:text-muted min-h-11 border-2 px-3 py-1.5 text-xs disabled:cursor-not-allowed disabled:opacity-50"
+              className="border-green-dim text-meta text-green hover:border-amber hover:text-amber disabled:text-muted min-h-11 border-2 px-3 py-1.5 text-xs transition-colors duration-(--dur-fast) disabled:cursor-not-allowed disabled:opacity-50"
             >
               {"[ next > ]"}
             </button>
@@ -170,7 +199,9 @@ function ApproachStory({ stages }: ApproachStoryProps) {
             <span>system-view.svg</span>
             <span className="text-amber">STAGE_{active.number}</span>
           </div>
-          <StageDiagram visualKind={active.visualKind} title={active.title} />
+          <div key={`svg-${active.id}`} className="animate-rise-in motion-reduce:animate-none">
+            <StageDiagram visualKind={active.visualKind} title={active.title} />
+          </div>
           <figcaption className="text-meta text-muted text-xs">{active.visualCaption}</figcaption>
         </figure>
       </div>
@@ -262,7 +293,6 @@ function StageDiagram({ visualKind, title }: { visualKind: ApproachVisualKind; t
 
       {visualKind === "map-as-is" ? (
         <g fontFamily="monospace" fontSize="10">
-          {/* Current-state workflow swimlane and manual handoffs */}
           <rect
             x="20"
             y="38"

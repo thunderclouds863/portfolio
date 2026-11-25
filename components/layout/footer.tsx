@@ -23,7 +23,7 @@ async function Footer() {
               <li key={item.id}>
                 <a
                   href={item.href}
-                  className="text-muted hover:text-amber inline-flex min-h-8 items-center font-mono text-sm"
+                  className="text-muted hover:text-amber inline-flex min-h-8 items-center font-mono text-sm underline-offset-4 transition-colors duration-(--dur-fast) hover:underline"
                 >
                   {item.label}
                 </a>
@@ -39,7 +39,7 @@ async function Footer() {
               <li key={item.href}>
                 <Link
                   href={item.href}
-                  className="text-muted hover:text-amber inline-flex min-h-8 items-center font-mono text-sm"
+                  className="text-muted hover:text-amber inline-flex min-h-8 items-center font-mono text-sm underline-offset-4 transition-colors duration-(--dur-fast) hover:underline"
                 >
                   {item.label}
                 </Link>
@@ -60,7 +60,7 @@ async function Footer() {
                     <a
                       href={link.url}
                       {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-                      className="text-muted hover:text-amber inline-flex min-h-8 max-w-full items-center gap-2 font-mono text-sm"
+                      className="text-muted hover:text-amber inline-flex min-h-8 max-w-full items-center gap-2 font-mono text-sm underline-offset-4 transition-colors duration-(--dur-fast) hover:underline"
                     >
                       <Icon aria-hidden="true" className="size-4 shrink-0" />
                       {/* Long labels (an email address) wrap instead of widening the page. */}
