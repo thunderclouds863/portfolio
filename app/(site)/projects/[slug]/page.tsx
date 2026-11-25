@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 
 import { DraftBadge, Val, isFilled } from "@/components/content/val";
 import { MarkdocContent } from "@/components/markdoc/markdoc-content";
 import { ZoomableFigure } from "@/components/markdoc/zoomable-figure";
 import { CaseStudySnapshot } from "@/components/projects/case-study-snapshot";
+import { ProjectVisualCover } from "@/components/projects/project-visual-cover";
 import { JsonLd } from "@/components/seo/json-ld";
+import { DemoLink } from "@/components/ui/project-card";
 import { Tag } from "@/components/ui/tag";
 import { capabilityLabel, projectTypeLabel } from "@/lib/format";
 import { nodeFromJson } from "@/lib/markdoc";
@@ -38,11 +41,30 @@ export async function generateMetadata({
 
 // Case study (PRD section 3 template): snapshot, Markdoc body with sticky TOC on
 // desktop (FR-PD-02), diagram lightbox (FR-PD-03), prev/next, back to projects.
-export default async function CaseStudyPage({ params }: PageProps<"/projects/[slug]">) {
+// Next.js 16 Cache Components: dynamic `params` access is wrapped in <Suspense>
+// so unprerendered / dev-mode navigations stream cleanly without blocking shell errors.
+export default function CaseStudyPage({ params }: PageProps<"/projects/[slug]">) {
+  return (
+    <Suspense
+      fallback={
+        <div
+          aria-busy="true"
+          className="text-meta text-muted mx-auto max-w-[1200px] px-4 py-12 md:px-6 md:py-16"
+        >
+          Loading case study...
+        </div>
+      }
+    >
+      <CaseStudyContent params={params} />
+    </Suspense>
+  );
+}
+
+async function CaseStudyContent({ params }: { params: PageProps<"/projects/[slug]">["params"] }) {
   const { slug } = await params;
   const study = await getCaseStudy(slug);
   if (!study) notFound();
-  const { project, headings, prev, next } = study;
+  const { project, headings, prev, next, related } = study;
   const tags = [
     projectTypeLabel[project.type] ?? project.type,
     ...project.capabilities.map((c) => capabilityLabel[c] ?? c),
@@ -76,10 +98,28 @@ export default async function CaseStudyPage({ params }: PageProps<"/projects/[sl
             <Val value={project.summary} what="one-line summary (IN-05)" />
           </p>
         ) : null}
+        {project.demoUrl ? (
+          <div className="pt-1">
+            <DemoLink href={project.demoUrl} title={project.title} />
+          </div>
+        ) : null}
       </header>
 
       <div className="grid gap-12 lg:grid-cols-12">
         <div className="flex min-w-0 flex-col gap-10 lg:col-span-8">
+          <figure className="border-green-dim shadow-pixel overflow-hidden border-2">
+            <ProjectVisualCover
+              project={project}
+              lcp
+              sizes="(min-width: 1024px) 760px, calc(100vw - 2rem)"
+            />
+            {project.thumbnail && isFilled(project.thumbnailAlt) ? (
+              <figcaption className="bg-panel border-green-dim text-meta text-muted border-t-2 px-4 py-2 text-xs">
+                {project.thumbnailAlt}
+              </figcaption>
+            ) : null}
+          </figure>
+
           <CaseStudySnapshot project={project} />
 
           <div className="case-body">
@@ -101,6 +141,35 @@ export default async function CaseStudyPage({ params }: PageProps<"/projects/[sl
                   />
                 ) : null,
               )}
+            </section>
+          ) : null}
+
+          {related.length > 0 ? (
+            <section
+              aria-labelledby="related-projects-title"
+              className="border-green-dim flex flex-col gap-4 border-t-2 pt-8"
+            >
+              <h2 id="related-projects-title" className="text-label text-green">
+                Related projects
+              </h2>
+              <ul className="grid gap-4 sm:grid-cols-2">
+                {related.map((item) => (
+                  <li key={item.slug}>
+                    <Link
+                      href={`/projects/${item.slug}`}
+                      className="bg-panel border-green-dim hover:border-amber flex h-full flex-col gap-2 border-2 p-4"
+                    >
+                      <span className="text-meta text-green-dim text-xs">
+                        {projectTypeLabel[item.type] ?? item.type}
+                      </span>
+                      <span className="text-h3 text-green">{item.title}</span>
+                      {isFilled(item.summary) ? (
+                        <p className="text-muted line-clamp-2 text-sm">{item.summary}</p>
+                      ) : null}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             </section>
           ) : null}
 

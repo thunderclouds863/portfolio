@@ -201,6 +201,24 @@ export const ExperienceSchema = z.object({
   tags: z.array(requiredText("tag")),
 });
 
+export const IntellectualPropertySchema = z.object({
+  title: requiredText("intellectual property title"),
+  officialTitle: optionalText("official certificate title"),
+  workType: requiredText("registration type"),
+  registrationReference: requiredText("registration reference"),
+  recordNumber: optionalText("copyright record number"),
+  registrationDate: requiredText("registration date"),
+  firstPublication: optionalText("first publication"),
+  copyrightHolder: requiredText("copyright holder"),
+  creatorAttribution: requiredText("creator attribution"),
+  summary: requiredText("technical summary"),
+  projectSlug: optionalText("related project slug"),
+  verificationUrl: optionalText("verification URL").refine(
+    (s) => s === null || /^https:\/\/\S+$/.test(s),
+    "verification URL must start with https://",
+  ),
+});
+
 export const EducationSchema = z.object({
   slug: z.string().min(1),
   institution: requiredText("institution"),
@@ -219,6 +237,7 @@ export const EducationSchema = z.object({
       date: yearMonth("achievement month"),
     }),
   ),
+  intellectualProperty: z.array(IntellectualPropertySchema).default([]),
 });
 
 // ── Projects ────────────────────────────────────────────────────────────────

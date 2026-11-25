@@ -215,7 +215,7 @@ export async function validateAllContent(): Promise<string[]> {
   }
   await attempt(getSettings);
   await attempt(getExperience);
-  await attempt(getEducation);
+  const education = (await attempt(getEducation)) ?? [];
   const recommendations = (await attempt(getRecommendations)) ?? [];
   for (const r of recommendations) {
     if (r.avatar && !publicFileExists(r.avatar)) {
@@ -245,6 +245,15 @@ export async function validateAllContent(): Promise<string[]> {
     for (const ref of s.evidence) {
       if (!projectSlugs.has(ref)) {
         problems.push(`content/skills/${s.slug}: evidence '${ref}' is not a published project`);
+      }
+    }
+  }
+  for (const ed of education) {
+    for (const ip of ed.intellectualProperty) {
+      if (ip.projectSlug && !projectSlugs.has(ip.projectSlug)) {
+        problems.push(
+          `content/education/${ed.slug}: intellectualProperty '${ip.title}' projectSlug '${ip.projectSlug}' is not a published project`,
+        );
       }
     }
   }

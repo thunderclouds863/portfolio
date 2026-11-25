@@ -2,4 +2,5 @@ name: RAD
 status: published
 group: analysis_modeling
 level: daily
-evidence: []
+evidence:
+  - thermal-comfort-monitoring
