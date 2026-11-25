@@ -1,3 +1,6 @@
+import { ExternalLink } from "lucide-react";
+import Link from "next/link";
+
 import { Missing } from "@/components/content/missing";
 import { DraftBadge, isFilled } from "@/components/content/val";
 import { Reveal } from "@/components/motion/reveal";
@@ -60,6 +63,88 @@ function Education({ education, number }: EducationProps) {
                       </li>
                     ))}
                   </ul>
+                ) : null}
+                {(ed.intellectualProperty ?? []).length > 0 ? (
+                  <div
+                    aria-label="Intellectual property and copyright recognition"
+                    data-education-ip=""
+                    className="mt-2 flex flex-col gap-4"
+                  >
+                    {(ed.intellectualProperty ?? []).map((ip) => (
+                      <article
+                        key={ip.registrationReference}
+                        className="bg-panel border-green-dim flex flex-col gap-3 border-2 p-4"
+                      >
+                        <div className="flex flex-col gap-1">
+                          <p className="text-meta text-amber text-xs">{ip.workType}</p>
+                          <h4 className="text-h3 text-white">{ip.title}</h4>
+                          {isFilled(ip.officialTitle) ? (
+                            <p className="text-meta text-muted text-xs">
+                              Official title: {ip.officialTitle}
+                            </p>
+                          ) : null}
+                        </div>
+
+                        <p className="max-w-[66ch] text-sm">{ip.summary}</p>
+
+                        <dl className="border-green-dim/50 grid gap-x-6 gap-y-2 border-t border-dashed pt-3 text-xs sm:grid-cols-2">
+                          <div>
+                            <dt className="text-meta text-green-dim">Registration reference</dt>
+                            <dd className="font-mono break-all text-white">
+                              {ip.registrationReference}
+                            </dd>
+                          </div>
+                          {isFilled(ip.recordNumber) ? (
+                            <div>
+                              <dt className="text-meta text-green-dim">Copyright record no.</dt>
+                              <dd className="font-mono break-all text-white">{ip.recordNumber}</dd>
+                            </div>
+                          ) : null}
+                          <div>
+                            <dt className="text-meta text-green-dim">Registration date</dt>
+                            <dd className="text-white">{ip.registrationDate}</dd>
+                          </div>
+                          {isFilled(ip.firstPublication) ? (
+                            <div>
+                              <dt className="text-meta text-green-dim">First publication</dt>
+                              <dd className="text-white">{ip.firstPublication}</dd>
+                            </div>
+                          ) : null}
+                          <div>
+                            <dt className="text-meta text-green-dim">Copyright holder</dt>
+                            <dd className="text-white">{ip.copyrightHolder}</dd>
+                          </div>
+                          <div>
+                            <dt className="text-meta text-green-dim">Creator attribution</dt>
+                            <dd className="text-white">{ip.creatorAttribution}</dd>
+                          </div>
+                        </dl>
+
+                        <div className="flex flex-wrap items-center gap-x-5 gap-y-2 pt-1">
+                          {isFilled(ip.projectSlug) ? (
+                            <Link
+                              href={`/projects/${ip.projectSlug}`}
+                              className="text-meta text-green hover:text-amber text-xs underline underline-offset-4"
+                            >
+                              [ View related project {"->"} ]
+                            </Link>
+                          ) : null}
+                          {isFilled(ip.verificationUrl) ? (
+                            <a
+                              href={ip.verificationUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-meta text-amber hover:text-yellow inline-flex items-center gap-1.5 text-xs underline underline-offset-4"
+                            >
+                              [ View official copyright record
+                              <ExternalLink aria-hidden="true" className="size-3.5" /> ]
+                              <span className="sr-only"> (opens in a new tab)</span>
+                            </a>
+                          ) : null}
+                        </div>
+                      </article>
+                    ))}
+                  </div>
                 ) : null}
               </li>
             ))}
