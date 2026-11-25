@@ -1,16 +1,27 @@
 entry: Cimory Corporate People Analyst
 status: published
 organization: Cimory Group
-role: HR Development Specialist – Corporate People Analyst (Systems & Process Improvement)
-start: "2026-08"
-end: "2026-11"
+role: >-
+  HR Development Specialist – Corporate People Analyst (Systems & Process
+  Improvement)
+start: 2026-08
+end: 2026-11
 highlights:
-  - text: Replaced a 3+ hour manual Excel compilation with a centralized FPTK & Sourcing Database for 5 business units and 25+ recruiters.
+  - text: >-
+      Replaced a 3+ hour manual Excel compilation with a centralized FPTK &
+      Sourcing Database for 5 business units and 25+ recruiters.
     scope: owner
-  - text: Turned the overtime process into an approval-based web system with location checks and email approval. HR's overtime recap time went from about 4 hours to about 5 minutes.
+  - text: >-
+      Turned the overtime process into an approval-based web system with
+      location checks and email approval. HR's overtime recap time went from
+      about 4 hours to about 5 minutes.
     scope: owner
-  - text: Designed the workload analysis method and processed measurement results to determine manpower needs.
+  - text: >-
+      Designed the workload analysis method and processed measurement results to
+      determine manpower needs.
     scope: owner
-  - text: "Supported the HRIS migration to Pro-Int: joined system meetings, handled organization codes such as job title codes, and prepared and cleaned as-is data."
+  - text: >-
+      Supported the HRIS migration to Pro-Int: handled organization codes such
+      as job title codes, and prepared and cleaned as-is data.
     scope: supporting
 tags: []
