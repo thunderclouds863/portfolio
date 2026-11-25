@@ -76,6 +76,83 @@ test.describe("Phase 6 / 7C — Approach CMS-driven interactive visual storytell
       .not.toBe("matrix(0, 0, 0, 1, 0, 0)");
   });
 
+  test("animates System View SVG flow paths and nodes across all 6 stages without clipping", async ({
+    page,
+  }) => {
+    await page.goto("/#approach");
+    const section = page.locator("#approach");
+    const tabs = section.getByRole("tab");
+
+    // Stage 01 (Understand): verify live stroke-dashoffset motion on dashed & pulse connectors.
+    const svg = section.locator("[data-approach-visual]");
+    await expect(svg).toBeVisible();
+
+    const dashPath = svg.locator("[data-sv-dash]").first();
+    await expect(dashPath).toBeVisible();
+    const initialDashOffset = await dashPath.evaluate(
+      (el) => getComputedStyle(el).strokeDashoffset,
+    );
+    await expect
+      .poll(async () => dashPath.evaluate((el) => getComputedStyle(el).strokeDashoffset), {
+        timeout: 2000,
+      })
+      .not.toBe(initialDashOffset);
+
+    // Cycle through all 6 stages and verify each has active SVG flow animations and no clipping.
+    for (let i = 0; i < 6; i++) {
+      if (i > 0) await tabs.nth(i).click();
+      const stageSvg = section.locator("[data-approach-visual]");
+      await expect(stageSvg).toBeVisible();
+
+      const flowCount = await stageSvg.locator("[data-sv-flow]").count();
+      const nodeCount = await stageSvg.locator("[data-sv-node]").count();
+      expect(flowCount, `stage ${i + 1} flow paths`).toBeGreaterThan(0);
+      expect(nodeCount, `stage ${i + 1} animated nodes`).toBeGreaterThan(0);
+
+      const flowAnim = await stageSvg
+        .locator("[data-sv-flow]")
+        .first()
+        .evaluate((el) => getComputedStyle(el).animationName);
+      expect(flowAnim).toBe("sv-signal-flow");
+
+      // Ensure every node stays within the SVG viewport bounds (no clipping).
+      const clipped = await stageSvg.evaluate((el) => {
+        const svgBox = el.getBoundingClientRect();
+        const items = el.querySelectorAll("[data-sv-node], [data-sv-bar]");
+        for (const item of items) {
+          const r = item.getBoundingClientRect();
+          if (
+            r.left < svgBox.left - 2 ||
+            r.right > svgBox.right + 2 ||
+            r.top < svgBox.top - 2 ||
+            r.bottom > svgBox.bottom + 2
+          ) {
+            return true;
+          }
+        }
+        return false;
+      });
+      expect(clipped, `stage ${i + 1} SVG clipping`).toBe(false);
+    }
+  });
+
+  test("@mobile renders animated System View SVG cleanly at 375px", async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 812 });
+    await page.goto("/#approach");
+    const svg = page.locator("#approach [data-approach-visual]");
+    await expect(svg).toBeVisible();
+
+    const dashPath = svg.locator("[data-sv-dash]").first();
+    const initialDashOffset = await dashPath.evaluate(
+      (el) => getComputedStyle(el).strokeDashoffset,
+    );
+    await expect
+      .poll(async () => dashPath.evaluate((el) => getComputedStyle(el).strokeDashoffset), {
+        timeout: 2000,
+      })
+      .not.toBe(initialDashOffset);
+  });
+
   test("works cleanly under prefers-reduced-motion: reduce", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.goto("/#approach");
@@ -84,6 +161,24 @@ test.describe("Phase 6 / 7C — Approach CMS-driven interactive visual storytell
       "data-approach-revealed",
       "reduced",
     );
+
+    // SVG animations are disabled and pulse overlays are hidden under reduced motion.
+    const reducedState = await section.locator("[data-approach-visual]").evaluate((svg) => {
+      const node = svg.querySelector("[data-sv-node]");
+      const dash = svg.querySelector("[data-sv-dash]");
+      const pulse = svg.querySelector("[data-sv-flow]");
+      return {
+        nodeAnim: node ? getComputedStyle(node).animationName : null,
+        nodeOpacity: node ? getComputedStyle(node).opacity : null,
+        dashAnim: dash ? getComputedStyle(dash).animationName : null,
+        pulseDisplay: pulse ? getComputedStyle(pulse).display : null,
+      };
+    });
+    expect(reducedState.nodeAnim).toBe("none");
+    expect(reducedState.nodeOpacity).toBe("1");
+    expect(reducedState.dashAnim).toBe("none");
+    expect(reducedState.pulseDisplay).toBe("none");
+
     await section.getByRole("tab").nth(1).click();
     await expect(section.locator('[data-approach-visual="map-as-is"]')).toBeVisible();
     await expect(section.getByRole("tabpanel")).toContainText("Map as-is");

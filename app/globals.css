@@ -417,6 +417,109 @@
   animation-delay: 1.85s;
 }
 
+/* Approach System View SVG flow & node animations (pure CSS, zero React re-renders). */
+@keyframes sv-dash-march-6 {
+  from {
+    stroke-dashoffset: 0;
+  }
+  to {
+    stroke-dashoffset: -12;
+  }
+}
+@keyframes sv-dash-march-7 {
+  from {
+    stroke-dashoffset: 0;
+  }
+  to {
+    stroke-dashoffset: -14;
+  }
+}
+@keyframes sv-dash-march-8 {
+  from {
+    stroke-dashoffset: 0;
+  }
+  to {
+    stroke-dashoffset: -16;
+  }
+}
+@keyframes sv-signal-flow {
+  0%,
+  8% {
+    stroke-dashoffset: 24;
+    opacity: 0;
+  }
+  14% {
+    opacity: 1;
+  }
+  46% {
+    stroke-dashoffset: -104;
+    opacity: 1;
+  }
+  52%,
+  100% {
+    stroke-dashoffset: -104;
+    opacity: 0;
+  }
+}
+@keyframes sv-node-pulse {
+  0%,
+  100% {
+    opacity: 0.78;
+    transform: scale(1);
+  }
+  10%,
+  28% {
+    opacity: 1;
+    transform: scale(1.022);
+  }
+  42% {
+    opacity: 0.84;
+    transform: scale(1);
+  }
+}
+@keyframes sv-bar-wave {
+  0%,
+  100% {
+    opacity: 0.76;
+    transform: scaleY(0.95);
+  }
+  14%,
+  34% {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+  48% {
+    opacity: 0.84;
+    transform: scaleY(0.97);
+  }
+}
+.sv-dash-6 {
+  animation: sv-dash-march-6 2s linear infinite;
+}
+.sv-dash-7 {
+  animation: sv-dash-march-7 2.2s linear infinite;
+}
+.sv-dash-8 {
+  animation: sv-dash-march-8 2.4s linear infinite;
+}
+.sv-pulse {
+  stroke-dasharray: 24 120;
+  stroke-dashoffset: 24;
+  stroke-linecap: square;
+  opacity: 0;
+  animation: sv-signal-flow 4.8s var(--ease-pixel) var(--sv-delay, 0s) infinite;
+}
+.sv-node {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: sv-node-pulse 4.8s var(--ease-pixel) var(--sv-delay, 0s) infinite;
+}
+.sv-bar {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  animation: sv-bar-wave 4.8s var(--ease-pixel) var(--sv-delay, 0s) infinite;
+}
+
 /* Project card hover/focus: a scanline sweep over the thumbnail (FR-PRJ-02, 200ms). */
 .card-sweep {
   position: absolute;
@@ -555,6 +658,18 @@ body:has([data-active-relationship="other"])
     opacity: 1;
     transform: none;
   }
+  .sv-node,
+  .sv-bar,
+  .sv-dash-6,
+  .sv-dash-7,
+  .sv-dash-8 {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .sv-pulse {
+    display: none;
+  }
   .tilt-layer {
     transform: none;
   }
@@ -595,7 +710,8 @@ body:has([data-active-relationship="other"])
   .card-sweep,
   .typing-cover,
   .page-grid-frame,
-  .section-glyphs {
+  .section-glyphs,
+  .sv-pulse {
     display: none !important;
   }
   [data-reveal="hidden"]:not([data-reveal-stagger]),
