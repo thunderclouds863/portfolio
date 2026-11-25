@@ -2,4 +2,8 @@ name: SQL (PostgreSQL, MySQL)
 status: published
 group: data_automation
 level: project
-evidence: []
+evidence:
+  - fptk-sourcing-database
+  - overtime-management-system
+  - sales-academy-lms
+  - thermal-comfort-monitoring
