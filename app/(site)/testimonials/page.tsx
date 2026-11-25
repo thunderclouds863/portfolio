@@ -19,9 +19,9 @@ export const metadata: Metadata = pageMetadata({
   path: "/testimonials",
 });
 
-// FR-TST-02: all testimonials, filterable by relationship (state in the URL).
-// Source A only for now (LinkedIn recommendations); site submissions (source B)
-// and the "Write a testimonial" flow arrive with the Supabase + LinkedIn setup.
+// FR-TST-02 + Phase 3: published recommendations filterable by relationship (URL query),
+// plus a moderated public submission form that sends [PENDING MODERATION] emails to the
+// owner for manual review and never publishes automatically.
 export default async function TestimonialsPage() {
   const { recommendations } = await getHomeData();
   const options: RelationshipOption[] = [];
