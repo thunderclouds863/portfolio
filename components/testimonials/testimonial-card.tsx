@@ -1,4 +1,4 @@
-import { ExternalLink } from "lucide-react";
+import { ArrowUpRight, ExternalLink } from "lucide-react";
 import Image from "next/image";
 
 import { DraftBadge } from "@/components/content/val";
@@ -35,9 +35,11 @@ export function platformText(item: RecommendationView): string {
 }
 
 /**
- * Multi-platform recommendation card (Workstream 3).
- * Supports LinkedIn, Shopee, WhatsApp, Email, Google, and Other sources.
- * Hides optional fields cleanly when empty; never fabricates URLs or verification claims.
+ * Multi-platform recommendation card (Phase 9 Workstream C):
+ * - Keeps quote cards visually calm (removes false card-level hover lift on non-clickable <figure>).
+ * - Gives linked contributor names an understated, always-discoverable LinkedIn affordance
+ *   (subtle persistent underline + diagonal arrow shift on hover/focus + accessible context)
+ *   that works identically across touch, keyboard, and pointer devices.
  */
 function TestimonialCard({ item, large = false, className }: TestimonialCardProps) {
   const paragraphs = item.text.split(/\n{2,}/).filter((p) => p.trim() !== "");
@@ -53,7 +55,6 @@ function TestimonialCard({ item, large = false, className }: TestimonialCardProp
       data-platform={item.platform || "linkedin"}
       className={cn(
         "bg-panel border-green-dim flex h-full flex-col gap-5 border-2 p-6",
-        "ease-pixel hover:border-amber hover:shadow-pixel-hover transition-transform duration-(--dur-fast) hover:-translate-y-0.5",
         large && "border-green shadow-pixel lg:p-10",
         className,
       )}
@@ -110,7 +111,7 @@ function TestimonialCard({ item, large = false, className }: TestimonialCardProp
         </details>
       ) : null}
 
-      <figcaption className="mt-auto flex items-start gap-3">
+      <figcaption className="border-green-dim/40 mt-auto flex items-start gap-3 border-t border-dashed pt-4">
         {avatar ? (
           <div className="border-green-dim relative size-11 shrink-0 overflow-hidden border-2">
             <Image
@@ -129,33 +130,42 @@ function TestimonialCard({ item, large = false, className }: TestimonialCardProp
               href={linkedinUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-h3 text-green hover:text-amber inline-flex items-center gap-1.5 underline-offset-4 hover:underline"
+              data-contributor-link=""
+              className="group/author text-h3 hover:text-amber focus-visible:text-amber inline-flex min-h-11 max-w-full flex-wrap items-center gap-x-2 gap-y-0.5 self-start text-white transition-colors duration-(--dur-fast)"
             >
-              <span>{item.authorName}</span>
-              <ExternalLink aria-hidden="true" className="size-4 shrink-0" />
+              <span className="border-green-dim group-hover/author:border-amber group-focus-visible/author:border-amber border-b border-dashed pb-0.5 transition-colors duration-(--dur-fast)">
+                {item.authorName}
+              </span>
+              <span
+                aria-hidden="true"
+                className="text-meta text-green-dim group-hover/author:text-amber group-focus-visible/author:text-amber inline-flex items-center gap-0.5 text-xs transition-colors duration-(--dur-fast)"
+              >
+                <span>in</span>
+                <ArrowUpRight className="size-3.5 transition-transform duration-(--dur-fast) group-hover/author:translate-x-0.5 group-hover/author:-translate-y-0.5 group-focus-visible/author:translate-x-0.5 group-focus-visible/author:-translate-y-0.5 motion-reduce:transform-none" />
+              </span>
               <span className="sr-only"> (LinkedIn profile, opens in a new tab)</span>
             </a>
           ) : (
-            <span className="text-h3 text-green">{item.authorName}</span>
+            <span className="text-h3 text-white">{item.authorName}</span>
           )}
 
           {headline || organization ? (
             <span className="text-sm">{[headline, organization].filter(Boolean).join(" · ")}</span>
           ) : null}
 
-          <span className="text-meta text-muted flex flex-wrap items-center gap-2">
-            {relationshipText(item)}
+          <span className="text-meta text-muted flex flex-wrap items-center gap-2 pt-0.5 text-xs">
+            <span>{relationshipText(item)}</span>
             <span aria-hidden="true">{"·"}</span>
-            <span className="border-green-dim text-green border px-1.5">{platformText(item)}</span>
+            <span className="text-green-dim">{platformText(item)}</span>
             {sourceUrl ? (
               <a
                 href={sourceUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-amber hover:text-yellow inline-flex items-center gap-1 underline-offset-4 hover:underline"
+                className="text-amber hover:text-yellow inline-flex items-center gap-1 underline underline-offset-4"
               >
-                [ Source
-                <ExternalLink aria-hidden="true" className="size-3" /> ]
+                Source
+                <ArrowUpRight aria-hidden="true" className="size-3" />
                 <span className="sr-only"> for {item.authorName} (opens in a new tab)</span>
               </a>
             ) : null}
