@@ -1,12 +1,14 @@
 "use client";
 
 import { MenuIcon, XIcon } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Dialog as DialogPrimitive } from "radix-ui";
 import { useEffect, useRef, useState, type CSSProperties, type MouseEvent } from "react";
 
-import { cn } from "@/lib/utils";
 import { navCta, sectionNav } from "@/lib/nav";
+import { cn } from "@/lib/utils";
+
+import { scrollToSection, setPendingSectionTarget } from "./active-section";
 
 const DESKTOP_QUERY = "(min-width: 768px)";
 
@@ -62,6 +64,7 @@ function MobileMenu() {
   const [open, setOpen] = useState(false);
   // Active section when the menu opened (FR-NAV-02 indicator inside the menu).
   const [activeId, setActiveId] = useState<string | null>(null);
+  const pathname = usePathname();
   const router = useRouter();
   // Section id to focus once the menu has closed ("Navigating -> Closed: restore focus").
   const pendingTarget = useRef<string | null>(null);
@@ -89,12 +92,13 @@ function MobileMenu() {
       router.push(href);
       return;
     }
-    const target = document.getElementById(id);
-    if (!target) {
-      // Not on the home page: let the router navigate to "/#id" after closing.
+    // Check pathname (not document.getElementById): under Next.js 16 Cache Components,
+    // `/` stays mounted inside a hidden <Activity> tree when viewing detail routes.
+    if (pathname !== "/") {
       pendingTarget.current = null;
+      setPendingSectionTarget(id);
       setOpen(false);
-      router.push(href);
+      router.push(href, { scroll: false });
       return;
     }
     // Same page: close first (releases the scroll lock), then scroll and focus.
@@ -107,10 +111,13 @@ function MobileMenu() {
     pendingTarget.current = null;
     if (!id) return; // default: Radix returns focus to the trigger
     const target = document.getElementById(id);
-    if (!target) return;
+    if (!target || target.getClientRects().length === 0) return;
     event.preventDefault();
-    window.history.pushState(null, "", `#${id}`);
-    target.scrollIntoView(); // honours CSS scroll-behavior (off under reduced motion)
+    const nextHash = `#${id}`;
+    if (window.location.hash !== nextHash) {
+      window.history.pushState(null, "", nextHash);
+    }
+    scrollToSection(id, { smooth: true });
     const heading = target.matches("h1, h2") ? target : target.querySelector<HTMLElement>("h2");
     const focusable = heading ?? target;
     if (!focusable.hasAttribute("tabindex")) focusable.setAttribute("tabindex", "-1");
