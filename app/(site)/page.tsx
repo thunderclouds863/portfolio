@@ -34,7 +34,7 @@ export default async function Home() {
       <Education education={data.education} number="04" />
       <Projects projects={data.featuredProjects} number="05" />
       <Testimonials items={data.recommendations} number="06" />
-      <Approach settings={data.settings} number={n(6)} />
+      <Approach settings={data.settings} projects={data.projects} number={n(6)} />
       <Stack skills={data.skills} projects={data.projects} number={n(7)} />
       <Contact profile={data.profile} settings={data.settings} number={n(8)} />
     </>
