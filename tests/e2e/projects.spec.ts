@@ -1,3 +1,6 @@
+import fs from "node:fs";
+import path from "node:path";
+
 import { expect, test } from "@playwright/test";
 
 const PUBLISHED_SLUGS = [
@@ -15,7 +18,12 @@ const PUBLISHED_SLUGS = [
   "hmti-letter-generator",
 ] as const;
 
-const REAL_THUMBNAIL_SLUGS = new Set(["fptk-sourcing-database", "overtime-management-system"]);
+function hasProjectThumbnail(slug: string): boolean {
+  const file = path.join(process.cwd(), "content", "projects", slug, "index.mdoc");
+  const raw = fs.readFileSync(file, "utf8");
+  const frontmatter = raw.match(/^---\r?\n([\s\S]*?)\r?\n---/)?.[1] ?? "";
+  return /^thumbnail:\s*(?!null\b|""\s*$|''\s*$)\S+/m.test(frontmatter);
+}
 
 test.describe("Phase 2 — project listing & all 12 published case studies", () => {
   test.use({ viewport: { width: 1280, height: 800 } });
@@ -85,7 +93,7 @@ test.describe("Phase 2 — project listing & all 12 published case studies", () 
         "/projects",
       );
 
-      if (REAL_THUMBNAIL_SLUGS.has(slug)) {
+      if (hasProjectThumbnail(slug)) {
         const img = page.locator("article figure img").first();
         await expect(img).toBeVisible();
         const loaded = await img.evaluate((el: HTMLImageElement) => el.naturalWidth > 0);
