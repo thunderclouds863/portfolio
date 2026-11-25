@@ -129,8 +129,9 @@ test.describe("Phase 1 — navigation consistency & cross-route routing (1280px)
 
     const nav = page.getByRole("navigation", { name: "Main" });
 
-    // From /projects -> ./education
-    await page.goto("/projects");
+    // From /projects -> ./education (waitUntil: "networkidle" lets background RSC
+    // prefetches settle so WebKit does not log aborted-fetch console errors on leave).
+    await page.goto("/projects", { waitUntil: "networkidle" });
     await page.evaluate(() => {
       (window as unknown as { __spaCanary?: string }).__spaCanary = "alive";
     });
@@ -152,8 +153,11 @@ test.describe("Phase 1 — navigation consistency & cross-route routing (1280px)
       await page.evaluate(() => (window as unknown as { __spaCanary?: string }).__spaCanary),
     ).toBe("alive");
 
+    // Let background RSC prefetches on `/` settle before hard navigation (WebKit aborts in-flight fetch on unload).
+    await page.waitForLoadState("networkidle");
+
     // From /projects/[slug] -> ./experience
-    await page.goto("/projects/overtime-management-system");
+    await page.goto("/projects/overtime-management-system", { waitUntil: "networkidle" });
     await page.evaluate(() => {
       (window as unknown as { __spaCanary?: string }).__spaCanary = "alive";
     });
@@ -174,8 +178,10 @@ test.describe("Phase 1 — navigation consistency & cross-route routing (1280px)
       await page.evaluate(() => (window as unknown as { __spaCanary?: string }).__spaCanary),
     ).toBe("alive");
 
+    await page.waitForLoadState("networkidle");
+
     // Direct open /projects/[slug] -> click brand Home link
-    await page.goto("/projects/fptk-sourcing-database");
+    await page.goto("/projects/fptk-sourcing-database", { waitUntil: "networkidle" });
     await page.getByRole("link", { name: /Desi Armanda Sari.*home/i }).click();
     await expect(page).toHaveURL(/\/$/);
     await expect(page.locator("#hero-title")).toBeVisible();
