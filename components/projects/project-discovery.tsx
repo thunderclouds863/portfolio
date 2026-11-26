@@ -114,10 +114,7 @@ function ProjectsNavIndicator({
     >
       <span
         aria-hidden="true"
-        className={cn(
-          "bg-amber block size-1.5 shrink-0",
-          placement === "inline" && "ml-1.5",
-        )}
+        className={cn("bg-amber block size-1.5 shrink-0", placement === "inline" && "ml-1.5")}
       />
       <span className="sr-only"> (new projects available)</span>
     </span>
