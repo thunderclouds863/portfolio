@@ -3,15 +3,20 @@ title: Library System
 status: published
 featured: false
 order: 10
-type: personal
+type: freelance
 capabilities:
+  - system_analysis
   - system_development
-role: ""
-contribution: unset
-period: ""
-stack: []
-summary: Web-based library management application for catalog records, borrowing, and return administration.
-problem: ""
+role: Full-stack web developer
+contribution: owner
+period: 2025-07
+stack:
+  - PHP
+  - MySQL
+  - HTML/CSS/JavaScript
+  - Docker
+summary: Multi-role web-based library management system supporting book catalog CRUD, member approval, visitor search, borrowing administration, and catalog export.
+problem: Manual library administration slows down book lookups, member registration approvals, and borrowing-return monitoring.
 outcomes: []
 thumbnailAlt: ""
 demoUrl: https://perpustakaan-demo.onrender.com
@@ -19,40 +24,43 @@ gallery: []
 ---
 ## Context
 
-Personal web application built to manage library catalog entries and book-circulation records in a structured web interface.
+A multi-role library management web application designed to simplify daily library operations for both administrators and visitors/members through a clean, browser-based interface.
 
 ## Problem
 
-TODO(content): problem (IN-05).
+Tracking book collections, validating new members, and monitoring book circulation manually makes it hard for staff to keep catalog availability accurate and for visitors to quickly check whether a book is available.
 
 ## My role
 
-TODO(content): my role (IN-05).
+Owner: I designed the dual-role workflow (Admin and Visitor), built the PHP backend and MySQL database integration, and deployed the containerized live demo on Render.
 
 ## As-is analysis
 
-TODO(content): as-is analysis (IN-05).
+Library workflows split into two core journeys: back-office catalog and member administration by librarians, and self-service catalog discovery and borrowing inquiries by visitors. Separating these interfaces reduces clutter and prevents unauthorized catalog edits.
 
 ## Requirements
 
-TODO(content): requirements (IN-05).
+- Role-based access separating Admin (`admin-login.php`, `admin_dashboard.php`) and Visitor (`index-visitor.php`, `katalog-pengguna.php`) portals.
+- Full book catalog management: add, edit, delete, and check book availability (`add_books.php`, `edit_book.php`, `delete_book.php`, `check_books.php`).
+- Member approval workflow (`approve_member.php`) and borrowing/return monitoring.
+- Book data export capability (`export_data_buku`) for administrative reporting.
 
 ## Solution design
 
-Available as a live web demo (`perpustakaan-demo.onrender.com`). Detailed technology stack, ERD, and test documentation are pending owner review.
+The application separates public/member catalog browsing from protected administrative endpoints via `backend_api.php` and `db_connect.php`, keeping book availability queries fast and administrative actions auditable.
 
 ## Build
 
-TODO(content): build (IN-05).
+Implemented using PHP, MySQL, Composer dependencies, HTML/CSS/JavaScript, and Docker, deployed at `perpustakaan-demo.onrender.com`. Source code: [github.com/thunderclouds863/manajemen-perpustakaan](https://github.com/thunderclouds863/manajemen-perpustakaan).
 
 ## Verification
 
-TODO(content): verification (IN-05).
+Verified admin login, book CRUD operations, member approval screens, and visitor catalog browsing in the live Render environment.
 
 ## Outcome
 
-TODO(content): outcome (IN-05).
+Delivered a functional multi-role library management web application with live demo access covering catalog administration, member onboarding, and visitor discovery.
 
 ## Reflection
 
-TODO(content): reflection (IN-05).
+Keeping the visitor catalog uncluttered while centralizing approvals and exports in the admin dashboard made the system practical for both technical and non-technical users.

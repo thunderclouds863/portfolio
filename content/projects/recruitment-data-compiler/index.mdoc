@@ -1,20 +1,23 @@
 ---
 title: Recruitment Data Compiler
-status: draft
+status: published
 featured: false
-order: 8
+order: 13
 type: work
-capabilities: []
-role: Built the compiler
+capabilities:
+  - process_improvement
+  - system_development
+  - data
+role: Built the Excel VBA compiler and BOD report automation
 contribution: owner
-period: 2026-06 – 2026-08
+period: 2026-06 - 2026-08
 stack:
   - Excel VBA
   - PowerPoint automation
-summary: Excel VBA system that compiled weekly recruitment data from about 17 differently formatted recruiter files into one dataset at Cimory Group.
-problem: Weekly recruitment data arrived in about 17 files with different formats.
+summary: Schema-driven Excel VBA system that compiled weekly recruitment data from ~17 differently formatted recruiter files into one dataset and automated 60-70% of the weekly BOD report at Cimory Group.
+problem: Every week about 17 recruiter Excel files with different headers, column orders, and date formats had to be combined manually before preparing the BOD report.
 outcomes:
-  - statement: Automated about 60–70% of the weekly Board of Directors recruitment report.
+  - statement: Automated about 60-70% of the weekly Board of Directors recruitment report, including Excel-to-PowerPoint updates.
     verified: false
     evidence: ""
 thumbnailAlt: ""
@@ -22,42 +25,43 @@ gallery: []
 ---
 ## Context
 
-Weekly recruitment reporting at Cimory Group, built from about 17 recruiter files with different formats.
+Built while working in Corporate Talent Acquisition Excellence and People Analytics at Cimory Group (2026). Weekly recruitment reporting across 5 business units (CORP, MP, MS, CMD, JESS) depended on combining separate tracking files kept by individual recruiters.
 
 ## Problem
 
-TODO(content): what made the weekly compilation slow or error-prone (IN-05).
+Each recruiter and business unit maintained their own Excel workbook for manpower requests (FPTK) and candidate sourcing. Every week, roughly 17 files with mismatched header names, column orders, and date formats had to be merged and cleaned by hand before the weekly Board of Directors (BOD) presentation could be updated.
 
 ## My role
 
-Owner: I built the compiler and the report automation.
+Owner: I designed the schema-driven mapping architecture, wrote the VBA compilation, validation, monitoring, and PowerPoint automation modules, and later evolved the solution into the web-based FPTK & Sourcing Database.
 
 ## As-is analysis
 
-TODO(content): the manual compilation steps (IN-05).
+Manual weekly compilation required opening each recruiter file, fixing inconsistent headers and dates, checking duplicates and blacklist entries, recalculating funnel metrics, and copying charts and tables into PowerPoint slides under tight weekly deadlines.
 
 ## Requirements
 
-TODO(content): what the weekly report needed (IN-05).
+- Compile FPTK, candidate sourcing, position codes, and candidate blacklist files from configured input folders into master sheets.
+- Handle varying source column names and orders without breaking whenever a recruiter adjusts a template.
+- Normalize names, dates, and codes while logging corrupted rows and duplicate entries.
+- Generate monitoring, funneling, and recruiter performance views and update the weekly BOD PowerPoint deck automatically.
 
 ## Solution design
 
-Schema-driven header mapping: a configuration sheet with 340+ field definitions and aliases maps differently named or ordered columns to one layout.
+Instead of hardcoding column positions, I built a schema-driven header mapping sheet (`modSchemaAdjustment`, `frmHeaderAdjustment`) with 340+ field definitions and aliases so differently named or ordered columns map cleanly into one target layout with full schema-change logging.
 
 ## Build
 
-- Data quality checks: normalization of names, dates and codes, validation, duplicate detection and a trace of corrupted rows.
-- Monitoring, funneling and recruiter performance reports, plus automatic updates to the weekly Board of Directors PowerPoint deck.
-- Later rebuilt as a web application: the FPTK & Sourcing Database.
+Implemented modular Excel VBA workbooks covering compilation (`m02_MainCompiler`, `m11_DBSourcingCompiler`, `m06_CompileDBKodePosisi_FPTK`, `m10_CompileBlacklist`), data quality (`modLookup`, `modFPTKCompatibilityCleanup`), monitoring reports (`modMonitoring`, `modRecruiterMapping`), late-bound PowerPoint slide updates (`UpdatetoPPT`), and run controls with progress tracking, backups, archiving, and OneDrive export (`m15_ProgressManagement`, `m17_ExportAndBackup`, `modSaveToOneDrive`). Source code (template and VBA modules without candidate data): [github.com/thunderclouds863/recruitment-data-compiler-vba](https://github.com/thunderclouds863/recruitment-data-compiler-vba).
 
 ## Verification
 
-TODO(content): how the output was checked (IN-05).
+Verified compiled master sheets, duplicate flags, funnel calculations, and generated PowerPoint slides against manual weekly reports across business units before rolling out for regular weekly reporting.
 
 ## Outcome
 
-Automated about 60–70% of the weekly Board of Directors recruitment report.
+Automated about 60-70% of the weekly Board of Directors recruitment report, standardized ~17 recruiter files into one dataset, and established the business rules later migrated into the FPTK & Sourcing Database web application.
 
 ## Reflection
 
-TODO(content): what you would do differently (IN-05).
+Building a schema-driven Excel VBA tool first delivered immediate weekly time savings inside the team's existing workflow while revealing the exact governance rules needed for the subsequent PostgreSQL web application.
