@@ -3,7 +3,7 @@ export type NavItem = { id: string; href: string; label: string };
 
 export const sectionNav: readonly NavItem[] = [
   { id: "about", href: "/#about", label: "./about" },
-  { id: "capabilities", href: "/#capabilities", label: "./skills" },
+  { id: "capabilities", href: "/#capabilities", label: "./capabilities" },
   { id: "experience", href: "/#experience", label: "./experience" },
   { id: "education", href: "/#education", label: "./education" },
   { id: "projects", href: "/#projects", label: "./projects" },

@@ -34,7 +34,7 @@ function Testimonials({ items, number }: { items: RecommendationView[]; number: 
       </Reveal>
       <div className="mt-10">
         <Button asChild variant="secondary">
-          <Link href="/testimonials">[ All testimonials ]</Link>
+          <Link href="/testimonials">[ All recommendations ]</Link>
         </Button>
       </div>
     </Section>

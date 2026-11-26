@@ -241,6 +241,8 @@ test("demo links open the running app in a new tab, from the card and the case s
     /live demo.*of FPTK & Sourcing Database.*opens in a new tab/,
   );
   // The demo link sits above the card's stretched link, so a click reaches it.
+  // Scroll into the viewport first because document.elementFromPoint returns null off-screen.
+  await demo.scrollIntoViewIfNeeded();
   const box = (await demo.boundingBox())!;
   const hit = await page.evaluate(
     ({ x, y }) => document.elementFromPoint(x, y)?.closest("a")?.getAttribute("href"),
