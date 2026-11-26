@@ -17,9 +17,19 @@ highlights:
       about 4 hours to about 5 minutes.
     scope: owner
   - text: >-
+      Translated sales-training needs into a Sales Academy LMS for Cimory and
+      Kanzler sales teams (tested for 1,000 concurrent users), later handed over
+      to IT as a company-wide platform.
+    scope: owner
+  - text: >-
       Designed the workload analysis method and processed measurement results to
       determine manpower needs.
     scope: owner
+  - text: >-
+      Managed the Employee Data Management Form (FMDK) process for promotions,
+      transfers, permanent appointments, demotions, and terminations, including
+      data validation and multi-level approvals.
+    scope: core_team
   - text: >-
       Supported the HRIS migration to Pro-Int: handled organization codes such
       as job title codes, and prepared and cleaned as-is data.
