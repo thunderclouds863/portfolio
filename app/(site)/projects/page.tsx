@@ -3,6 +3,7 @@ import { Suspense } from "react";
 
 import { Missing } from "@/components/content/missing";
 import { FilterChips } from "@/components/projects/filter-chips";
+import { ProjectsVisitedTracker } from "@/components/projects/project-discovery";
 import { ProjectFilter } from "@/components/projects/project-filter";
 import { ProjectCard } from "@/components/ui/project-card";
 import { capabilityFilters, filterValuesFor, type FilterValue } from "@/lib/filters";
@@ -21,6 +22,9 @@ export const metadata: Metadata = pageMetadata({
 // active and CSS hides the rest, so the page stays static.
 export default async function ProjectsPage() {
   const { projects } = await getHomeData();
+  const discoveryProjects = projects
+    .filter((p) => !p.isDraft && p.publishedAt)
+    .map((p) => ({ slug: p.slug, publishedAt: p.publishedAt, isDraft: false }));
   const values = projects.map((p) => filterValuesFor(p.capabilities));
   const counts = {
     all: projects.length,
@@ -34,6 +38,7 @@ export default async function ProjectsPage() {
 
   return (
     <div className="mx-auto flex max-w-[1200px] flex-col gap-6 px-4 py-10 md:px-6 md:py-12">
+      <ProjectsVisitedTracker projects={discoveryProjects} />
       <header className="flex flex-col gap-4">
         <p className="text-meta text-green-dim">{"> ls ./projects"}</p>
         <h1 className="text-display-1 text-green glow">Projects</h1>

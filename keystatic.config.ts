@@ -298,6 +298,11 @@ export default config({
         contribution: contributionScope,
         teamSize: fields.integer({ label: "Team size" }),
         period: fields.text({ label: "Period", description: "e.g. 2024-09 – 2025-06" }),
+        publishedAt: fields.date({
+          label: "Published date (optional)",
+          description:
+            "YYYY-MM-DD — drives Latest Project Spotlight and 7-day NEW badge. Editing a project does not reset this date.",
+        }),
         stack: fields.array(fields.text({ label: "Tool" }), {
           label: "Stack",
           itemLabel: (p) => p.value,
