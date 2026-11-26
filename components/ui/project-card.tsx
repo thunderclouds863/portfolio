@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import { Missing } from "@/components/content/missing";
 import { DraftBadge, Val, isFilled } from "@/components/content/val";
+import { NewProjectBadge } from "@/components/projects/project-discovery";
 import { ProjectVisualCover } from "@/components/projects/project-visual-cover";
 import { capabilityLabel, projectTypeLabel, scopeLabel } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -69,6 +70,7 @@ function ProjectCard({
               </li>
             ))}
           </ul>
+          <NewProjectBadge publishedAt={project.publishedAt} isDraft={project.isDraft} />
           <DraftBadge show={project.isDraft} />
         </div>
 

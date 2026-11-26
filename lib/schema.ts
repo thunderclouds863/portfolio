@@ -289,6 +289,7 @@ export const ProjectSchema = z
     contribution: z.enum(["owner", "core_team", "supporting", "unset"]).optional(),
     teamSize: z.number().int().positive().nullable(),
     period: optionalText("period"),
+    publishedAt: optionalIsoDate("published date"),
     stack: z.array(requiredText("stack item")),
     outcomes: z.array(OutcomeSchema),
     featured: z.boolean(),
