@@ -36,16 +36,16 @@ function TerminalFrame({
     >
       <div
         aria-hidden="true"
-        className="text-meta border-green-dim text-green flex items-center gap-2 overflow-hidden border-b-2 px-3 py-1 whitespace-nowrap select-none"
+        className="text-meta border-green-dim text-green flex items-center gap-2 overflow-hidden border-b-2 px-3 py-1 text-xs whitespace-nowrap select-none sm:text-sm"
       >
-        <span>
+        <span className="min-w-0 truncate">
           {"┌─"} {title}
         </span>
         {/* contain:inline-size gives the rule zero intrinsic width so it never widens the frame. */}
         <span className="text-green-dim min-w-0 flex-1 overflow-hidden [contain:inline-size]">
           {RULE}
         </span>
-        <span>{"[_][□][x] ─┐"}</span>
+        <span className="shrink-0">{"[_][□][x] ─┐"}</span>
       </div>
       <div className="p-4 md:p-6">{children}</div>
     </Comp>

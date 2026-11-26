@@ -5,7 +5,7 @@ import { revealAll } from "./helpers";
 
 const SECTION_LABELS = [
   "./about",
-  "./skills",
+  "./capabilities",
   "./experience",
   "./education",
   "./projects",

@@ -44,7 +44,7 @@ function ProjectCard({
     >
       <div
         className={cn(
-          "border-green-dim relative aspect-video overflow-hidden border-b-2 md:col-span-5 md:border-b-0",
+          "bg-bg border-green-dim relative flex overflow-hidden border-b-2 md:col-span-6 md:min-h-[296px] md:border-b-0",
           flip ? "md:order-2 md:border-l-2" : "md:border-r-2",
         )}
       >
@@ -52,14 +52,15 @@ function ProjectCard({
           project={project}
           lcp={lcp}
           interactive
-          sizes="(min-width: 1200px) 480px, (min-width: 768px) 40vw, calc(100vw - 2rem)"
-          className="h-full"
+          fit="contain"
+          sizes="(min-width: 1200px) 600px, (min-width: 768px) 50vw, calc(100vw - 2rem)"
+          className="h-full md:aspect-auto"
         />
         {/* FR-PRJ-02: scanline sweep on hover/focus (transform + opacity, 200ms). */}
         <span aria-hidden="true" className="card-sweep" />
       </div>
 
-      <div className="flex flex-col gap-3 p-5 md:col-span-7 md:p-6">
+      <div className="flex flex-col gap-3.5 p-5 md:col-span-6 md:p-6 lg:p-7">
         <div className="flex flex-wrap items-center gap-2">
           <ul aria-label="Tags" className="flex flex-wrap gap-2">
             {tags.map((t) => (
