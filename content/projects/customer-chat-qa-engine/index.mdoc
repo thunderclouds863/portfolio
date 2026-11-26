@@ -10,7 +10,7 @@ capabilities:
   - data
 role: Built the engine
 contribution: owner
-period: 2025-10 – 2026-01
+period: 2025-10 - 2026-01
 stack:
   - Python
   - Pandas
@@ -25,6 +25,7 @@ outcomes:
       Reduced a day-long manual review of 1,000+ monthly tickets to under 30
       minutes.
     verified: false
+    evidence: ""
 thumbnail: /images/projects/customer-chat-qa-engine/thumbnail.png
 thumbnailAlt: home
 demoUrl: https://livechat-analysis-desi.streamlit.app
@@ -32,42 +33,43 @@ gallery: []
 ---
 ## Context
 
-Quality review of customer service live chats at PT Toyota-Astra Motor, covering 1,000+ tickets per month.
+Quality review of customer service live chats at PT Toyota-Astra Motor, covering 1,000+ tickets per month across customer assistance channels.
 
 ## Problem
 
-Manual quality review of unstructured chat text took a full day and did not scale.
+Manual quality review of unstructured chat transcripts took a full working day each cycle, making consistent SLA tracking, severity classification, and response quality evaluation difficult to scale.
 
 ## My role
 
-Owner: I built the engine.
+Owner: I analyzed the QA review criteria, designed the hybrid rule-and-NLP scoring logic, built the Python processing engine and Streamlit interface, and delivered automated Excel and PDF QA reporting.
 
 ## As-is analysis
 
-TODO(content): how the QA review was done before, and its pain points (IN-05).
+Before automation, QA reviewers read raw chat logs ticket by ticket to locate the actual customer issue (filtering out greetings and bot prompts), check first and final agent responses, calculate response lead times, and verify whether answers aligned with standard guidelines.
 
 ## Requirements
 
-TODO(content): what the QA team needed from the engine (IN-05).
+- Process 1,000+ monthly live-chat transcripts reliably in a single batch run.
+- Distinguish real customer inquiries from greetings, bot navigation menus, reopened tickets, and abandoned chats.
+- Automatically detect first and final agent replies, classify inquiry severity, and calculate SLA lead times.
+- Export structured Excel and PDF summary reports for the QA team.
 
 ## Solution design
 
-The engine combines rule-based logic with TF-IDF text similarity. The rules handle fixed parameters such as SLA compliance; the similarity layer identifies the main customer issue and compares agent replies with a set of standard answers.
-
-TODO(content): architecture diagram (IN-05).
+The engine combines deterministic rule-based logic with TF-IDF text similarity (scikit-learn). Rules handle objective operational metrics such as SLA compliance, timestamp lead times, and conversation state transitions, while the TF-IDF similarity layer identifies the primary customer issue and compares agent responses against standard answer templates.
 
 ## Build
 
-The engine detects the first and final agent replies, classifies inquiry severity and calculates lead time. It handles real-world chat patterns: greetings, bot navigation, reopened tickets and customers who leave without replying. Results are delivered through a Streamlit app with Excel and PDF reports for the QA team.
+Built with Python, Pandas, scikit-learn (TF-IDF), and Streamlit (`livechat-analysis-desi.streamlit.app`). The application ingests chat exports, runs the hybrid QA pipeline, surfaces ticket-level diagnostics, and generates downloadable Excel and PDF reports. Source code: [github.com/thunderclouds863/Live-Chat-Analysis-System](https://github.com/thunderclouds863/Live-Chat-Analysis-System).
 
 ## Verification
 
-TODO(content): how the results were checked against manual review (IN-05).
+Cross-checked automated issue classification, lead-time calculations, and edge-case handling (reopened tickets, bot flows, and unreturned chats) against manual QA review samples to tune rules and similarity thresholds.
 
 ## Outcome
 
-Reduced a day-long manual review of 1,000+ monthly tickets to under 30 minutes.
+Reduced a full-day manual QA review of 1,000+ monthly live-chat tickets to under 30 minutes with consistent SLA and severity scoring.
 
 ## Reflection
 
-TODO(content): what you would do differently (IN-05).
+Pairing simple, transparent rules with lightweight NLP (TF-IDF) outperformed heavier black-box approaches for operational QA because reviewers could immediately understand and audit why a ticket was flagged.

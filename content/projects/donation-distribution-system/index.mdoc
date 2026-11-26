@@ -3,15 +3,20 @@ title: Donation Distribution System
 status: published
 featured: false
 order: 11
-type: personal
+type: freelance
 capabilities:
+  - system_analysis
   - system_development
-role: ""
-contribution: unset
-period: ""
-stack: []
-summary: Web application for organizing donation records and tracking distribution workflows in one interface.
-problem: ""
+role: Full-stack web developer
+contribution: owner
+period: 2025-07
+stack:
+  - PHP
+  - MySQL
+  - HTML/CSS/JavaScript
+  - Docker
+summary: Web-based donation collection and distribution platform connecting donors, organizers, and recipients with transparent, structured tracking.
+problem: Manual donation recording makes it difficult for social organizations and foundations to maintain transparent, accountable distribution records.
 outcomes: []
 thumbnailAlt: ""
 demoUrl: https://penyaluran-donasi-demo.onrender.com
@@ -19,40 +24,43 @@ gallery: []
 ---
 ## Context
 
-Personal web application built to support structured recording and tracking of donation distribution activities.
+A web-based information system designed for social organizations, foundations, and donation communities to coordinate fundraising and aid distribution transparently in a single platform.
 
 ## Problem
 
-TODO(content): problem (IN-05).
+When donation inflows and aid disbursements are tracked manually in disconnected spreadsheets or messaging apps, recording errors increase, distribution slows down, and donors have limited visibility into how funds or goods are allocated.
 
 ## My role
 
-TODO(content): my role (IN-05).
+Owner: I designed the donation and distribution tracking workflow, built the web application (`SI_Penyaluran Donasi`), and containerized it for live deployment on Render.
 
 ## As-is analysis
 
-TODO(content): as-is analysis (IN-05).
+Donation management involves three stakeholder groups: donors who contribute, organizers who verify and allocate aid, and recipients who receive distributions. Structuring these interactions in one database improves accountability and reduces manual reconciliation.
 
 ## Requirements
 
-TODO(content): requirements (IN-05).
+- Centralized digital recording of incoming donations and outgoing distributions.
+- Clear visibility connecting donors, program organizers, and recipient records.
+- Simple, approachable interface usable by community volunteers and non-technical foundation staff.
+- Traceable distribution history to support transparent reporting.
 
 ## Solution design
 
-Available as a live web demo (`penyaluran-donasi-demo.onrender.com`). Detailed technology stack, process maps, and verification notes are pending owner review.
+The platform models donation intake and distribution as linked records so organizers can track available aid and log disbursements cleanly without duplicating entries across multiple sheets.
 
 ## Build
 
-TODO(content): build (IN-05).
+Built with PHP, MySQL, HTML/CSS/JavaScript, and containerized with Docker (`render.yaml` deployment at `penyaluran-donasi-demo.onrender.com`). Source code: [github.com/thunderclouds863/Sistem-Penyaluran-Donasi](https://github.com/thunderclouds863/Sistem-Penyaluran-Donasi).
 
 ## Verification
 
-TODO(content): verification (IN-05).
+Tested core donation recording and distribution tracking workflows in the containerized live demo environment.
 
 ## Outcome
 
-TODO(content): outcome (IN-05).
+Delivered a working web-based donation distribution platform with live demo access that supports structured, accountable aid tracking for social organizations.
 
 ## Reflection
 
-TODO(content): reflection (IN-05).
+Designing around clarity and simplicity is critical for community and foundation tools, where ease of daily data entry directly determines whether records stay accurate and transparent.

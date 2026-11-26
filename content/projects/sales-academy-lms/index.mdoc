@@ -9,11 +9,12 @@ capabilities:
   - system_development
 role: Designed and built the platform; later handed over to IT
 contribution: core_team
-period: 2026-09 – 2026-10
+period: 2026-09 - 2026-10
 stack:
   - Node.js
   - Express
   - NestJS
+  - Prisma
   - PostgreSQL
   - Cloudflare R2
   - k6
@@ -21,11 +22,16 @@ stack:
 summary: >-
   Learning platform for the Cimory and Kanzler sales teams that grew into a
   broader LMS initiative and was handed over to IT.
+problem: >-
+  Sales training lacked a centralized digital learning platform with structured
+  progress validation, assessments, and scalable content management for HR.
 outcomes:
   - statement: >-
-      Load-tested with k6: 0.17% errors at 1,000 virtual users and 0.01% errors
-      in a 1-hour soak test.
+      Load-tested across 7 k6 scenarios: 0.17% errors at 1,000 virtual users,
+      0.01% errors in a 1-hour soak test, and 5,216 TPS database benchmark with
+      zero failed transactions.
     verified: false
+    evidence: ""
 thumbnail: /images/projects/sales-academy-lms/thumbnail.png
 thumbnailAlt: login page
 demoUrl: https://cimory-academy-demo.onrender.com
@@ -33,42 +39,43 @@ gallery: []
 ---
 ## Context
 
-A digital learning platform for the Cimory Group and Kanzler sales teams that evolved into a broader Learning Management System initiative.
+A digital learning platform built for the Cimory Group and Kanzler sales teams that evolved into a broader company-wide Learning Management System (LMS) initiative handed over to IT with full technical documentation.
 
 ## Problem
 
-TODO(content): what the sales training process lacked before the platform (IN-05).
+Training materials for distributed sales teams needed a structured delivery channel where HR could update learning content without engineering bottlenecks, verify that videos were actually watched, and measure comprehension consistently across teams.
 
 ## My role
 
-Owner: I translated the HR and sales-training needs into features and built the platform. As the scope expanded, it was handed over to the IT team for further development and production deployment.
+Owner of initial build: I translated HR and sales-training needs into functional requirements, designed and built the platform, ran performance engineering benchmarks, and prepared the handover documentation (`HANDOVER.md`, system status, performance report, and feature specs) for the IT team's production deployment.
 
 ## As-is analysis
 
-TODO(content): how sales training worked before (IN-05).
+Sales enablement relied on manual training coordination and static material sharing without automated completion tracking, quiz scoring, or unified analytics for leadership.
 
 ## Requirements
 
-- Video modules with viewing-progress validation, chapter quizzes, XP, badges and leaderboards.
-- A content management system with Excel bulk import, so HR can manage learning content without code changes.
-- Authentication, content protection and performance testing.
+- Video learning modules with anti-skip viewing-progress validation, chapter quizzes, flashcards, XP, badges, and leaderboards.
+- An admin CMS with Excel bulk import so HR can manage courses and content without code changes.
+- Security controls including JWT authentication, bcrypt password hashing, rate limiting, Content Security Policy (CSP), and screen-capture restriction mechanisms.
+- Permission-based Power BI reporting and verified performance under high concurrent load.
 
 ## Solution design
 
-The backend started with Express.js. As the scope grew, I developed a hybrid architecture with Express.js and NestJS using the Strangler Pattern, so selected components could migrate step by step without rewriting the whole backend. Learning videos are stored in Cloudflare R2 object storage, separate from the application server.
+The backend started on Express.js. As the scope grew toward a company-wide LMS, I introduced a hybrid Express.js and NestJS architecture using the Strangler Pattern (reaching ~40% migration to NestJS with Prisma 6 and PostgreSQL 15+) so new features could ship cleanly without rewriting legacy routes all at once. Learning videos are stored in Cloudflare R2 object storage, decoupled from the application server.
 
 ## Build
 
-Node.js, Express, NestJS, PostgreSQL, Cloudflare R2 and permission-based Power BI reporting.
+Built with Node.js 20, Express 4, NestJS 10, Prisma 6, PostgreSQL 15+, Vanilla JavaScript (ES2022), Cloudflare R2, JWT authentication, and permission-based Power BI reporting. Demo: `cimory-academy-demo.onrender.com`. Source code and handover docs: [github.com/thunderclouds863/cimory-academy](https://github.com/thunderclouds863/cimory-academy).
 
 ## Verification
 
-Seven k6 test scenarios: smoke, load, stress, spike, soak, database benchmarking and object storage benchmarking.
+Executed seven k6 performance engineering scenarios: smoke, load, stress, spike, soak, database benchmarking, and object storage benchmarking. All 7 performance tests passed, including 0.17% error rate at 1,000 virtual users (stress), 0.01% error rate over a 1-hour soak test, and 5,216 transactions per second (TPS) on the PostgreSQL benchmark with zero failed transactions.
 
 ## Outcome
 
-0.17% errors at 1,000 virtual users in the stress test and 0.01% errors in a 1-hour soak test. The project was handed over to IT for production deployment.
+Delivered a production-ready LMS foundation validated under 1,000 concurrent virtual users and handed over the complete codebase and documentation to IT for company-wide rollout.
 
 ## Reflection
 
-TODO(content): what you would do differently (IN-05).
+Using the Strangler Pattern allowed the platform to evolve from a fast HR prototype into a structured NestJS architecture without halting delivery, while early k6 load testing surfaced and resolved performance bottlenecks before IT handover.

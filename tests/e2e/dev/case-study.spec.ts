@@ -46,7 +46,7 @@ test("every project page renders", async ({ page }) => {
   }
 });
 
-function findDraftTodoProjectSlug(): string {
+function findDraftTodoProjectSlug(): string | null {
   const root = path.join(process.cwd(), "content", "projects");
   for (const slug of SLUGS) {
     const raw = fs.readFileSync(path.join(root, slug, "index.mdoc"), "utf8");
@@ -55,7 +55,7 @@ function findDraftTodoProjectSlug(): string {
       return slug;
     }
   }
-  throw new Error("No draft project with TODO(content) placeholders found in content/projects/");
+  return null;
 }
 
 test.describe("case-study layout (1280px)", () => {
@@ -70,12 +70,10 @@ test.describe("case-study layout (1280px)", () => {
     await expect(snapshot).toContainText(
       "HR's overtime recap time went from about 4 hours to about 5 minutes.",
     );
-    // Published: sections that only hold TODO(content) are hidden until filled.
-    const empty = ["Solution design", "Verification"];
+    // All 10 standard case-study sections are now authored and visible.
     for (const name of TEMPLATE_HEADINGS) {
       const heading = page.getByRole("heading", { level: 2, name, exact: true });
-      if (empty.includes(name)) await expect(heading).toHaveCount(0);
-      else await expect(heading).toBeVisible();
+      await expect(heading).toBeVisible();
     }
     await expect(page.getByRole("link", { name: "< back to projects" })).toHaveAttribute(
       "href",
@@ -119,6 +117,7 @@ test.describe("case-study layout (1280px)", () => {
 
   test("draft TODO paragraphs render as MISSING markers, not raw TODO text", async ({ page }) => {
     const draftSlug = findDraftTodoProjectSlug();
+    test.skip(!draftSlug, "No draft project with TODO(content) placeholders currently exists");
     await page.goto(`/projects/${draftSlug}`);
     await expect(page.locator("[data-todo-content]").first()).toBeVisible();
     await expect(page.locator(".case-body")).not.toContainText("TODO(content)");
@@ -166,7 +165,7 @@ test("/projects lists every draft project and the filter hides non-matching ones
   await filters.getByRole("link", { name: /Process/ }).click();
   await expect(page).toHaveURL(/capability=process/);
   await expect(items.filter({ visible: true })).toHaveCount(expectedProcess);
-  await expect(items.filter({ visible: true })).toContainText("Overtime Management System");
+  await expect(items.filter({ visible: true }).first()).toContainText("Overtime Management System");
 });
 
 // PRD 12: project card -> detail -> back, at desktop and phone widths.
