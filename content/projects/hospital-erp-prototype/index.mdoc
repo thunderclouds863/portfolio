@@ -24,34 +24,35 @@ problem: >-
   Edition features.
 outcomes: []
 thumbnail: /images/projects/hospital-erp-prototype/thumbnail.jpg
-thumbnailAlt: RFQ Page
+thumbnailAlt: Odoo Purchase Requests for Quotation view in the hospital_erp prototype
 gallery: []
 ---
 ## Context
 
-A freelance project to build a hospital ERP prototype on Odoo Community Edition. The requirements covered procurement, inventory, pharmacy operations, billing, receivables, payables and financial reporting.
+A freelance prototype project built on Odoo Community Edition to model connected hospital workflows across procurement, inventory, pharmacy operations, billing, receivables, payables, and financial reporting.
 
 ## Problem
 
-Not every requirement could be supported by the standard Community Edition functionality. For example, the full Accounting functionality is not available in Community Edition.
+Not every requested hospital workflow could be fulfilled out of the box by standard Odoo Community Edition functionality. In particular, the full Accounting suite is excluded from Community Edition, creating functional gaps for hospital-specific financial tracking and reporting.
 
 ## My role
 
-Owner: I mapped the requirements into ERP workflows, analyzed the gaps, and developed the custom modules.
+Owner: I mapped the functional requirements into ERP workflows, evaluated native Odoo Community Edition capabilities against the gaps, and designed and implemented the custom modules and local prototype setup.
 
 ## As-is analysis
 
-TODO(content): how the hospital's processes worked before, and the main pain points (IN-05).
+Before building custom components, I analyzed the requested scope—procurement, inventory, pharmacy operations, billing, receivables, payables, and financial reporting—against native Odoo Community Edition behavior. Because this was a constraint-driven prototype engagement rather than a live hospital rollout study, the analysis focused on isolating where standard modules satisfied workflow requirements (such as purchasing and invoicing) versus where Community Edition lacked built-in accounting coverage and required custom extensions.
 
 ## Requirements
 
-- Procurement, inventory and pharmacy operations.
-- Billing, receivables and payables.
-- Financial reporting.
+- Procurement, inventory, and pharmacy operations linked to vendor purchasing and stock workflows.
+- Billing, receivables, and payables tracking within Community Edition constraints.
+- Hospital-specific financial reporting extending beyond standard Community Edition Invoicing.
+- A reproducible local prototype setup suitable for iterative testing prior to any server or cloud deployment.
 
 ## Solution design
 
-I treated the platform limits as a problem-solving exercise rather than blockers:
+I treated the platform limits as a structured engineering constraint rather than a blocker:
 
 {% Steps %}
 {% Step title="Business requirement" /%}
@@ -67,24 +68,27 @@ I treated the platform limits as a problem-solving exercise rather than blockers
 {% Step title="Integrate and test" /%}
 {% /Steps %}
 
-For each requirement I asked: what can the existing system already do, what is missing, and what is the simplest practical way to bridge the gap. Where full Accounting was not available, I designed a hybrid approach: standard Odoo Invoicing combined with custom modules for hospital-specific financial requirements.
+For each requirement I assessed what Odoo Community Edition already provides, where the functional gap sits, and how to bridge it cleanly inside the platform. Rather than duplicating core ERP behavior or claiming equivalent functionality to Odoo Enterprise Accounting, I designed a hybrid prototype architecture:
 
-TODO(content): workflow diagram across Procurement → Inventory → Finance (IN-05).
+- **Configured native workflows:** Standard Odoo modules handle Purchase Requests for Quotation, Purchase Orders, Inventory movements, and base Odoo Invoicing for customer billing and vendor bills.
+- **Custom Python and XML extensions:** Hospital-specific financial rules, receivables/payables extensions, and reporting views are implemented as custom Odoo add-on modules integrated directly with Odoo's relational models and security views.
 
 ## Build
 
-I configured standard Odoo functionality where it was sufficient and developed custom Odoo modules in Python for the rest, integrated with Odoo's existing workflows instead of building a separate system. The development environment used PostgreSQL, XML views, and Docker with Docker Compose.
+The prototype combines configured standard Odoo Community Edition modules with custom-developed Python modules and XML views backed by PostgreSQL, orchestrated in Docker and Docker Compose:
 
-TODO(content): screenshots with dummy data (IN-05).
+- **Configured functionality:** Standard Purchase and Invoicing flows (illustrated in the `hospital_erp` Purchase Requests for Quotation screen in the cover image, showing confirmed purchase order entry `P00001`).
+- **Custom prototype modules:** Python models, business logic, and XML UI/reporting views extending Odoo workflows for hospital-specific pharmacy/billing links and financial reporting needs not shipped in Community Edition.
+- **Containerized runtime:** Reproducible local stack via Docker and Docker Compose connecting the Odoo application container and PostgreSQL database.
 
 ## Verification
 
-TODO(content): how the prototype was tested (IN-05).
+Verification was conducted at the local prototype level inside the Docker Compose environment using sample records and configured workflows—validating end-to-end Request for Quotation to Purchase Order state transitions (such as `P00001` in `hospital_erp`), invoice generation, and module loading alongside custom Python/XML extensions. Production load testing, hospital UAT, and live deployment remain out of scope for this prototype stage.
 
 ## Outcome
 
-The prototype runs in a Dockerized local development environment, which gives an isolated, reproducible setup for development, testing and iteration before a possible server or cloud deployment.
+Delivered a working, containerized Hospital ERP prototype running in an isolated Docker Compose environment that connects configured purchasing, inventory, pharmacy, and invoicing flows with custom Python/XML financial extensions—establishing a reproducible foundation for testing and iteration before any server or cloud deployment.
 
 ## Reflection
 
-ERP development is not always about finding the perfect tool. Sometimes it is about working with the tools and constraints you have, understanding the gap, and engineering a practical solution.
+ERP development is not always about having every enterprise module available out of the box. Under Community Edition constraints, clear gap analysis decides what should stay standard configuration versus where targeted custom modules can bridge hospital-specific requirements without over-engineering.
