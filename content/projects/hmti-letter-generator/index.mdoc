@@ -3,15 +3,21 @@ title: HMTI Letter Generator
 status: published
 featured: false
 order: 12
-type: personal
+type: freelance
 capabilities:
+  - process_improvement
   - system_development
-role: ""
-contribution: unset
-period: ""
-stack: []
-summary: Web-based letter generation tool for preparing standardized HMTI administrative documents.
-problem: ""
+role: Full-stack web developer
+contribution: owner
+period: 2025-07
+stack:
+  - PHP
+  - Python
+  - MySQL
+  - HTML/CSS/JavaScript
+  - Docker
+summary: Form-driven web application that automatically generates standardized official letters (borrowing, request, and invitation letters) for HMTI student organization officers.
+problem: Preparing official organizational letters manually in word processors led to formatting inconsistencies, numbering mistakes, and repetitive secretarial work.
 outcomes: []
 thumbnailAlt: ""
 demoUrl: https://generate-surat-demo.onrender.com
@@ -19,40 +25,43 @@ gallery: []
 ---
 ## Context
 
-Web application built to streamline the creation of standardized HMTI organizational letters through a form-driven interface.
+An automated digital letter generation system built for HMTI (Industrial Engineering Student Association) to streamline the preparation of official organizational correspondence through structured web forms.
 
 ## Problem
 
-TODO(content): problem (IN-05).
+Student organization secretaries and leaders repeatedly edited Word templates by hand for borrowing, request, and invitation letters, which caused inconsistent letterheads, margin shifts, and slow turnaround times.
 
 ## My role
 
-TODO(content): my role (IN-05).
+Owner: I mapped the three most frequent HMTI letter workflows, designed the database (`hmti_system.sql`) and role-specific dashboards, built the PHP web forms and Python document-generation scripts, and deployed the live demo.
 
 ## As-is analysis
 
-TODO(content): as-is analysis (IN-05).
+Reviewing HMTI secretarial workflows showed that three standardized letter formats accounted for most recurring administrative requests: Surat Peminjaman (borrowing), Surat Permohonan (formal requests), and Surat Undangan (invitations), reviewed across Kahim (Chair) and Sekhim (Secretary) roles.
 
 ## Requirements
 
-TODO(content): requirements (IN-05).
+- Role-specific entry views for organization leadership (`homepage-kahim.html`) and secretariat (`homepage-sekhim.html`).
+- Guided digital forms for Surat Peminjaman, Surat Permohonan, and Surat Undangan.
+- Automated rendering onto official HMTI letterhead templates (`bg-surat-peminjaman.png`, `bg-surat-permohonan.png`, `bg-surat-undangan.png`).
+- Structured record storage in MySQL (`hmti_system.sql`).
 
 ## Solution design
 
-Available as a live web demo (`generate-surat-demo.onrender.com`). Detailed technology stack, template workflow notes, and verification details are pending owner review.
+The system pairs simple PHP input forms (`form-surat-peminjaman.php`, `form-surat-permohonan.php`, `form-surat-undangan.php`) with dedicated Python document generators (`generate_peminjaman.py`, `generate_permohonan.py`, `generate_undangan.py`) so layout formatting stays locked to official templates regardless of who fills out the form.
 
 ## Build
 
-TODO(content): build (IN-05).
+Built with PHP, Python, MySQL, HTML/CSS/JavaScript, and Docker, deployed at `generate-surat-demo.onrender.com`. Source code: [github.com/thunderclouds863/Sistem-Generate-Surat](https://github.com/thunderclouds863/Sistem-Generate-Surat).
 
 ## Verification
 
-TODO(content): verification (IN-05).
+Verified form submission and automated document generation across all three letter types in the containerized Render demo.
 
 ## Outcome
 
-TODO(content): outcome (IN-05).
+Delivered a working form-based letter generator that standardizes official HMTI correspondence and eliminates manual template formatting.
 
 ## Reflection
 
-TODO(content): reflection (IN-05).
+Separating form input validation (PHP) from template rendering (Python) made it straightforward to enforce consistent official layouts without requiring officers to know document formatting tools.
