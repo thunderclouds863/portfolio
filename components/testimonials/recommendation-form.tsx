@@ -134,7 +134,7 @@ function RecommendationForm() {
             </p>
           </div>
           {!open ? (
-            <Button type="button" onClick={() => setOpen(true)}>
+            <Button type="button" onClick={() => setOpen(true)} className="w-full sm:w-auto">
               [ Share a Recommendation ]
             </Button>
           ) : null}

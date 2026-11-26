@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 // Only transform transitions; the shadow swaps instantly (transform/opacity-only motion rule).
 const buttonVariants = cva(
   [
-    "text-label inline-flex shrink-0 items-center justify-center gap-2 border-2 whitespace-nowrap select-none",
+    "text-label inline-flex max-w-full shrink-0 items-center justify-center gap-2 border-2 text-center whitespace-normal select-none sm:whitespace-nowrap",
     "transition-transform duration-(--dur-fast) ease-pixel",
     "disabled:pointer-events-none disabled:opacity-50",
     "[&_svg]:pointer-events-none [&_svg]:size-5 [&_svg]:shrink-0",

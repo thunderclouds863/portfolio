@@ -44,12 +44,20 @@ type ProjectVisualCoverProps = {
   sizes?: string;
   /** Zoom slightly on parent `.group:hover` (used on ProjectCard). */
   interactive?: boolean;
+  /**
+   * Image fit strategy. Defaults to "contain" so application UI screenshots stay
+   * legible and uncropped inside a framed dark stage; use "cover" only when edge
+   * cropping is intentional.
+   */
+  fit?: "contain" | "cover";
   className?: string;
 };
 
 /**
- * Standardized 16:9 project cover visual (Phase 2).
+ * Standardized project cover visual.
  * - Renders the real verified screenshot via next/image whenever project.thumbnail exists.
+ * - Defaults to a framed, uncropped dark preview stage (object-contain) so wide application
+ *   screenshots keep their full navigation, tables, and controls legible.
  * - When a real screenshot has not yet been uploaded, renders an honest, domain-specific
  *   terminal system schematic derived strictly from verified project metadata (never a
  *   fabricated screenshot or stock photo).
@@ -59,22 +67,48 @@ function ProjectVisualCover({
   lcp = false,
   sizes = "(min-width: 1200px) 760px, 100vw",
   interactive = false,
+  fit = "contain",
   className,
 }: ProjectVisualCoverProps) {
   if (project.thumbnail) {
+    if (fit === "cover") {
+      return (
+        <div className={cn("bg-bg relative aspect-video w-full overflow-hidden", className)}>
+          <Image
+            src={project.thumbnail}
+            alt={isFilled(project.thumbnailAlt) ? project.thumbnailAlt : project.title}
+            fill
+            {...(lcp ? { preload: true, fetchPriority: "high" as const } : {})}
+            sizes={sizes}
+            className={cn(
+              "ease-pixel object-cover transition-transform duration-(--dur-base)",
+              interactive ? "group-hover:scale-[1.03]" : "",
+            )}
+          />
+        </div>
+      );
+    }
+
     return (
-      <div className={cn("bg-bg relative aspect-video w-full overflow-hidden", className)}>
-        <Image
-          src={project.thumbnail}
-          alt={isFilled(project.thumbnailAlt) ? project.thumbnailAlt : project.title}
-          fill
-          {...(lcp ? { preload: true, fetchPriority: "high" as const } : {})}
-          sizes={sizes}
-          className={cn(
-            "ease-pixel object-cover transition-transform duration-(--dur-base)",
-            interactive ? "[image-rendering:pixelated] group-hover:scale-[1.03]" : "",
-          )}
-        />
+      <div
+        className={cn(
+          "bg-bg relative flex w-full items-center justify-center overflow-hidden p-3 sm:p-4 md:p-5",
+          className,
+        )}
+      >
+        <div className="relative aspect-video w-full">
+          <Image
+            src={project.thumbnail}
+            alt={isFilled(project.thumbnailAlt) ? project.thumbnailAlt : project.title}
+            fill
+            {...(lcp ? { preload: true, fetchPriority: "high" as const } : {})}
+            sizes={sizes}
+            className={cn(
+              "ease-pixel object-contain transition-transform duration-(--dur-base)",
+              interactive ? "group-hover:scale-[1.02]" : "",
+            )}
+          />
+        </div>
       </div>
     );
   }
