@@ -1,0 +1,63 @@
+---
+title: Muneng Village Administration System
+status: published
+featured: false
+order: 15
+type: freelance
+capabilities:
+  - process_improvement
+  - system_development
+role: System analyst & Excel VBA developer
+contribution: owner
+period: 2025-07
+stack:
+  - Excel VBA
+  - Microsoft Excel (.xlsb)
+summary: Excel VBA population administration system for Muneng Village that automates official letter generation, resident record search, and structured document archiving.
+problem: Village officers prepared official resident letters manually in separate documents, leading to repetitive data re-entry, lookup delays, and disorganized archives.
+outcomes: []
+thumbnailAlt: ""
+gallery: []
+---
+## Context
+
+A Microsoft Excel VBA population administration system built for Muneng Village (`Sistem Administrasi Desa Muneng.xlsb`) to support practical digital transformation in village-level civil administration without requiring internet connectivity or complex server infrastructure.
+
+## Problem
+
+Village staff handled resident lookups, official certificates (such as surat keterangan and surat domisili), and document archiving manually. Re-typing resident identity details for every request slowed down public service turnaround and increased the risk of clerical typos and inconsistent letter formatting.
+
+## My role
+
+Owner: I mapped the village administrative workflow, structured the resident database workbook, designed the user-friendly VBA interface, and implemented automated lookup, letter generation, and archiving macros.
+
+## As-is analysis
+
+Observing village-level correspondence workflows showed that most daily requests relied on the same core resident records, differing mainly in letter type, purpose (keperluan), and date. Running everything inside Excel VBA aligned with the tools village staff already used daily.
+
+## Requirements
+
+- Fast, automated resident lookup by name to pull identity details accurately without manual re-typing.
+- Guided input for dynamic letter details such as purpose (keperluan) and date.
+- Automated generation of standardized official documents including surat keterangan, surat domisili, and related village letters.
+- Organized digital archiving of issued records inside a lightweight, offline-capable `.xlsb` workbook.
+
+## Solution design
+
+The workbook combines a centralized resident master table with a clean Excel VBA interface and locked document templates. Selecting a resident automatically populates their details into the target letter format, leaving officers to enter only the dynamic purpose and date fields.
+
+## Build
+
+Built in Microsoft Excel VBA and packaged as a binary macro-enabled workbook (`Sistem Administrasi Desa Muneng.xlsb`) for fast loading and offline use on village office computers. Source code: [github.com/thunderclouds863/Sistem-Administrasi-Penduduk](https://github.com/thunderclouds863/Sistem-Administrasi-Penduduk).
+
+## Verification
+
+Tested resident search lookups, dynamic field injection, standardized letter layouts, and record archiving flows inside the `.xlsb` workbook to ensure consistent output with minimal user training.
+
+## Outcome
+
+Delivered an offline-ready, user-friendly Excel VBA administration system for Muneng Village that streamlines resident data lookup, official letter generation, and digital archiving while reducing manual re-entry errors.
+
+## Reflection
+
+For village offices with limited IT infrastructure, an offline Excel VBA solution delivers immediate operational impact because staff can adopt it right away without server maintenance or licensing overhead.

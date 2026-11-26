@@ -22,6 +22,7 @@ const SLUGS = [
   "library-system",
   "donation-distribution-system",
   "hmti-letter-generator",
+  "muneng-village-administration",
 ];
 const TEMPLATE_HEADINGS = [
   "Context",
