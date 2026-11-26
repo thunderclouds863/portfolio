@@ -9,14 +9,14 @@ capabilities:
   - system_development
 role: System analyst & developer (undergraduate thesis)
 contribution: core_team
-period: 2024-08 – 2025-06
+period: 2024-08 - 2025-06
 stack:
   - Arduino MKR Wi-Fi 1010
   - HTML/CSS/JavaScript
   - PHP
   - MySQL
 summary: End-to-end thermal comfort monitoring system connecting Arduino MKR Wi-Fi 1010 environmental sensors to a web dashboard with historical trends and configurable alerts.
-problem: ""
+problem: Indoor environmental parameters (temperature, humidity, air quality, and wind speed) lacked continuous real-time monitoring, historical trend logging, and automated threshold alerts.
 outcomes:
   - statement: Passed the undergraduate thesis defense without revision, and the computer program was registered under Indonesian copyright law (EC002025076498, Record No. 000916759).
     verified: true
@@ -27,42 +27,43 @@ gallery: []
 ---
 ## Context
 
-Undergraduate thesis, June 2025: *Design of Thermal Comfort Monitoring Information System with Rapid Application Development Method*. The system was aimed at supporting health and productivity in indoor environments.
+Undergraduate thesis, June 2025: *Design of Thermal Comfort Monitoring Information System with Rapid Application Development Method*. The system supports indoor health, ergonomics, and productivity by continuously monitoring room environmental conditions.
 
 ## Problem
 
-TODO(content): what was broken, slow, error-prone or missing (IN-05).
+Evaluating indoor thermal comfort manually with standalone meters only captures point-in-time snapshots, leaving no continuous historical record, no trend visibility, and no timely alert when conditions drift outside comfort thresholds.
 
 ## My role
 
-TODO(content): what you did personally vs. what others did, and your contribution scope (IN-05).
+Core team (System Analyst & Developer): I designed the information system architecture, data schema, and RAD web dashboard connecting the IoT sensor stream to real-time visualization, historical logging, and user-configurable alert settings.
 
 ## As-is analysis
 
-TODO(content): process map (BPMN or flowchart) and pain points. Add the map with the Diagram component (IN-05).
+Manual environmental checks required periodic on-site measurements and manual spreadsheet logging, making it slow to detect thermal comfort drops or analyze patterns across time for academic research and room operations.
 
 ## Requirements
 
-TODO(content): key functional and non-functional requirements (IN-05).
+- Continuous real-time ingestion of four environmental parameters: temperature, humidity, air quality, and wind speed.
+- Web-based dashboard displaying live readings alongside stored historical data and time-trend graphs.
+- User personalization for alert notification thresholds and data synchronization frequency.
+- Fast iterative delivery using Rapid Application Development (RAD).
 
 ## Solution design
 
-The system architecture combines an Arduino MKR Wi-Fi 1010 sensor device with an internet-connected web server to monitor indoor environmental parameters: temperature, humidity, air quality, and wind speed. Development followed Rapid Application Development (RAD) with iterative prototyping and user feedback.
-
-TODO(content): architecture diagram (IN-05).
+The architecture connects an Arduino MKR Wi-Fi 1010 sensor device over Wi-Fi to a PHP/MySQL web server. Following Rapid Application Development (RAD), the dashboard and alert workflows were prototyped iteratively with user feedback so readings remained clear and actionable.
 
 ## Build
 
-A full-stack information system (HTML/CSS/JavaScript, PHP, MySQL) presenting sensor readings through a web-based dashboard with historical data storage, time-trend graphs, and user personalization for notification thresholds and synchronization frequency.
+A full-stack information system built with Arduino MKR Wi-Fi 1010, HTML/CSS/JavaScript, PHP, and MySQL (`monitoring-termal-demo.onrender.com`), presenting live sensor streams, historical trend charts, and configurable threshold notifications. Source code: [github.com/thunderclouds863/monitoring-kenyamanan-termal](https://github.com/thunderclouds863/monitoring-kenyamanan-termal).
 
 ## Verification
 
-TODO(content): how it was tested — UAT, black-box tests, pilot (IN-05).
+Validated end-to-end sensor-to-dashboard data transmission, historical log storage, trend visualization, and threshold alert triggers during thesis testing and defense.
 
 ## Outcome
 
-The system monitored and analyzed indoor environmental parameters (temperature, humidity, air quality, and wind speed) through a web dashboard. The undergraduate thesis defense was passed without revision, and the computer program (*Monitoring Kenyamanan Termal*) was registered under Indonesian copyright law (`EC002025076498`, Record No. `000916759`, 26 June 2025; copyright holder: Universitas Diponegoro; Desi Armanda Sari listed as creator #6 among contributors).
+Passed the undergraduate thesis defense without revision, and the computer program (*Monitoring Kenyamanan Termal*) was registered under Indonesian copyright law (`EC002025076498`, Record No. `000916759`, 26 June 2025; copyright holder: Universitas Diponegoro; Desi Armanda Sari listed as creator #6 among 8 contributors).
 
 ## Reflection
 
-TODO(content): what you would do differently (IN-05).
+Combining hardware telemetry with a clean RAD web interface showed how important configurable thresholds and sync intervals are for turning raw sensor readings into practical operational decisions.

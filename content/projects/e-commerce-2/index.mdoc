@@ -3,15 +3,20 @@ title: E-Commerce 2
 status: published
 featured: false
 order: 8
-type: personal
+type: freelance
 capabilities:
+  - system_analysis
   - system_development
-contribution: unset
+role: Full-stack web developer
+contribution: owner
+period: 2025-07
 stack:
   - PHP
-summary: >-
-  PHP-based e-commerce web application prototype featuring user authentication
-  and storefront order workflows.
+  - MySQL
+  - HTML/CSS/JavaScript
+  - Docker
+summary: Authenticated PHP and MySQL e-commerce web application with password recovery, role-specific admin and courier dashboards, and separate customer and admin order detail views.
+problem: Online storefronts need reliable authentication, account recovery, inventory control, and clear separation between customer order tracking and admin order administration.
 outcomes: []
 thumbnail: /images/projects/e-commerce-2/thumbnail.png
 thumbnailAlt: login page
@@ -20,40 +25,43 @@ gallery: []
 ---
 ## Context
 
-Personal PHP web application prototype implementing an authenticated e-commerce storefront and transaction flow.
+A web-based e-commerce application built with PHP and MySQL that focuses on authenticated storefront access, user account management, and structured order fulfillment between admins, couriers, and customers.
 
 ## Problem
 
-TODO(content): problem (IN-05).
+Without structured authentication and dedicated administrative views, managing user accounts, password resets, stock updates, and delivery handoffs becomes error-prone as order volume grows.
 
 ## My role
 
-TODO(content): my role (IN-05).
+Owner: I designed the relational data structure, implemented authentication and role-based dashboards in PHP, and deployed the containerized live demo on Render.
 
 ## As-is analysis
 
-TODO(content): as-is analysis (IN-05).
+Reviewing standard storefront fulfillment highlighted the need for clear boundaries between customer-facing order tracking and internal admin/courier order operations, along with self-service account recovery.
 
 ## Requirements
 
-TODO(content): requirements (IN-05).
+- User authentication with login, logout, and forgot-password recovery (`login.php`, `forgot_password.php`).
+- Role-specific dashboards for Admin and Courier operations alongside customer checkout and order history.
+- Centralized user management and inventory management modules.
+- Dedicated order detail views tailored to admin administration (`order-details-admin.php`) versus customer tracking (`order-details.php`).
 
 ## Solution design
 
-Built with PHP and deployed with a login entry point (`ecommerce2-demo.onrender.com/login.php`). Additional stack details, schema diagrams, and test notes are pending owner review.
+The system routes authenticated sessions directly into role-appropriate interfaces (`admin_dashboard.php`, `courier_dashboard.php`, storefront checkout) backed by shared MySQL tables for users, products, and orders.
 
 ## Build
 
-TODO(content): build (IN-05).
+Implemented with PHP, MySQL, HTML/CSS/JavaScript, and Docker, deployed at `ecommerce2-demo.onrender.com/login.php`. Core modules include authentication and recovery, `management-user.php`, `inventory_management.php`, `checkout.php`, `order-history.php`, `fetch_order_details.php`, and separate admin and customer order detail views. Source code: [github.com/thunderclouds863/E-Commerce2](https://github.com/thunderclouds863/E-Commerce2).
 
 ## Verification
 
-TODO(content): verification (IN-05).
+Tested login flows, role-based dashboard routing, inventory management, and order detail views inside the Dockerized Render deployment.
 
 ## Outcome
 
-TODO(content): outcome (IN-05).
+Delivered an authenticated, multi-role PHP e-commerce web application available as an interactive live demo.
 
 ## Reflection
 
-TODO(content): reflection (IN-05).
+Separating admin order views from customer order views prevented accidental exposure of internal operational controls while keeping both sides easy to navigate.

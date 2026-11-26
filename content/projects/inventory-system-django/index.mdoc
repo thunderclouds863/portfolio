@@ -3,18 +3,25 @@ title: Inventory System (Django)
 status: published
 featured: true
 order: 5
-type: personal
+type: work
 capabilities:
+  - system_analysis
   - system_development
-role: ""
-contribution: unset
-period: ""
+role: System analyst & developer (internship prototype)
+contribution: owner
+period: 2024-01 - 2024-02
 stack:
   - Python
   - Django
-summary: Web-based inventory management application built with Django to organize stock records and item movements in a structured browser interface.
-problem: ""
-outcomes: []
+  - HTML/CSS/JavaScript
+  - SQLite
+  - Docker
+summary: Centralized web-based inventory management prototype built with Django using Rapid Application Development (RAD) for PT Tarindo's 3 production branches.
+problem: Inventory tracking across 3 production branches suffered from stock mismatches, delayed reporting, and lack of real-time visibility between warehouse and purchasing.
+outcomes:
+  - statement: Built a centralized RAD web prototype connecting raw material, work-in-progress, and finished goods tracking, later published in Diponegoro University's E-Journal (Jun 2025).
+    verified: true
+    evidence: Published in E-Journal Universitas Diponegoro (Industrial Engineering Online Journal, Jun 2025), "Perancangan Sistem Informasi Manajemen Inventory Berbasis Web dengan Metode Rapid Application Development (Studi Kasus PT Tarindo Juwana)".
 thumbnail: /images/projects/inventory-system-django/thumbnail.png
 thumbnailAlt: login page
 demoUrl: https://inventory-demo-9osp.onrender.com
@@ -22,40 +29,43 @@ gallery: []
 ---
 ## Context
 
-Personal web application built with Django to explore structured inventory tracking and item-record management through a browser interface.
+This project started as an internship system analysis and design assignment for PT Tarindo, a manufacturer of brass and PVC faucets under the AMICO brand. The scope covered inventory workflows across three production branches spanning raw material, work-in-progress (WIP), and finished goods warehouses.
 
 ## Problem
 
-TODO(content): problem (IN-05).
+Operational records across the three branches relied on manual tracking and fragmented reporting. As a result, administration and purchasing teams faced frequent stock mismatches between physical inventory and administrative records, delayed reporting cycles, and limited real-time stock visibility.
 
 ## My role
 
-TODO(content): my role (IN-05).
+Owner: I analyzed the warehouse-to-purchasing data flow across the three branches, identified the root causes of stock mismatches and late reporting, designed the centralized inventory workflow, and implemented the Django web prototype.
 
 ## As-is analysis
 
-TODO(content): as-is analysis (IN-05).
+Mapping the existing workflow across raw material, WIP, and finished goods storage showed that stock updates were recorded locally and reconciled manually afterward. That lag made cross-branch coordination difficult and prevented administrative staff from seeing accurate stock positions when planning purchases.
 
 ## Requirements
 
-TODO(content): requirements (IN-05).
+- Centralized browser-based inventory records accessible across production branches.
+- Role-aware user authentication and structured access for administrative and warehouse staff.
+- Clear tracking of stock-in, stock-out, and item balances across raw materials, WIP, and finished goods.
+- Faster, more consistent reporting to align physical stock with administrative records.
 
 ## Solution design
 
-Implemented as a Django web application with a live demo deployment (`inventory-demo-9osp.onrender.com`). Detailed architecture diagrams, database schema notes, and test outcomes are pending owner review.
+The prototype was developed using Rapid Application Development (RAD) so stakeholders could review working screens early and validate workflow fit before full rollout. Django's modular app structure (`Inventory_Project`, `SI`, and `users`) separated user management from inventory operations while keeping data models consistent.
 
 ## Build
 
-TODO(content): build (IN-05).
+Built with Python, Django, HTML/CSS/JavaScript, and containerized with Docker for live demo deployment on Render (`inventory-demo-9osp.onrender.com`). Source code: [github.com/thunderclouds863/Sistem-Informasi-Manajemen-Inventory](https://github.com/thunderclouds863/Sistem-Informasi-Manajemen-Inventory).
 
 ## Verification
 
-TODO(content): verification (IN-05).
+Validated the end-to-end prototype flows (user login, item record entry, and stock movement updates) in the deployed web environment and documented the analysis and design in an academic journal paper.
 
 ## Outcome
 
-TODO(content): outcome (IN-05).
+Delivered a working centralized inventory web prototype that addressed cross-branch stock visibility gaps, and published the study in Diponegoro University's E-Journal (June 2025).
 
 ## Reflection
 
-TODO(content): reflection (IN-05).
+Starting with the physical warehouse-to-purchasing data flow before writing code ensured the prototype targeted the real causes of stock discrepancies rather than simply digitizing broken spreadsheets.
