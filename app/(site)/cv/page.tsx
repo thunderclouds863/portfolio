@@ -64,7 +64,7 @@ export default async function CvPage() {
   const links = (profile?.links ?? []).filter((l) => !!l.url);
 
   return (
-    <div className="mx-auto flex max-w-[860px] flex-col gap-10 px-4 py-12 md:px-6 md:py-16 print:max-w-none print:gap-6 print:p-0">
+    <div className="mx-auto flex max-w-[860px] flex-col gap-10 px-4 pt-12 pb-24 md:px-6 md:pt-16 lg:pb-16 print:max-w-none print:gap-6 print:p-0">
       <header className="flex flex-col gap-4">
         <DraftBadge show={!!profile?.isDraft} className="self-start print:hidden" />
         <h1 className="text-display-1 text-green glow">
