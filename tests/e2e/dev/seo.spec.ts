@@ -1,7 +1,21 @@
+import fs from "node:fs";
+import path from "node:path";
+
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
 import { revealAll } from "../helpers";
+
+function findDraftProjectSlug(): string {
+  const root = path.join(process.cwd(), "content", "projects");
+  for (const entry of fs.readdirSync(root, { withFileTypes: true })) {
+    if (!entry.isDirectory()) continue;
+    const raw = fs.readFileSync(path.join(root, entry.name, "index.mdoc"), "utf8");
+    const frontmatter = raw.match(/^---\r?\n([\s\S]*?)\r?\n---/)?.[1] ?? "";
+    if (/^status:\s*draft\s*$/m.test(frontmatter)) return entry.name;
+  }
+  throw new Error("No draft project fixture found in content/projects/");
+}
 
 // JSON-LD and axe on pages that only have draft content so far (draft preview).
 test.describe.configure({ timeout: 90_000 });
@@ -31,7 +45,8 @@ test("home has a JSON-LD Person built from the profile", async ({ page }) => {
 });
 
 test("draft case studies are noindex and carry no CreativeWork yet", async ({ page }) => {
-  await page.goto("/projects/hospital-erp-prototype");
+  const draftSlug = findDraftProjectSlug();
+  await page.goto(`/projects/${draftSlug}`);
   await expect(page.locator('meta[name="robots"]').first()).toHaveAttribute("content", /noindex/);
   expect(await jsonLd(page)).toEqual([]);
 });

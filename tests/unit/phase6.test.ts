@@ -1,7 +1,7 @@
 import Markdoc from "@markdoc/markdoc";
 import { describe, expect, it } from "vitest";
 
-import { getProjects, reader } from "@/lib/content";
+import { getProject, getProjects, reader } from "@/lib/content";
 import { validateMarkdoc } from "@/lib/markdoc";
 import { checkContactRateLimit, extractClientIp, resetContactRateLimit } from "@/lib/rate-limit";
 import { ProjectSchema, RecommendationSchema } from "@/lib/schema";
@@ -69,11 +69,36 @@ describe("Workstream 3 — Multi-platform RecommendationSchema", () => {
   });
 });
 
-describe("Workstream 4 — All 12 supplied projects published & drafts preserved", () => {
-  it("publishes all 12 supplied projects with valid demo URLs and keeps hospital-erp-prototype draft", async () => {
+describe("Workstream 4 — Published projects follow CMS status & drafts stay excluded", () => {
+  it("publishes every CMS-published project with valid bodies/demo URLs and excludes drafts", async () => {
+    const allEntries = await reader.collections.projects.all();
+    const expectedPublishedSlugs = allEntries
+      .filter(({ entry }) => entry.status === "published")
+      .map(({ slug }) => slug);
+    const expectedDraftSlugs = allEntries
+      .filter(({ entry }) => entry.status === "draft")
+      .map(({ slug }) => slug);
+
     const published = await getProjects();
-    expect(published.length).toBe(12);
-    const urls = published.map((p) => p.demoUrl);
+    const publishedSlugs = published.map((p) => p.slug);
+
+    expect(published.length).toBe(expectedPublishedSlugs.length);
+    expect(new Set(publishedSlugs)).toEqual(new Set(expectedPublishedSlugs));
+    for (const draftSlug of expectedDraftSlugs) {
+      expect(publishedSlugs).not.toContain(draftSlug);
+    }
+
+    // Every published project passes full body/Markdoc validation.
+    for (const slug of publishedSlugs) {
+      const full = await getProject(slug);
+      expect(full?.slug).toBe(slug);
+    }
+
+    // Existing live-demo URLs remain intact and every optional demoUrl uses https.
+    const urls = published.map((p) => p.demoUrl).filter((u): u is string => Boolean(u));
+    for (const url of urls) {
+      expect(url).toMatch(/^https:\/\//);
+    }
     for (const expected of [
       "https://fptkdemo-desi.streamlit.app",
       "https://livechat-analysis-desi.streamlit.app",
@@ -90,8 +115,6 @@ describe("Workstream 4 — All 12 supplied projects published & drafts preserved
     ]) {
       expect(urls).toContain(expected);
     }
-    const erp = await reader.collections.projects.read("hospital-erp-prototype");
-    expect(erp?.status).toBe("draft");
   });
 
   it("allows demo-showcase projects without invented role/summary while rejecting TODO text", () => {
