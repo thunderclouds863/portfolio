@@ -5,11 +5,13 @@ import { Contact } from "@/components/sections/contact";
 import { Education } from "@/components/sections/education";
 import { Experience } from "@/components/sections/experience";
 import { Hero } from "@/components/sections/hero";
+import { LatestProjectSpotlight } from "@/components/sections/latest-project-spotlight";
 import { Projects } from "@/components/sections/projects";
 import { Stack } from "@/components/sections/stack";
 import { Testimonials } from "@/components/sections/testimonials";
 import { JsonLd } from "@/components/seo/json-ld";
 import { getHomeData } from "@/lib/home-data";
+import { getLatestPublishedProject } from "@/lib/project-discovery";
 import { pageMetadata, personJsonLd } from "@/lib/seo";
 
 export const metadata = pageMetadata({ path: "/" });
@@ -22,12 +24,14 @@ export const metadata = pageMetadata({ path: "/" });
 export default async function Home() {
   const data = await getHomeData();
   const hasTestimonials = data.recommendations.length > 0;
+  const latestProject = getLatestPublishedProject(data.projects);
   const n = (base: number) => String(hasTestimonials ? base + 1 : base).padStart(2, "0");
 
   return (
     <>
       <JsonLd data={personJsonLd(data)} />
       <Hero profile={data.profile} settings={data.settings} />
+      <LatestProjectSpotlight project={latestProject} />
       <About profile={data.profile} education={data.education[0]} />
       <Capabilities settings={data.settings} projects={data.projects} />
       <Experience experience={data.experience} number="03" />

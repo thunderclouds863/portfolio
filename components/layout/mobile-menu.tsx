@@ -5,7 +5,9 @@ import { usePathname, useRouter } from "next/navigation";
 import { Dialog as DialogPrimitive } from "radix-ui";
 import { useEffect, useRef, useState, type CSSProperties, type MouseEvent } from "react";
 
+import { ProjectsNavIndicator } from "@/components/projects/project-discovery";
 import { navCta, sectionNav } from "@/lib/nav";
+import type { ProjectPublishRef } from "@/lib/project-discovery";
 import { cn } from "@/lib/utils";
 
 import { scrollToSection, setPendingSectionTarget } from "./active-section";
@@ -60,7 +62,11 @@ const buttonClass =
  * Esc, scroll lock, aria-expanded/aria-controls and focus return. Links >= 44px.
  * Under reduced motion the items appear without the launch animation.
  */
-function MobileMenu() {
+function MobileMenu({
+  discoveryProjects = [],
+}: {
+  discoveryProjects?: readonly ProjectPublishRef[];
+}) {
   const [open, setOpen] = useState(false);
   // Active section when the menu opened (FR-NAV-02 indicator inside the menu).
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -189,6 +195,9 @@ function MobileMenu() {
                       )}
                     >
                       {item.label}
+                      {item.id === "projects" ? (
+                        <ProjectsNavIndicator projects={discoveryProjects} />
+                      ) : null}
                     </a>
                   </li>
                 );
