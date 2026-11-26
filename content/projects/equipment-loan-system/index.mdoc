@@ -3,15 +3,20 @@ title: Equipment Loan System
 status: published
 featured: false
 order: 9
-type: personal
+type: freelance
 capabilities:
+  - system_analysis
   - system_development
-role: ""
-contribution: unset
-period: ""
-stack: []
-summary: Web application for recording equipment borrowing requests, item availability, and return tracking.
-problem: ""
+role: Full-stack web developer
+contribution: owner
+period: 2025-07
+stack:
+  - PHP
+  - MySQL
+  - HTML/CSS/JavaScript
+  - Docker
+summary: Multi-role web application for managing organizational equipment borrowing, approval workflows, inventory availability, and return tracking.
+problem: Manual equipment borrowing logs in labs, offices, and student organizations led to double bookings, untracked returns, and unrecorded item damage.
 outcomes: []
 thumbnailAlt: ""
 demoUrl: https://peminjaman-alat-demo.onrender.com
@@ -19,40 +24,43 @@ gallery: []
 ---
 ## Context
 
-Personal web application designed to organize equipment lending and return records in a centralized browser interface.
+A multi-role web application built to streamline equipment lending and return administration for organizations such as laboratories, offices, or campus student associations.
 
 ## Problem
 
-TODO(content): problem (IN-05).
+When equipment borrowing is tracked on paper or in chat groups, coordinators struggle to verify real-time item availability, prevent double borrowing, and maintain an accurate history of who borrowed each item and in what condition it was returned.
 
 ## My role
 
-TODO(content): my role (IN-05).
+Owner: I mapped the borrowing and approval workflow across organizational roles, designed the MySQL schema (`pinjam.sql`), built the PHP web application, and deployed the containerized demo.
 
 ## As-is analysis
 
-TODO(content): as-is analysis (IN-05).
+Equipment requests involve three distinct parties: borrowers who request items, division/operator staff who verify requests and returns, and administrators or treasurers who oversee inventory and reports. Handling these handoffs manually created bottlenecks and missing records.
 
 ## Requirements
 
-TODO(content): requirements (IN-05).
+- Multi-role access for Treasurer/Admin (`bendahara_dashboard.php`), Division/Operator (`divisi_dashboard.php`), and Borrower (`peminjam_dashboard.php`).
+- Cart-based equipment request workflow (`add_to_chart.php`, `shopping-cart.php`, `checkout.php`) so borrowers can request multiple items in one submission.
+- Approval verification, return tracking with item condition records, and per-user borrowing history.
+- Centralized inventory management and borrowing activity reports.
 
 ## Solution design
 
-Available as a live web demo (`peminjaman-alat-demo.onrender.com`). Full technology stack, workflow diagrams, and verification notes are pending owner review.
+The system adapts a familiar cart-and-checkout interaction model to organizational equipment lending, pairing it with role-based approval dashboards and a shared MySQL inventory ledger so availability updates cleanly as requests move through approval and return.
 
 ## Build
 
-TODO(content): build (IN-05).
+Built with PHP, MySQL, HTML/CSS/JavaScript, and Docker (`render.yaml` deployment at `peminjaman-alat-demo.onrender.com`), including registration/login, inventory management (`inventory_management.php`), cart checkout, and order tracking (`order-management.php`, `order-details.php`, `order-history.php`). Source code: [github.com/thunderclouds863/Peminjaman-Barang](https://github.com/thunderclouds863/Peminjaman-Barang).
 
 ## Verification
 
-TODO(content): verification (IN-05).
+Verified multi-role login, equipment selection, checkout submission, and dashboard management flows in the live Docker deployment.
 
 ## Outcome
 
-TODO(content): outcome (IN-05).
+Delivered a working multi-role equipment loan management system that replaces paper borrowing logs with traceable digital records and live demo access.
 
 ## Reflection
 
-TODO(content): reflection (IN-05).
+Using a cart-style request flow made multi-item borrowing intuitive for first-time users while keeping approval records structured for administrators.

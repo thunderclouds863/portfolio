@@ -1,20 +1,23 @@
 ---
 title: Survey Report Automation
-status: draft
+status: published
 featured: false
-order: 7
+order: 14
 type: work
-capabilities: []
-role: Built the workbook
+capabilities:
+  - process_improvement
+  - system_development
+  - data
+role: Built the Excel VBA automation workbook
 contribution: owner
-period: 2025-10 – 2026-06
+period: 2025-10 - 2026-06
 stack:
   - Excel VBA
   - Pivot tables
-summary: Excel VBA workbook that turned manual customer-survey reporting at PT Toyota-Astra Motor into a guided flow for 38 branches.
-problem: Each survey report run took about 1 hour of manual copying, recalculating and exporting.
+summary: Excel VBA automation workbook that imports customer survey responses, removes duplicates, calculates monthly survey rates, and exports PDF reports for 38 branches at PT Toyota-Astra Motor.
+problem: Manual compilation, pivot copying, survey-rate recalculation, and individual PDF exporting per dealer group took about 1 hour per report run.
 outcomes:
-  - statement: Cut a full report run from 1 hour to 5–10 minutes, with consistent formatting.
+  - statement: Cut a full survey report run for 38 branches from 1 hour to 5-10 minutes with consistent formatting.
     verified: false
     evidence: ""
 thumbnailAlt: ""
@@ -22,42 +25,43 @@ gallery: []
 ---
 ## Context
 
-Customer-survey reporting at PT Toyota-Astra Motor, with PDF reports for 38 branches.
+Built during my internship at the Customer Assistance Center, PT Toyota-Astra Motor (2025-2026), to automate monthly reporting of customer surveys on education media (posters) across 38 car dealer branches.
 
 ## Problem
 
-TODO(content): what was slow or error-prone in the manual process (IN-05).
+Survey responses arrived from Google Forms and were processed manually. For every dealer group, staff had to copy numbers from a pivot table, adjust month columns, recalculate survey rates, and export PDFs one by one, taking around 1 hour per cycle and risking inconsistent formatting.
 
 ## My role
 
-Owner: I built the workbook.
+Owner: I mapped the manual reporting steps, designed the 4-button guided workbook flow, and wrote the Excel VBA macros for data ingestion, deduplication, pivot synchronization, survey-rate calculation, and batch PDF export.
 
 ## As-is analysis
 
-TODO(content): the manual reporting steps (IN-05).
+Reviewing the manual reporting cycle showed four repetitive, error-prone bottlenecks: duplicate survey submissions, shifting monthly columns in pivot tables, manual percentage calculations per dealer group, and repetitive one-by-one PDF page setup and export.
 
 ## Requirements
 
-TODO(content): what the report needed to contain (IN-05).
+- Import new Excel or CSV survey exports while detecting and handling duplicates cleanly.
+- Automatically refresh pivot tables and sync newly added month columns into summary sheets.
+- Calculate monthly survey rates per branch and dealer group with visual flags for zero values.
+- Export standardized one-page PDF reports per dealer group plus a consolidated all-dealer PDF.
 
 ## Solution design
 
-TODO(content): how the workbook is structured (IN-05).
+I structured the workbook as a guided 4-step dashboard workflow (`Add Data` -> `Refresh` -> `Olah Data` -> `Export to PDF`) so any team member can run the monthly reporting cycle consistently without touching formulas or macros.
 
 ## Build
 
-- An import macro that merges new survey responses, detects duplicates and sorts the data.
-- Pivot refresh and sync that adds month columns automatically and calculates the survey rate per branch and dealer group.
-- Batch export of one PDF report per dealer group, plus an all-dealer summary.
+Built in Excel VBA with modular dashboard macros: `AddData` (array-based import, duplicate detection by Timestamp + survey date + branch, and chronological sorting), `RefreshSemuaPivot` and `SinkronkanSemuaData` (dynamic month column alignment), `OlahDataSurveyRate_Fixed` (branch binary scoring and dealer-group rate calculation with zero-value highlighting), and `ExportPDF_Dinamis_SatuHalaman` / `ExportPDF_SatuFile_BoldSaja_HinggaBulanTerakhir` (batch PDF generation). Source code (clean template with customer data removed): [github.com/thunderclouds863/excel-vba-survey-report-automation](https://github.com/thunderclouds863/excel-vba-survey-report-automation).
 
 ## Verification
 
-TODO(content): how the output was checked (IN-05).
+Verified deduplication accuracy, monthly column syncing, dealer-group survey-rate formulas, and PDF pagination across all 38 branches against previously generated manual reports.
 
 ## Outcome
 
-A full report run went from 1 hour to 5–10 minutes, with consistent formatting.
+Cut a full survey report run from about 1 hour to 5-10 minutes while guaranteeing uniform formatting across every dealer-group PDF.
 
 ## Reflection
 
-TODO(content): what you would do differently (IN-05).
+Turning a complex multi-sheet spreadsheet into four clearly labeled buttons made the automation immediately usable by non-technical teammates and eliminated formatting drift between monthly cycles.

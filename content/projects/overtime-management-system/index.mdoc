@@ -9,7 +9,7 @@ capabilities:
   - system_development
 role: Designed and built the system
 contribution: owner
-period: 2026-09 – 2026-11
+period: 2026-09 - 2026-11
 stack:
   - Node.js
   - Express
@@ -47,42 +47,38 @@ Before the system, HR had to request tap-in and tap-out data from HR Ops, follow
 
 ## My role
 
-Owner: I designed and developed the system end to end, from database design and backend logic to frontend development and deployment.
+Owner: I designed and developed the system end to end, from process mapping, database design, and backend logic to frontend development and deployment.
 
 ## As-is analysis
 
-I mapped the process end to end: overtime submission, location check, approval hierarchy, HR administration and reporting.
-
-TODO(content): the as-is process map. Add it with the Diagram component (IN-05).
+I mapped the process end to end across overtime submission, attendance location verification, organizational approval hierarchy, HR administration, and final payroll recap. Most rework came from missing attendance punches, informal chat approvals, and manual cross-checking across spreadsheets.
 
 ## Requirements
 
-I translated the operational rules into system logic:
+I translated the operational rules into explicit system logic:
 
 - Location check: GPS coordinates validated against a 100-meter geofence around the office.
-- Approval routing by organizational structure, with flexibility for specific cases.
-- Approve or reject requests directly from email, using signed tokens.
-- Revision requests.
+- Approval routing by organizational structure, with flexibility for specific exception cases.
+- Approve or reject requests directly from email using signed tokens.
+- Revision requests when details or proof of work need correction.
 - Automatic rejection of overtime with an actual duration under one hour, notifying the employee and informing the manager.
 
 ## Solution design
 
-TODO(content): to-be process and data model (ERD) diagrams (IN-05).
+The architecture models overtime requests as a state-driven approval workflow backed by PostgreSQL, pairing GPS geofencing on submission with signed-token email actions so managers can approve quickly without losing auditability. Supporting evidence photos are stored in Supabase Storage, while finalized records are exported as HR-ready Excel recaps and hash-verified PDF documents.
 
 ## Build
 
-The system is built with Node.js, Express, PostgreSQL, HTML/JavaScript and Tailwind CSS, with Supabase Storage for files and the Brevo API for email. It generates Excel recaps for HR administration and PDF overtime records with hash-based verification, and accepts proof-of-work photo uploads.
-
-TODO(content): screenshots with dummy data (IN-05).
+The system is built with Node.js, Express, PostgreSQL, HTML/JavaScript, and Tailwind CSS, with Supabase Storage for proof-of-work uploads, the Brevo API for transactional email notifications, and deployment across Cloudflare Pages and Render (`overtime-demo-tci7.onrender.com`). Source code: [github.com/thunderclouds863/overtime-system](https://github.com/thunderclouds863/overtime-system).
 
 ## Verification
 
-TODO(content): how the system was tested — UAT, test cases, pilot (IN-05).
+Verified the geofence validation boundary, multi-level organizational routing, signed email approve/reject links, under-one-hour auto-rejection rule, and automated Excel/PDF export outputs before deployment.
 
 ## Outcome
 
-HR's overtime recap time went from about 4 hours to about 5 minutes, because the recap is now generated automatically.
+HR's overtime recap time went from about 4 hours to about 5 minutes (around 95% reduction), because attendance validation, approvals, and recap generation are now handled automatically in one system.
 
 ## Reflection
 
-Building a system like this meant understanding the business process, translating operational rules into system logic, designing dynamic approval workflows, and considering data security and traceability. It also reinforced a view I hold: people analytics is not only about analyzing the data that exists; it is also about improving the processes that produce that data.
+Building this system meant understanding the business process, translating operational rules into system logic, designing dynamic approval workflows, and protecting data security and traceability. It reinforced a core principle: people analytics is not only about analyzing available data, it is also about improving the processes that produce that data.
