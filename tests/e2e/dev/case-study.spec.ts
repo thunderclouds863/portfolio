@@ -46,6 +46,18 @@ test("every project page renders", async ({ page }) => {
   }
 });
 
+function findDraftTodoProjectSlug(): string {
+  const root = path.join(process.cwd(), "content", "projects");
+  for (const slug of SLUGS) {
+    const raw = fs.readFileSync(path.join(root, slug, "index.mdoc"), "utf8");
+    const frontmatter = raw.match(/^---\r?\n([\s\S]*?)\r?\n---/)?.[1] ?? "";
+    if (/^status:\s*draft\s*$/m.test(frontmatter) && /\bTODO\(content\)/.test(raw)) {
+      return slug;
+    }
+  }
+  throw new Error("No draft project with TODO(content) placeholders found in content/projects/");
+}
+
 test.describe("case-study layout (1280px)", () => {
   test.use({ viewport: { width: 1280, height: 800 } });
 
@@ -106,7 +118,8 @@ test.describe("case-study layout (1280px)", () => {
   });
 
   test("draft TODO paragraphs render as MISSING markers, not raw TODO text", async ({ page }) => {
-    await page.goto("/projects/hospital-erp-prototype");
+    const draftSlug = findDraftTodoProjectSlug();
+    await page.goto(`/projects/${draftSlug}`);
     await expect(page.locator("[data-todo-content]").first()).toBeVisible();
     await expect(page.locator(".case-body")).not.toContainText("TODO(content)");
   });
