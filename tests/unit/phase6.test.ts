@@ -70,7 +70,7 @@ describe("Workstream 3 — Multi-platform RecommendationSchema", () => {
 });
 
 describe("Workstream 4 — Published projects follow CMS status & drafts stay excluded", () => {
-  it("publishes every CMS-published project (including hospital-erp-prototype and demo-backed entries) and excludes drafts", async () => {
+  it("publishes every CMS-published project with valid bodies/demo URLs and excludes drafts", async () => {
     const allEntries = await reader.collections.projects.all();
     const expectedPublishedSlugs = allEntries
       .filter(({ entry }) => entry.status === "published")
@@ -88,10 +88,11 @@ describe("Workstream 4 — Published projects follow CMS status & drafts stay ex
       expect(publishedSlugs).not.toContain(draftSlug);
     }
 
-    // Hospital ERP Prototype is published and passes full body/Markdoc validation.
-    expect(publishedSlugs).toContain("hospital-erp-prototype");
-    const erp = await getProject("hospital-erp-prototype");
-    expect(erp?.title).toBe("Hospital ERP Prototype");
+    // Every published project passes full body/Markdoc validation.
+    for (const slug of publishedSlugs) {
+      const full = await getProject(slug);
+      expect(full?.slug).toBe(slug);
+    }
 
     // Existing live-demo URLs remain intact and every optional demoUrl uses https.
     const urls = published.map((p) => p.demoUrl).filter((u): u is string => Boolean(u));
