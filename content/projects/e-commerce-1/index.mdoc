@@ -3,15 +3,20 @@ title: E-Commerce 1
 status: published
 featured: false
 order: 7
-type: personal
+type: freelance
 capabilities:
+  - system_analysis
   - system_development
-role: ""
-contribution: unset
-period: ""
-stack: []
-summary: Web-based e-commerce prototype focused on online product browsing and order workflow fundamentals.
-problem: ""
+role: Full-stack web developer
+contribution: owner
+period: 2025-07
+stack:
+  - PHP
+  - MySQL
+  - HTML/CSS/JavaScript
+  - Docker
+summary: Multi-role PHP and MySQL e-commerce web application connecting customers, employees, couriers, and admins from product browsing through payment confirmation and reporting.
+problem: Small online sellers needed a structured, multi-role web platform to manage products, customer orders, payment confirmations, and courier handoffs in one place.
 outcomes: []
 thumbnailAlt: ""
 demoUrl: https://ecommerce1-demo.onrender.com
@@ -19,40 +24,43 @@ gallery: []
 ---
 ## Context
 
-Personal web application prototype exploring e-commerce storefront flows and order-handling structure.
+A web-based e-commerce information system designed to handle end-to-end online buying and selling between sellers and buyers, with dedicated workflows for each operational role involved in fulfilling an order.
 
 ## Problem
 
-TODO(content): problem (IN-05).
+Managing online orders manually across chat messages and spreadsheets creates friction in tracking inventory, verifying customer payments, assigning couriers, and summarizing sales reports.
 
 ## My role
 
-TODO(content): my role (IN-05).
+Owner: I designed the multi-role transaction flow, structured the MySQL relational schema (`ecommerce.sql`), built the PHP web application and role dashboards, and containerized the demo for Render deployment.
 
 ## As-is analysis
 
-TODO(content): as-is analysis (IN-05).
+Typical small-scale online selling splits product catalogs, payment proofs, delivery coordination, and sales recaps across disconnected tools. Unifying them into one transactional workflow prevents missed payment checks and stock discrepancies.
 
 ## Requirements
 
-TODO(content): requirements (IN-05).
+- Separate role-based dashboards for Admin, Employee, Courier, and Customer accounts.
+- Product browsing, shopping cart management, checkout, and payment confirmation.
+- Order management, order history, and detailed order status tracking.
+- Inventory management, user administration, and sales reporting for internal staff.
 
 ## Solution design
 
-Deployed as an interactive web demo (`ecommerce1-demo.onrender.com`). Detailed technology stack, architecture notes, and verification results are pending owner review.
+The application separates responsibilities by user role (`admin_dashboard.php`, `employee_dashboard.php`, `courier_dashboard.php`, `customer_dashboard.php`) backed by a shared MySQL database so every order state change updates inventory, payment verification, and delivery views consistently.
 
 ## Build
 
-TODO(content): build (IN-05).
+Built with PHP, MySQL, HTML/CSS/JavaScript, and Docker (`render.yaml` deployment at `ecommerce1-demo.onrender.com`), covering user registration and management (`manajemen_user.php`), inventory (`inventory_management.php`), cart and checkout (`checkout.php`, `remove-from-cart.php`), payment confirmation (`payment.php`, `confirm-payment.php`), order tracking (`order-management.php`, `order-details.php`, `order-history.php`), and reporting (`report.php`). Source code: [github.com/thunderclouds863/E-commerce1](https://github.com/thunderclouds863/E-commerce1).
 
 ## Verification
 
-TODO(content): verification (IN-05).
+Verified end-to-end storefront and back-office flows in the containerized live demo, including user login across roles, cart-to-checkout submission, payment confirmation, and order detail retrieval.
 
 ## Outcome
 
-TODO(content): outcome (IN-05).
+Delivered a working multi-role e-commerce web application with live demo access demonstrating end-to-end order, payment, courier, and reporting workflows.
 
 ## Reflection
 
-TODO(content): reflection (IN-05).
+Separating customer, employee, courier, and admin views early kept each screen focused on the decisions that role actually needs to make.

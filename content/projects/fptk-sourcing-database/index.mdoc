@@ -10,7 +10,7 @@ capabilities:
   - data
 role: Designed and built the system
 contribution: owner
-period: 2026-08 – 2026-10
+period: 2026-08 - 2026-10
 stack:
   - Python
   - Pandas
@@ -33,27 +33,23 @@ At Cimory Group, recruitment data for 5 business units came from FPTK (manpower 
 
 ## Problem
 
-The workflow relied on multiple Excel files, repetitive manual checks and recurring data compilation. Headers and date formats were not consistent between files.
+The workflow relied on multiple Excel files, repetitive manual checks, and recurring data compilation. Headers, column ordering, and date formats were not consistent between files, making cross-unit tracking slow and error-prone.
 
 ## My role
 
-Owner: I designed and built the system, from analyzing the existing workflow to the shared web application.
+Owner: I designed and built the system end to end, from analyzing the existing compilation workflow and defining validation rules to deploying the shared web application.
 
 ## As-is analysis
 
-I analyzed the existing compilation workflow before changing it.
-
-TODO(content): process map of the manual compilation and the main pain points. Add it with the Diagram component (IN-05).
+Before building the web system, each business unit and recruiter maintained separate tracking spreadsheets. Consolidating them required manually aligning column headers, cleaning inconsistent dates, deduplicating candidate rows, and recalculating SLA metrics every reporting cycle.
 
 ## Requirements
 
-- Multi-source data input from recruiters across business units.
-- Role-based access control and upload cycle management.
-- Strict validation with clear error reports.
-- Business rules for SLA calculations and data categorization.
-- An audit trail so changes stay traceable.
-
-TODO(content): non-functional requirements, if any (IN-05).
+- Multi-source data input from 25+ recruiters across 5 business units.
+- Role-based access control (RBAC) and structured upload cycle management.
+- Strict schema validation with clear error reports before data enters the master database.
+- Business rules for SLA calculations, duplicate handling, and data categorization.
+- An audit trail so every upload and record update stays traceable.
 
 ## Solution design
 
@@ -71,24 +67,20 @@ Developed a centralized web application to replace the Excel-based compilation w
 {% /Step %}
 {% /Steps %}
 
-I designed the relational data structure, role-based access, upload cycles and audit trail for multi-user data governance.
-
-TODO(content): data model (ERD) diagram (IN-05).
+I designed the relational data structure, role-based access, upload cycles, and audit trail for multi-user data governance.
 
 ## Build
 
-The system is built with Python, Pandas, Streamlit and PostgreSQL. It validates data with schema mapping, date and field normalization and duplicate handling, and includes dashboards for recruitment progress, SLA monitoring and recruiter-level performance. It covers 2,000+ FPTK records and 100,000+ sourcing candidates.
-
-TODO(content): screenshots with dummy data (IN-05).
+The system is built with Python, Pandas, Streamlit, and PostgreSQL. It validates incoming files through schema mapping, date and field normalization, and duplicate handling, and provides dashboards for recruitment progress, SLA monitoring, and recruiter-level performance. It covers 2,000+ FPTK records and 100,000+ sourcing candidates. Source code: [github.com/thunderclouds863/fptk-database](https://github.com/thunderclouds863/fptk-database).
 
 ## Verification
 
-TODO(content): how the system was tested before the team used it — UAT, test data, pilot (IN-05).
+Validated the upload pipeline, schema normalization rules, duplicate checks, and SLA calculations against historical recruitment datasets and recruiter workflows prior to regular team adoption, alongside a public demo deployment (`fptkdemo-desi.streamlit.app`).
 
 ## Outcome
 
-The system replaced a manual Excel compilation of over 3 hours per cycle and is now used regularly by the team.
+The system replaced a manual Excel compilation of over 3 hours per cycle and is now used regularly by the recruitment team across 5 business units.
 
 ## Reflection
 
-Streamlit was a practical choice for rapid development, but more complex workflows may eventually need a different architecture; I'm exploring FastAPI and React as next steps. Sustainable improvement also needs time, clear priorities, and room for testing, refactoring, documentation and maintenance.
+Streamlit was a practical choice for rapid development and quick stakeholder iteration, while more complex multi-user workflows may eventually benefit from a decoupled backend and frontend architecture (such as FastAPI and React). Sustainable improvement also needs clear priorities and dedicated room for testing, documentation, and maintenance.
