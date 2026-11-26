@@ -15,7 +15,9 @@ import { ProjectSchema } from "@/lib/schema";
 
 const NOW_2026_11_27 = Date.UTC(2026, 10, 27, 12, 0, 0); // 2026-11-27T12:00:00Z
 
-function makeProject(overrides: Partial<DiscoverableProject> & { slug: string }): DiscoverableProject {
+function makeProject(
+  overrides: Partial<DiscoverableProject> & { slug: string },
+): DiscoverableProject {
   return {
     title: overrides.slug,
     isDraft: false,
@@ -76,7 +78,9 @@ describe("Latest Project Discovery System", () => {
 
   it("returns null gracefully when there are no published projects", () => {
     expect(getLatestPublishedProject([])).toBeNull();
-    expect(getLatestPublishedProject([makeProject({ slug: "only-draft", isDraft: true })])).toBeNull();
+    expect(
+      getLatestPublishedProject([makeProject({ slug: "only-draft", isDraft: true })]),
+    ).toBeNull();
   });
 
   it("applies the 7-day NEW badge window accurately and expires cleanly at >= 7 days", () => {
