@@ -56,7 +56,7 @@ test("home shows the recommendations after Projects, verbatim, without dates", a
   expect(boxes[0]!.width).toBeGreaterThan(boxes[1]!.width + 40);
   expect(boxes[1]!.top).toBeGreaterThan(boxes[0]!.top);
   expect(Math.abs(boxes[1]!.top - boxes[2]!.top)).toBeLessThan(2);
-  await expect(section.getByRole("link", { name: "[ All testimonials ]" })).toHaveAttribute(
+  await expect(section.getByRole("link", { name: "[ All recommendations ]" })).toHaveAttribute(
     "href",
     "/testimonials",
   );
