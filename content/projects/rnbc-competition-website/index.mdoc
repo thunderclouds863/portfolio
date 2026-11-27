@@ -1,0 +1,73 @@
+---
+title: R'nB Startup Hackathon 2022 Website
+status: published
+featured: false
+order: 16
+type: personal
+capabilities:
+  - system_development
+role: Frontend Web Developer
+contribution: owner
+period: 2022-07
+stack:
+  - HTML5
+  - SCSS / CSS3
+  - JavaScript
+  - ScrollReveal
+  - Remix Icons
+  - Firebase Hosting
+summary: >-
+  Official event information website for R'nB Startup Hackathon 2022 (UKM
+  Research 'n Business Universitas Diponegoro), centralizing competition tracks,
+  timelines, FAQs, guidebook download, and committee contacts.
+problem: >-
+  Prospective national competition participants needed a single, responsive hub
+  for event themes, multi-stage timelines, competition categories, guidebook
+  access, and contact persons instead of fragmented announcements.
+outcomes: []
+thumbnailAlt: ""
+demoUrl: https://rnbc-2022.web.app/
+gallery: []
+---
+## Context
+
+R'nB Startup Hackathon 2022 (RNBC) is a national-level annual student startup competition organized by UKM Research 'n Business (UKM R'nB) Universitas Diponegoro under the theme *"Realizing the Post-Pandemic Economic Growth of Indonesia"*. This website was built as the official public information portal for prospective participants across Indonesian universities.
+
+## Problem
+
+Information for multi-stage national competitions — including competition categories, three-stage selection timelines, bootcamp schedules, FAQs, official guidebooks, and WhatsApp contact persons — is difficult for participants to navigate when scattered across social media posts and chat broadcasts.
+
+## My role
+
+Owner: I designed and built the static multi-page frontend, styled the responsive layout with SCSS/CSS, integrated interactive navigation and scroll animations, and deployed the site to Firebase Hosting.
+
+## As-is analysis
+
+Mapping participant questions showed five primary information needs: an overview of the competition and previous after-movie, detailed event theme and startup categories, stage-by-stage timelines, frequently asked questions, and direct access to the official guidebook PDF and committee contacts.
+
+## Requirements
+
+- Clear multi-page navigation covering Home, About, Event, FAQs, and Information.
+- Dedicated pages for competition categories and stage-by-stage timelines (`timeline1` through `timeline9`).
+- Direct downloadable official Guidebook (`GuideBook.pdf`) and embedded RNBC 2021 after-movie video tour.
+- Direct WhatsApp contact links for committee contact persons and responsive mobile/desktop layout.
+
+## Solution design
+
+The site uses a lightweight, static multi-page architecture so pages load quickly without backend dependencies. Shared navigation and footer patterns keep orientation consistent across overview pages, category details, and timeline breakdowns.
+
+## Build
+
+Built with semantic HTML5, modular SCSS compiled to CSS3, vanilla JavaScript, Remix Icons, and ScrollReveal for smooth section reveals, then deployed on Firebase Hosting at [rnbc-2022.web.app](https://rnbc-2022.web.app/). Source code: [github.com/thunderclouds863/Website-RNBC](https://github.com/thunderclouds863/Website-RNBC).
+
+## Verification
+
+Verified responsive layout across mobile and desktop viewports, checked all internal navigation links (`home`, `about`, `event`, `faqs`, `information`, and timeline pages), confirmed `GuideBook.pdf` and media assets load properly, and verified live availability on Firebase Hosting.
+
+## Outcome
+
+Delivered a live, publicly accessible competition portal for UKM R'nB Universitas Diponegoro that gave national student teams a single reference point for RNBC 2022 tracks, schedules, FAQs, and guidebook resources.
+
+## Reflection
+
+For time-bound campus and national events, a well-structured static site hosted on Firebase provides reliable uptime, fast loading, and straightforward content updates without the operational overhead of a backend server.
