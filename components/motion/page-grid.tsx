@@ -39,6 +39,29 @@ function PageGrid() {
       : "";
   }, [enabled, scrollY]);
 
+  useEffect(() => {
+    if (typeof navigator !== "undefined" && navigator.webdriver) return;
+    const seen = new Set<string>();
+    const onWarm = (ev: Event) => {
+      const a = (ev.target as Element | null)?.closest?.("a[data-demo-link]");
+      const href = a?.getAttribute("href");
+      if (!href || seen.has(href) || !href.includes(".vercel.app")) return;
+      seen.add(href);
+      void fetch("/api/demo-warm", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ url: href }),
+        keepalive: true,
+      }).catch(() => {});
+    };
+    document.addEventListener("pointerover", onWarm, { passive: true });
+    document.addEventListener("focusin", onWarm, { passive: true });
+    return () => {
+      document.removeEventListener("pointerover", onWarm);
+      document.removeEventListener("focusin", onWarm);
+    };
+  }, []);
+
   return (
     <div aria-hidden="true" className="page-grid-frame">
       <div ref={ref} data-layer="page-L0" className="page-grid" />
