@@ -1,0 +1,67 @@
+name: Weekly Demo Database Reset
+
+on:
+  schedule:
+    # Every Monday at 02:00 WIB (Sunday 19:00 UTC)
+    - cron: "0 19 * * 0"
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "Single app key or 'all'"
+        required: false
+        default: "all"
+
+permissions:
+  contents: read
+
+jobs:
+  reset-demos:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      max-parallel: 5
+      matrix:
+        app:
+          - name: overtime-demo
+            url: https://overtime-demo.vercel.app/api/demo/reset
+          - name: cimory-academy-demo
+            url: https://cimory-academy-demo.vercel.app/api/demo/reset
+          - name: inventory-demo
+            url: https://inventory-demo-woad.vercel.app/_demo/reset/
+          - name: ecommerce1-demo
+            url: https://ecommerce1-demo.vercel.app/?__demo_reset=1
+          - name: ecommerce2-demo
+            url: https://ecommerce2-demo.vercel.app/?__demo_reset=1
+          - name: peminjaman-alat-demo
+            url: https://peminjaman-alat-demo.vercel.app/?__demo_reset=1
+          - name: generate-surat-demo
+            url: https://generate-surat-demo.vercel.app/?__demo_reset=1
+          - name: penyaluran-donasi-demo
+            url: https://penyaluran-donasi-demo.vercel.app/?__demo_reset=1
+          - name: perpustakaan-demo
+            url: https://perpustakaan-demo.vercel.app/?__demo_reset=1
+          - name: monitoring-termal-demo
+            url: https://monitoring-termal-demo.vercel.app/?__demo_reset=1
+    steps:
+      - name: Reset ${{ matrix.app.name }}
+        if: ${{ github.event.inputs.target == '' || github.event.inputs.target == 'all' || github.event.inputs.target == matrix.app.name }}
+        env:
+          DEMO_RESET_SECRET: ${{ secrets.DEMO_RESET_SECRET }}
+        run: |
+          if [ -z "$DEMO_RESET_SECRET" ]; then
+            echo "DEMO_RESET_SECRET is not set" >&2
+            exit 1
+          fi
+          tmp=$(mktemp)
+          code=$(curl -sS -o "$tmp" -w "%{http_code}" \
+            --retry 3 --retry-delay 5 --retry-all-errors --max-time 120 \
+            -X POST "${{ matrix.app.url }}" \
+            -H "Authorization: Bearer $DEMO_RESET_SECRET" \
+            -H "X-Demo-Reset-Secret: $DEMO_RESET_SECRET")
+          cat "$tmp"
+          echo ""
+          if [ "$code" != "200" ]; then
+            echo "Reset failed for ${{ matrix.app.name }} with HTTP $code" >&2
+            exit 1
+          fi

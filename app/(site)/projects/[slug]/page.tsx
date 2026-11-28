@@ -9,6 +9,7 @@ import { ZoomableFigure } from "@/components/markdoc/zoomable-figure";
 import { CaseStudySnapshot } from "@/components/projects/case-study-snapshot";
 import { ProjectVisualCover } from "@/components/projects/project-visual-cover";
 import { JsonLd } from "@/components/seo/json-ld";
+import { DemoWarmup } from "@/components/ui/demo-link";
 import { DemoLink } from "@/components/ui/project-card";
 import { Tag } from "@/components/ui/tag";
 import { capabilityLabel, projectTypeLabel } from "@/lib/format";
@@ -100,6 +101,7 @@ async function CaseStudyContent({ params }: { params: PageProps<"/projects/[slug
         ) : null}
         {project.demoUrl ? (
           <div className="pt-1">
+            <DemoWarmup href={project.demoUrl} />
             <DemoLink href={project.demoUrl} title={project.title} />
           </div>
         ) : null}
