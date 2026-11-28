@@ -23,7 +23,11 @@ const SKIP_PATHS = [/^\/keystatic/, /^\/api\//, /^\/admin/];
 /** Hosts known to reject bots: a non-2xx answer there is a warning only. */
 const BOT_HOSTILE = [/(^|\.)linkedin\.com$/];
 // Free-tier demo apps sleep when idle (Render/Streamlit, Vercel containers cold-start) and may answer slowly.
-const SLEEPING_DEMOS = [/\.onrender\.com$/, /\.streamlit\.app$/, /-demo(-[a-z0-9]+)?\.vercel\.app$/];
+const SLEEPING_DEMOS = [
+  /\.onrender\.com$/,
+  /\.streamlit\.app$/,
+  /-demo(-[a-z0-9]+)?\.vercel\.app$/,
+];
 
 const TIMEOUT_MS = 15_000;
 const UA = "Mozilla/5.0 (compatible; portfolio-link-check/1.0)";
