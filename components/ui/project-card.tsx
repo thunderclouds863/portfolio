@@ -1,10 +1,10 @@
-import { ExternalLink } from "lucide-react";
 import Link from "next/link";
 
 import { Missing } from "@/components/content/missing";
 import { DraftBadge, Val, isFilled } from "@/components/content/val";
 import { NewProjectBadge } from "@/components/projects/project-discovery";
 import { ProjectVisualCover } from "@/components/projects/project-visual-cover";
+import { DemoLink } from "@/components/ui/demo-link";
 import { capabilityLabel, projectTypeLabel, scopeLabel } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import type { ProjectView } from "@/lib/views";
@@ -148,26 +148,6 @@ function ProjectCard({
         </div>
       </div>
     </article>
-  );
-}
-
-/** "[ live demo ]" link to the running app, in a new tab. */
-function DemoLink({ href, title, className }: { href: string; title: string; className?: string }) {
-  return (
-    <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      data-demo-link=""
-      className={cn(
-        "text-amber hover:text-yellow inline-flex min-h-11 items-center gap-2 self-start font-mono text-sm underline-offset-4 hover:underline",
-        className,
-      )}
-    >
-      [ live demo
-      <ExternalLink aria-hidden="true" className="size-4" /> ]
-      <span className="sr-only"> of {title} (opens in a new tab)</span>
-    </a>
   );
 }
 
