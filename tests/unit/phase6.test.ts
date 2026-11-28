@@ -102,16 +102,16 @@ describe("Workstream 4 — Published projects follow CMS status & drafts stay ex
     for (const expected of [
       "https://fptkdemo-desi.streamlit.app",
       "https://livechat-analysis-desi.streamlit.app",
-      "https://overtime-demo-tci7.onrender.com",
-      "https://cimory-academy-demo.onrender.com",
-      "https://inventory-demo-9osp.onrender.com",
-      "https://monitoring-termal-demo.onrender.com",
-      "https://ecommerce1-demo.onrender.com",
-      "https://ecommerce2-demo.onrender.com/login.php",
-      "https://peminjaman-alat-demo.onrender.com",
-      "https://perpustakaan-demo.onrender.com",
-      "https://penyaluran-donasi-demo.onrender.com",
-      "https://generate-surat-demo.onrender.com",
+      "https://overtime-demo.vercel.app",
+      "https://cimory-academy-demo.vercel.app",
+      "https://inventory-demo-woad.vercel.app",
+      "https://monitoring-termal-demo.vercel.app",
+      "https://ecommerce1-demo.vercel.app",
+      "https://ecommerce2-demo.vercel.app/login.php",
+      "https://peminjaman-alat-demo.vercel.app",
+      "https://perpustakaan-demo.vercel.app",
+      "https://penyaluran-donasi-demo.vercel.app",
+      "https://generate-surat-demo.vercel.app",
     ]) {
       expect(urls).toContain(expected);
     }
